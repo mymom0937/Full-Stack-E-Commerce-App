@@ -18,7 +18,7 @@ async function connectDB() {
         };
 
         cached.promise = mongoose
-          .connect(`${process.env.MONGODB_URI}/ecommerce`, opts)
+          .connect(`${process.env.MONGODB_URL}/ecommerce`, opts)
           .then((mongoose) => {
             return mongoose;
           });
