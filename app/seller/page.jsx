@@ -2,8 +2,13 @@
 import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useAppContext } from "@/context/AppContext";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
+
+  const {getToken}= useAppContext();
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
@@ -11,10 +16,58 @@ const AddProduct = () => {
   const [category, setCategory] = useState('Earphone');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate files
+    const validFiles = files.filter(file => file !== null && file !== undefined);
+    if (validFiles.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+    
+    setLoading(true);
+    
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("category", category);
+    formData.append("price", price);
+    formData.append("offerPrice", offerPrice);
+     
+    // Only add valid files
+    for (let i = 0; i < files.length; i++) {
+      if (files[i]) {
+        formData.append("images", files[i]);
+      }
+    } 
 
+    try {
+      const token = await getToken();
+      const {data} = await axios.post('/api/product/add', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success) {
+        toast.success(data.message);
+        setFiles([]);
+        setName('');
+        setDescription('');
+        setCategory('Earphone');
+        setPrice('');
+        setOfferPrice('');
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+      toast.error(error.response?.data?.message || error.message || "Error adding product");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,14 +79,22 @@ const AddProduct = () => {
 
             {[...Array(4)].map((_, index) => (
               <label key={index} htmlFor={`image${index}`}>
-                <input onChange={(e) => {
-                  const updatedFiles = [...files];
-                  updatedFiles[index] = e.target.files[0];
-                  setFiles(updatedFiles);
-                }} type="file" id={`image${index}`} hidden />
+                <input 
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const updatedFiles = [...files];
+                      updatedFiles[index] = e.target.files[0];
+                      setFiles(updatedFiles);
+                    }
+                  }} 
+                  type="file" 
+                  id={`image${index}`}
+                  accept="image/*"
+                  hidden 
+                />
                 <Image
                   key={index}
-                  className="max-w-24 cursor-pointer"
+                  className="max-w-24 cursor-pointer object-cover h-24 w-24 border border-gray-300"
                   src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
                   alt=""
                   width={100}
@@ -124,8 +185,12 @@ const AddProduct = () => {
             />
           </div>
         </div>
-        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+        <button 
+          type="submit" 
+          className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded disabled:bg-orange-400"
+          disabled={loading}
+        >
+          {loading ? "ADDING..." : "ADD"}
         </button>
       </form>
       {/* <Footer /> */}
