@@ -65,37 +65,40 @@ const MyOrders = () => {
                     />
                     <p className="flex flex-col gap-3">
                       <span className="font-medium text-base">
-                        {order.items
+                        {(order.items || [])
                           .map(
-                            (item) => item.product.name + ` x ${item.quantity}`
+                            (item) => {
+                              const productName = item.product?.name || 'Product';
+                              return productName + ` x ${item.quantity || 1}`;
+                            }
                           )
                           .join(", ")}
                       </span>
-                      <span>Items : {order.items.length}</span>
+                      <span>Items : {(order.items || []).length}</span>
                     </p>
                   </div>
                   <div>
                     <p>
                       <span className="font-medium">
-                        {order.address.fullName}
+                        {order.address?.fullName || 'No name available'}
                       </span>
                       <br />
-                      <span>{order.address.area}</span>
+                      <span>{order.address?.area || 'No area available'}</span>
                       <br />
-                      <span>{`${order.address.city}, ${order.address.state}`}</span>
+                      <span>{`${order.address?.city || 'No city'}, ${order.address?.state || 'No state'}`}</span>
                       <br />
-                      <span>{order.address.phoneNumber}</span>
+                      <span>{order.address?.phoneNumber || 'No phone number'}</span>
                     </p>
                   </div>
                   <p className="font-medium my-auto">
                     {currency}
-                    {order.amount}
+                    {order.amount || 0}
                   </p>
                   <div>
                     <p className="flex flex-col">
                       <span>Method : COD</span>
                       <span>
-                        Date : {new Date(order.date).toLocaleDateString()}
+                        Date : {order.date ? new Date(order.date).toLocaleDateString() : 'Unknown date'}
                       </span>
                       <span>Payment : Pending</span>
                     </p>

@@ -60,11 +60,7 @@ const orderSchema = new mongoose.Schema(
 // Create a compound index for faster queries
 orderSchema.index({ userId: 1, date: -1 });
 
-// If the model exists, use it, otherwise create it
-// Force model recreation by deleting any existing model
-if (mongoose.models.order) {
-  delete mongoose.models.order;
-}
-const Order = mongoose.model("order", orderSchema);
+// If the model exists, reuse it; otherwise create a new one
+const Order = mongoose.models.order || mongoose.model("order", orderSchema);
 
 export default Order;
