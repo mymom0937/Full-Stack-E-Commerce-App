@@ -44,6 +44,17 @@ const Cart = () => {
                   const product = products.find(product => product._id === itemId);
 
                   if (!product || cartItems[itemId] <= 0) return null;
+                  
+                  // Determine product image source with fallback
+                  const productImage = product.image && Array.isArray(product.image) && product.image.length > 0 
+                    ? product.image[0] 
+                    : product.images && Array.isArray(product.images) && product.images.length > 0 
+                      ? product.images[0] 
+                      : typeof product.image === 'string' 
+                        ? product.image 
+                        : typeof product.images === 'string' 
+                          ? product.images 
+                          : '/placeholder-image.png';
 
                   return (
                     <tr key={itemId}>
@@ -51,7 +62,7 @@ const Cart = () => {
                         <div>
                           <div className="rounded-lg overflow-hidden bg-gray-500/10 p-2">
                             <Image
-                              src={product.image[0]}
+                              src={productImage}
                               alt={product.name}
                               className="w-16 h-auto object-cover mix-blend-multiply"
                               width={1280}

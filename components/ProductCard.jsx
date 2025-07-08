@@ -4,8 +4,31 @@ import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
 
 const ProductCard = ({ product }) => {
-
-    const { currency, router } = useAppContext()
+    if (!product) return null;
+    
+    const { currency, router } = useAppContext();
+    
+    // Handle different image formats (array, single string, or undefined)
+    let productImage = '/placeholder-image.png';
+    if (product.image) {
+        // Handle if product.image is an array
+        if (Array.isArray(product.image) && product.image.length > 0) {
+            productImage = product.image[0];
+        } 
+        // Handle if product.image is a string
+        else if (typeof product.image === 'string') {
+            productImage = product.image;
+        }
+    } 
+    // Handle if the field is called images instead of image
+    else if (product.images) {
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            productImage = product.images[0];
+        }
+        else if (typeof product.images === 'string') {
+            productImage = product.images;
+        }
+    }
 
     return (
         <div
@@ -14,8 +37,8 @@ const ProductCard = ({ product }) => {
         >
             <div className="cursor-pointer group relative bg-gray-500/10 rounded-lg w-full h-52 flex items-center justify-center">
                 <Image
-                    src={product.image[0]}
-                    alt={product.name}
+                    src={productImage}
+                    alt={product.name || "Product"}
                     className="group-hover:scale-105 transition object-cover w-4/5 h-4/5 md:w-full md:h-full"
                     width={800}
                     height={800}
@@ -29,8 +52,8 @@ const ProductCard = ({ product }) => {
                 </button>
             </div>
 
-            <p className="md:text-base font-medium pt-2 w-full truncate">{product.name}</p>
-            <p className="w-full text-xs text-gray-500/70 max-sm:hidden truncate">{product.description}</p>
+            <p className="md:text-base font-medium pt-2 w-full truncate">{product.name || "Product"}</p>
+            <p className="w-full text-xs text-gray-500/70 max-sm:hidden truncate">{product.description || ""}</p>
             <div className="flex items-center gap-2">
                 <p className="text-xs">{4.5}</p>
                 <div className="flex items-center gap-0.5">
@@ -50,7 +73,7 @@ const ProductCard = ({ product }) => {
             </div>
 
             <div className="flex items-end justify-between w-full mt-1">
-                <p className="text-base font-medium">{currency}{product.offerPrice}</p>
+                <p className="text-base font-medium">{currency}{product.offerPrice || 0}</p>
                 <button className=" max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
                     Buy now
                 </button>
