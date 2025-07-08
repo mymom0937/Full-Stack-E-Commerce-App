@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const AddAddress = () => {
-  const { getToken, router } = useAppContext();
+  const { getToken, router, user } = useAppContext();
   const [address, setAddress] = useState({
     fullName: "",
     phoneNumber: "",
@@ -25,8 +25,20 @@ const AddAddress = () => {
     
     try {
         const token = await getToken();
+        // Get userId from user object
+        const userId = user?.id;
+        console.log("User ID being sent:", userId);
+        
+        if (!userId) {
+          toast.error("Please sign in to add an address");
+          return;
+        }
+        
         const { data } = await axios.post("/api/user/add-address", 
-          { address: address }, // Ensure address is properly nested
+          { 
+            address: address,
+            userId: userId  // Include userId in request body as fallback
+          }, 
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -44,7 +56,7 @@ const AddAddress = () => {
         }   
     } catch (error) {
         console.error("Error details:", error);
-        toast.error(error.message);
+        toast.error(error.response?.data?.message || error.message);
     }
   };
 

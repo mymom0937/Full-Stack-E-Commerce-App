@@ -7,6 +7,52 @@ if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
 }
 
+// Helper to clear cached models if needed
+function clearModelCache() {
+    // Delete any potentially cached models
+    try {
+        if (mongoose.models && mongoose.models.order) {
+            delete mongoose.models.order;
+            console.log("Cleared cached Order model");
+        }
+    } catch (err) {
+        console.error("Error clearing model cache:", err);
+    }
+}
+
+// Helper to migrate existing orders with ammount to amount
+async function migrateOrderAmounts() {
+    try {
+        // Only run if we have a connection
+        if (!mongoose.connection.db) return;
+        
+        console.log("Running order amount field migration...");
+        
+        // Find orders with ammount field but missing amount field
+        const ordersToFix = await mongoose.connection.db.collection('orders').find({
+            ammount: { $exists: true },
+            amount: { $exists: false }
+        }).toArray();
+        
+        if (ordersToFix.length > 0) {
+            console.log(`Found ${ordersToFix.length} orders that need migration from 'ammount' to 'amount'`);
+            
+            for (const order of ordersToFix) {
+                await mongoose.connection.db.collection('orders').updateOne(
+                    { _id: order._id },
+                    { $set: { amount: order.ammount }, $unset: { ammount: "" } }
+                );
+            }
+            
+            console.log(`Successfully migrated ${ordersToFix.length} orders from 'ammount' to 'amount'`);
+        } else {
+            console.log("No orders found that need migration");
+        }
+    } catch (err) {
+        console.error("Error during order amount migration:", err);
+    }
+}
+
 async function connectDB() {
     try {
         if (cached.conn) {
@@ -19,6 +65,9 @@ async function connectDB() {
             }
             return cached.conn;
         }
+
+        // Clear any cached models before creating a new connection
+        clearModelCache();
 
         if (!cached.promise) {
             const opts = {
@@ -48,7 +97,7 @@ async function connectDB() {
             
             cached.promise = mongoose
               .connect(connectionUrl, opts)
-              .then((mongoose) => {
+              .then(async (mongoose) => {
                 // Verify the database name after connection
                 console.log(`MongoDB connected to database: ${mongoose.connection.db.databaseName}`);
                 
@@ -57,6 +106,9 @@ async function connectDB() {
                     console.log(`Switching from ${mongoose.connection.db.databaseName} to ecommerce database`);
                     mongoose.connection.useDb('ecommerce');
                 }
+                
+                // Run migration to fix order fields after connection is established
+                await migrateOrderAmounts();
                 
                 return mongoose;
               });

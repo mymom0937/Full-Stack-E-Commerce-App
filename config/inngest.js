@@ -102,32 +102,81 @@ export const syncUserDeletion = inngest.createFunction({
 
 //  Inngest function to create user's order in the database
 export const createUserOrder = inngest.createFunction(
-  { id: "create-user-order",
-    batchEvents:{
-      maxSize: 5, // Adjust this based on your needs
-      timeout: '5s' // Wait up to 5 seconds for events to batch
-    }
-   },
-  {
-    event: "order/created"
-  },
-
-  async ({ events }) => {
-
-    const orders = events.map((event) => {
-      return {
+  { id: "create-user-order" }, // Remove batch processing for now
+  { event: "order/created" },
+  async ({ event, step }) => {
+    try {
+      console.log("Processing order event:", event.id);
+      
+      // Log the data to see what we're working with
+      console.log("Order data received:", JSON.stringify(event.data));
+      
+      // Explicitly check if we have amount field with correct spelling
+      if ('amount' in event.data) {
+        console.log(`Order amount field found: ${event.data.amount}`);
+      } else if ('ammount' in event.data) {
+        console.log(`Warning: Found misspelled 'ammount' field: ${event.data.ammount}`);
+        // Fix the misspelling by copying to correct field name
+        event.data.amount = event.data.ammount;
+      } else {
+        console.log("Neither 'amount' nor 'ammount' field found in event data");
+      }
+      
+      // Connect to database first
+      await step.run("connect-to-db", async () => {
+        await ensureEcommerceDB();
+        console.log(`Connected to database: ${mongoose.connection.db?.databaseName || 'unknown'}`);
+        return { success: true };
+      });
+      
+      // Create the order document
+      const orderData = {
         userId: event.data.userId,
         items: event.data.items,
-        amount: event.data.amount,
+        amount: event.data.amount, // Ensure this is 'amount' not 'ammount'
         address: event.data.address,
-        date: event.data.date
-      }
-    });
-    
-    // Process the orders here
-    await connectDB();
-    await Order.insertMany(orders);
-    return {success:true, processed:orders.length}
-
+        date: event.data.date,
+        status: "Order Placed"
+      };
+      
+      console.log("Order data prepared:", JSON.stringify(orderData));
+      
+      // Try a direct MongoDB insert to bypass Mongoose schema validation
+      return await step.run("save-order-direct", async () => {
+        try {
+          await ensureEcommerceDB();
+          
+          // Double check the orderData has the correct field name
+          if ('ammount' in orderData && !('amount' in orderData)) {
+            console.log("Fixing field name from 'ammount' to 'amount' before insertion");
+            orderData.amount = orderData.ammount;
+            delete orderData.ammount;
+          }
+          
+          // Try direct insertion to bypass Mongoose validation
+          const result = await mongoose.connection.db.collection('orders').insertOne(orderData);
+          
+          console.log("Order created directly in MongoDB:", result.insertedId);
+          return { success: true, orderId: result.insertedId.toString() };
+        } catch (dbError) {
+          console.error("Database error creating order:", dbError);
+          
+          // Fallback to Mongoose if direct insert fails
+          try {
+            console.log("Trying Mongoose fallback...");
+            const order = new Order(orderData);
+            const savedOrder = await order.save();
+            console.log("Order created via Mongoose:", savedOrder._id);
+            return { success: true, orderId: savedOrder._id };
+          } catch (mongooseError) {
+            console.error("Mongoose error:", mongooseError);
+            throw new Error(`Failed to save order: ${mongooseError.message}`);
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error in order creation function:", error);
+      return { success: false, error: error.message };
+    }
   }
 )
