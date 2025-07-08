@@ -31,7 +31,9 @@ const MyOrders = () => {
         setLoading(false);
       }
       setLoading(false);
-    } catch (error) {}
+    } catch (error) {
+        toast.error(error.message || "An error occurred while fetching orders");
+    }
   };
 
   useEffect(() => {
