@@ -1,10 +1,15 @@
-import { Inngest } from "inngest";
+"use server";
+
+import { EventSchemas, Inngest } from "inngest";
+import { cookies } from "next/headers";
 import connectDB from "./db";
 // Import the User model to interact with the database
 import User from "@/models/User"; 
 import mongoose from "mongoose";
 import Order from "@/models/Order";
-export const inngest = new Inngest({ id: "quickcart-next" });
+
+// Create a client to send and receive events
+export const inngest = new Inngest({ id: "ezcart-next" });
 
 // Helper function to ensure we're using the ecommerce database
 async function ensureEcommerceDB() {
