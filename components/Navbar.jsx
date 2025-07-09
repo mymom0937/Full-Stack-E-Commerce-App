@@ -30,10 +30,10 @@ const Navbar = () => {
         <Link href="/all-products" className="hover:text-gray-900 font-medium transition">
           Shop
         </Link>
-        <Link href="/" className="hover:text-gray-900 font-medium transition">
+        <Link href="/about" className="hover:text-gray-900 font-medium transition">
           About Us
         </Link>
-        <Link href="/" className="hover:text-gray-900 font-medium transition">
+        <Link href="/contact" className="hover:text-gray-900 font-medium transition">
           Contact
         </Link>
 
@@ -187,10 +187,10 @@ const Navbar = () => {
               <Link href="/cart" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 Cart {cartCount > 0 && <span className="ml-2 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
               </Link>
-              <Link href="/" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/about" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 About Us
               </Link>
-              <Link href="/" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/contact" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 Contact
               </Link>
               {isSeller && (
