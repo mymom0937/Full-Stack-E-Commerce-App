@@ -117,7 +117,7 @@ const AllProducts = () => {
         setSearchQuery("");
         setSortOption("default");
     };
-    
+
     return (
         <>
             <Navbar />

@@ -5,14 +5,33 @@ import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 import { useClerk, UserButton } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const { isSeller, router, user, getCartCount, wishlist } = useAppContext();
-  const { openSignIn } = useClerk();
+  const { isSeller, router, user, getCartCount, wishlist, handleLogout: contextLogout } = useAppContext();
+  const { openSignIn, signOut } = useClerk();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const cartCount = getCartCount();
   const wishlistCount = wishlist?.length || 0;
+
+  // Custom logout handler that also calls our AppContext's handleLogout
+  const handleLogout = () => {
+    contextLogout();
+    toast.success('Logged out successfully');
+  };
+  
+  // Mobile menu logout handler
+  const handleMobileLogout = async () => {
+    try {
+      await signOut();
+      contextLogout();
+      toast.success('Logged out successfully');
+      setIsMenuOpen(false);
+    } catch (error) {
+      toast.error('Failed to logout. Please try again.');
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white flex items-center justify-between px-6 md:px-16 lg:px-32 py-4 border-b border-gray-300 text-gray-700 shadow-sm">
@@ -78,7 +97,7 @@ const Navbar = () => {
         </div>
 
         {user ? (
-          <UserButton>
+          <UserButton afterSignOutUrl="/">
             <UserButton.MenuItems>
               <UserButton.Action
                 label="Home"
@@ -118,6 +137,10 @@ const Navbar = () => {
                 onClick={() => router.push("/my-orders")}
               />
             </UserButton.MenuItems>
+
+            <UserButton.MenuItems>
+              <UserButton.SignOutButton onSignOut={handleLogout} />
+            </UserButton.MenuItems>
           </UserButton>
         ) : (
           <button
@@ -151,7 +174,7 @@ const Navbar = () => {
         </div>
 
         {user ? (
-          <UserButton />
+          <UserButton afterSignOutUrl="/" onSignOut={handleLogout} />
         ) : (
           <button
             onClick={openSignIn}
@@ -199,9 +222,17 @@ const Navbar = () => {
                     router.push("/seller");
                     setIsMenuOpen(false);
                   }}
-                  className="text-sm border px-4 py-2 rounded hover:bg-gray-50 transition mt-2"
+                  className="hover:text-gray-900 transition py-2 border-b text-left"
                 >
                   Seller Dashboard
+                </button>
+              )}
+              {user && (
+                <button
+                  onClick={handleMobileLogout}
+                  className="hover:text-gray-900 transition py-2 border-b text-left text-red-600"
+                >
+                  Logout
                 </button>
               )}
             </div>

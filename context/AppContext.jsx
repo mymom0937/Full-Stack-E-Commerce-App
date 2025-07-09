@@ -216,6 +216,7 @@ export const AppContextProvider = (props) => {
     wishlist,
     toggleWishlist,
     isInWishlist,
+    handleLogout,
   };
 
   return (
