@@ -1,14 +1,8 @@
-"use client";
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
-export const metadata = {
-  title: 'About Us',
-  description: 'Learn about EzCart, our mission, values, and the team behind our e-commerce platform.',
-};
 
 export default function AboutPage() {
   return (

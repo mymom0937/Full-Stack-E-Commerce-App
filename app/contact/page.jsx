@@ -1,15 +1,10 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Breadcrumb from '@/components/Breadcrumb';
 import * as Toast from '@/lib/toast';
-
-export const metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with EzCart customer support. We\'re here to help with any questions or concerns about your orders or our products.',
-};
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
