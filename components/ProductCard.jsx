@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { assets } from '@/assets/assets'
 import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
@@ -6,10 +6,17 @@ import OptimizedImage from './OptimizedImage';
 
 const ProductCard = ({ product }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const [isLikeAnimating, setIsLikeAnimating] = useState(false);
     
     if (!product) return null;
     
-    const { currency, router, addToCart } = useAppContext();
+    const { currency, router, addToCart, isInWishlist, toggleWishlist } = useAppContext();
+    
+    // Check if product is in wishlist on component mount
+    useEffect(() => {
+        setIsLiked(isInWishlist(product._id));
+    }, [isInWishlist, product._id]);
     
     // Handle different image formats (array, single string, or undefined)
     let productImage = '/placeholder-image.png';
@@ -47,6 +54,26 @@ const ProductCard = ({ product }) => {
     const handleAddToCart = (e) => {
         e.stopPropagation();
         addToCart(product._id);
+    };
+    
+    const handleToggleWishlist = async (e) => {
+        e.stopPropagation();
+        
+        // Start animation
+        setIsLikeAnimating(true);
+        
+        // Toggle wishlist status
+        const result = await toggleWishlist(product._id);
+        
+        // Update local state if we got a valid result
+        if (result !== null) {
+            setIsLiked(result);
+        }
+        
+        // End animation after a short delay
+        setTimeout(() => {
+            setIsLikeAnimating(false);
+        }, 500);
     };
 
     return (
@@ -89,11 +116,16 @@ const ProductCard = ({ product }) => {
                     </div>
                 </div>
                 
-                <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
+                <button 
+                    onClick={handleToggleWishlist}
+                    className={`absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition ${isLikeAnimating ? 'scale-125' : ''} transform duration-300`}
+                >
                     <Image
-                        className="h-3 w-3"
-                        src={assets.heart_icon}
+                        className={`h-3 w-3 transition-all duration-300 ${isLiked ? 'filter-none' : 'grayscale opacity-60'}`}
+                        src={isLiked ? '/heart-filled.svg' : assets.heart_icon}
                         alt="heart_icon"
+                        width={12}
+                        height={12}
                     />
                 </button>
             </div>

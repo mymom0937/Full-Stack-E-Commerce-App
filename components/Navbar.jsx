@@ -7,11 +7,12 @@ import Image from "next/image";
 import { useClerk, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
-  const { isSeller, router, user, getCartCount } = useAppContext();
+  const { isSeller, router, user, getCartCount, wishlist } = useAppContext();
   const { openSignIn } = useClerk();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const cartCount = getCartCount();
+  const wishlistCount = wishlist?.length || 0;
 
   return (
     <nav className="sticky top-0 z-50 bg-white flex items-center justify-between px-6 md:px-16 lg:px-32 py-4 border-b border-gray-300 text-gray-700 shadow-sm">
@@ -58,6 +59,15 @@ const Navbar = () => {
           </div>
         </div>
         
+        <div className="relative cursor-pointer" onClick={() => router.push("/wishlist")}>
+          <Image className="w-5 h-5" src={assets.heart_icon} alt="wishlist icon" />
+          {wishlistCount > 0 && (
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {wishlistCount}
+            </div>
+          )}
+        </div>
+        
         <div className="relative cursor-pointer" onClick={() => router.push("/cart")}>
           <Image className="w-5 h-5" src={assets.cart_icon} alt="cart icon" />
           {cartCount > 0 && (
@@ -82,6 +92,14 @@ const Navbar = () => {
                 label="Products"
                 labelIcon={<BoxIcon />}
                 onClick={() => router.push("/all-products")}
+              />
+            </UserButton.MenuItems>
+            
+            <UserButton.MenuItems>
+              <UserButton.Action
+                label="Wishlist"
+                labelIcon={<Image src={assets.heart_icon} alt="wishlist" width={16} height={16} />}
+                onClick={() => router.push("/wishlist")}
               />
             </UserButton.MenuItems>
 
@@ -114,6 +132,15 @@ const Navbar = () => {
 
       {/* Mobile navigation */}
       <div className="flex items-center gap-4 md:hidden">
+        <div className="relative cursor-pointer" onClick={() => router.push("/wishlist")}>
+          <Image className="w-5 h-5" src={assets.heart_icon} alt="wishlist icon" />
+          {wishlistCount > 0 && (
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {wishlistCount}
+            </div>
+          )}
+        </div>
+        
         <div className="relative cursor-pointer" onClick={() => router.push("/cart")}>
           <Image className="w-5 h-5" src={assets.cart_icon} alt="cart icon" />
           {cartCount > 0 && (
@@ -153,6 +180,12 @@ const Navbar = () => {
               </Link>
               <Link href="/all-products" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 Shop
+              </Link>
+              <Link href="/wishlist" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
+                Wishlist {wishlistCount > 0 && <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
+              </Link>
+              <Link href="/cart" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
+                Cart {cartCount > 0 && <span className="ml-2 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
               </Link>
               <Link href="/" className="hover:text-gray-900 transition py-2 border-b" onClick={() => setIsMenuOpen(false)}>
                 About Us

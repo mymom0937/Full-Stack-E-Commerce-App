@@ -22,6 +22,7 @@ export const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(null);
   const [isSeller, setIsSeller] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [wishlist, setWishlist] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProductData = async () => {
@@ -55,6 +56,7 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         setUserData(data.user);
         setCartItems(data.user.cartItems || {});
+        setWishlist(data.user.wishlist || []);
       } else {
         Toast.showError(data.message || "Failed to load user data");
       }
@@ -117,6 +119,42 @@ export const AppContextProvider = (props) => {
     }
   };
 
+  const toggleWishlist = async (productId) => {
+    if (!user) {
+      Toast.showInfo("Please sign in to save items to your wishlist");
+      return false;
+    }
+
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/user/wishlist",
+        { productId, action: "toggle" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        setWishlist(data.wishlist);
+        Toast.showSuccess(data.message);
+        return data.isInWishlist;
+      } else {
+        Toast.showError(data.message || "Failed to update wishlist");
+        return null;
+      }
+    } catch (error) {
+      Toast.handleApiError(error);
+      return null;
+    }
+  };
+
+  const isInWishlist = (productId) => {
+    return wishlist.includes(productId);
+  };
+
   const getCartCount = () => {
     let totalCount = 0;
     for (const items in cartItems) {
@@ -142,6 +180,7 @@ export const AppContextProvider = (props) => {
     setCartItems({});
     setUserData(null);
     setIsSeller(false);
+    setWishlist([]);
   };
 
   useEffect(() => {
@@ -174,6 +213,9 @@ export const AppContextProvider = (props) => {
     updateCartQuantity,
     getCartCount,
     getCartAmount,
+    wishlist,
+    toggleWishlist,
+    isInWishlist,
   };
 
   return (
