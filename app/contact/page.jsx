@@ -55,13 +55,13 @@ export default function ContactPage() {
         
         {/* Hero Image */}
         <div className="mb-16 rounded-xl overflow-hidden shadow-lg max-w-3xl mx-auto">
-          <div className="relative" style={{ maxHeight: "350px", overflow: "hidden" }}>
+          <div className="relative" style={{ maxHeight: "400px", overflow: "hidden" }}>
             <Image 
               src={assets.about_hero_image}
               alt="Contact EzCart" 
               className="w-full h-auto object-cover"
               width={900}
-              height={350}
+              height={400}
               priority
             />
           </div>

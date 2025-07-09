@@ -58,7 +58,7 @@ const Product = () => {
         setError(null);
         
         try {
-            const product = products.find(product => product && product._id === id);
+        const product = products.find(product => product && product._id === id);
         
         if (product) {
             setProductData(product);
