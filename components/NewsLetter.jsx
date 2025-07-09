@@ -3,16 +3,16 @@ import React from "react";
 const NewsLetter = () => {
   return (
     <div className="flex flex-col items-center justify-center text-center space-y-2 pt-8 pb-14">
-      <h1 className="md:text-4xl text-2xl font-medium">
+      <h1 className="md:text-4xl text-2xl font-medium text-text-primary">
         Subscribe now & get 20% off
       </h1>
-      <p className="md:text-base text-gray-500/80 pb-8">
+      <p className="md:text-base text-text-secondary pb-8">
         Lorem Ipsum is simply dummy text of the printing and typesetting
         industry.
       </p>
       <div className="flex items-center justify-between max-w-2xl w-full md:h-14 h-12">
         <input
-          className="border border-gray-500/30 rounded-md h-full border-r-0 outline-none w-full rounded-r-none px-3 text-gray-500"
+          className="border border-border-color rounded-md h-full border-r-0 outline-none w-full rounded-r-none px-3 text-text-primary bg-background transition-colors duration-200"
           type="text"
           placeholder="Enter your email id"
         />

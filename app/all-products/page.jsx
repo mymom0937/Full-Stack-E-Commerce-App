@@ -121,7 +121,7 @@ const AllProducts = () => {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-background transition-colors duration-200">
                 {/* Hero Banner */}
                 <div className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white py-16">
                     <div className="absolute inset-0 opacity-20 bg-center bg-cover" style={{ backgroundImage: 'url(/shop-banner.jpg)' }}></div>
@@ -141,7 +141,7 @@ const AllProducts = () => {
                             <div className="flex items-center gap-2">
                                 <button 
                                     onClick={() => setView("grid")}
-                                    className={`p-2 ${view === 'grid' ? 'bg-orange-100 text-orange-500' : 'bg-gray-100 text-gray-500'} rounded`}
+                                    className={`p-2 ${view === 'grid' ? 'bg-orange-100 text-orange-500' : 'bg-card-bg text-text-secondary'} rounded`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -149,7 +149,7 @@ const AllProducts = () => {
                                 </button>
                                 <button 
                                     onClick={() => setView("list")}
-                                    className={`p-2 ${view === 'list' ? 'bg-orange-100 text-orange-500' : 'bg-gray-100 text-gray-500'} rounded`}
+                                    className={`p-2 ${view === 'list' ? 'bg-orange-100 text-orange-500' : 'bg-card-bg text-text-secondary'} rounded`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -158,7 +158,7 @@ const AllProducts = () => {
                             </div>
                             <button 
                                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                className="flex items-center gap-2 px-4 py-2 bg-white border rounded shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2 bg-background border border-border-color rounded shadow-sm"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -168,10 +168,10 @@ const AllProducts = () => {
                         </div>
                         
                         {/* Sidebar filters */}
-                        <div className={`${isFilterOpen ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0 bg-white md:sticky md:top-20 md:self-start h-fit rounded-lg shadow-sm`}>
+                        <div className={`${isFilterOpen ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0 bg-card-bg md:sticky md:top-20 md:self-start h-fit rounded-lg shadow-sm transition-colors duration-200`}>
                             <div className="p-6">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-lg font-medium">Filters</h2>
+                                    <h2 className="text-lg font-medium text-text-primary">Filters</h2>
                                     <button 
                                         onClick={resetFilters} 
                                         className="text-xs text-orange-500 hover:underline"
@@ -182,16 +182,16 @@ const AllProducts = () => {
                                 
                                 {/* Search */}
                                 <div className="mb-6">
-                                    <label className="block text-sm font-medium mb-2">Search</label>
+                                    <label className="block text-sm font-medium mb-2 text-text-primary">Search</label>
                                     <div className="relative">
                                         <input 
                                             type="text" 
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             placeholder="Search products..."
-                                            className="w-full border rounded-lg p-2 pl-10 text-sm"
+                                            className="w-full border border-border-color rounded-lg p-2 pl-10 text-sm bg-background text-text-primary"
                                         />
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-text-secondary absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </div>
@@ -199,7 +199,7 @@ const AllProducts = () => {
                                 
                                 {/* Categories */}
                                 <div className="mb-6">
-                                    <label className="block text-sm font-medium mb-2">Categories</label>
+                                    <label className="block text-sm font-medium mb-2 text-text-primary">Categories</label>
                                     <div className="space-y-2">
                                         {categories.map((category) => (
                                             <div key={category} className="flex items-center">
@@ -211,7 +211,7 @@ const AllProducts = () => {
                                                     onChange={() => setFilterCategory(category)}
                                                     className="mr-2 accent-orange-500"
                                                 />
-                                                <label htmlFor={category} className="text-sm capitalize">
+                                                <label htmlFor={category} className="text-sm capitalize text-text-secondary">
                                                     {category}
                                                 </label>
                                             </div>
@@ -221,36 +221,36 @@ const AllProducts = () => {
                                 
                                 {/* Price Range */}
                                 <div className="mb-6">
-                                    <label className="block text-sm font-medium mb-2">Price Range</label>
+                                    <label className="block text-sm font-medium mb-2 text-text-primary">Price Range</label>
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="text-xs">
+                                        <span className="text-xs text-text-secondary">
                                             ${priceRange.min}
                                         </span>
-                                        <span className="text-xs">
+                                        <span className="text-xs text-text-secondary">
                                             ${priceRange.max}
                                         </span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
-                                            <label className="text-xs">Min</label>
+                                            <label className="text-xs text-text-secondary">Min</label>
                                             <input
                                                 type="number"
                                                 min={priceRangeValues.min}
                                                 max={priceRange.max}
                                                 value={priceRange.min}
                                                 onChange={(e) => handlePriceChange(e, "min")}
-                                                className="w-full border rounded p-2 text-sm"
+                                                className="w-full border border-border-color rounded p-2 text-sm bg-background text-text-primary"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-xs">Max</label>
+                                            <label className="text-xs text-text-secondary">Max</label>
                                             <input
                                                 type="number"
                                                 min={priceRange.min}
                                                 max={priceRangeValues.max}
                                                 value={priceRange.max}
                                                 onChange={(e) => handlePriceChange(e, "max")}
-                                                className="w-full border rounded p-2 text-sm"
+                                                className="w-full border border-border-color rounded p-2 text-sm bg-background text-text-primary"
                                             />
                                         </div>
                                     </div>
@@ -269,10 +269,10 @@ const AllProducts = () => {
                         {/* Main content */}
                         <div className="flex-1">
                             {/* Sort controls */}
-                            <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+                            <div className="bg-card-bg p-4 rounded-lg shadow-sm mb-6 transition-colors duration-200">
                                 <div className="flex flex-wrap justify-between items-center">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">
+                                        <span className="text-sm font-medium text-text-primary">
                                             {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
                                         </span>
                                     </div>
@@ -280,7 +280,7 @@ const AllProducts = () => {
                                         <div className="hidden md:flex items-center gap-2">
                                             <button 
                                                 onClick={() => setView("grid")}
-                                                className={`p-2 ${view === 'grid' ? 'bg-orange-100 text-orange-500' : 'bg-gray-100 text-gray-500'} rounded`}
+                                                className={`p-2 ${view === 'grid' ? 'bg-orange-100 text-orange-500' : 'bg-card-bg text-text-secondary'} rounded`}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -288,7 +288,7 @@ const AllProducts = () => {
                                             </button>
                                             <button 
                                                 onClick={() => setView("list")}
-                                                className={`p-2 ${view === 'list' ? 'bg-orange-100 text-orange-500' : 'bg-gray-100 text-gray-500'} rounded`}
+                                                className={`p-2 ${view === 'list' ? 'bg-orange-100 text-orange-500' : 'bg-card-bg text-text-secondary'} rounded`}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -296,11 +296,11 @@ const AllProducts = () => {
                                             </button>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm text-gray-600">Sort by:</span>
+                                            <span className="text-sm text-text-secondary">Sort by:</span>
                                             <select
                                                 value={sortOption}
                                                 onChange={(e) => setSortOption(e.target.value)}
-                                                className="border rounded p-2 text-sm bg-white"
+                                                className="border border-border-color rounded p-2 text-sm bg-background text-text-primary"
                                             >
                                                 <option value="default">Featured</option>
                                                 <option value="newest">Newest</option>
@@ -318,14 +318,14 @@ const AllProducts = () => {
                             {isLoading ? (
                                 <Loading variant="products" count={8} />
                             ) : filteredProducts.length === 0 ? (
-                                <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+                                <div className="bg-card-bg p-8 rounded-lg shadow-sm text-center transition-colors duration-200">
                                     <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
-                                    <h3 className="text-lg font-medium mb-2">No products found</h3>
-                                    <p className="text-gray-500 mb-4">Try adjusting your search or filter criteria</p>
+                                    <h3 className="text-lg font-medium mb-2 text-text-primary">No products found</h3>
+                                    <p className="text-text-secondary mb-4">Try adjusting your search or filter criteria</p>
                                     <button 
                                         onClick={resetFilters}
                                         className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
@@ -334,7 +334,7 @@ const AllProducts = () => {
                                     </button>
                                 </div>
                             ) : view === "grid" ? (
-                                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                     {filteredProducts.map((product, index) => (
                                         <ProductCard key={product._id || index} product={product} />
                                     ))}
@@ -344,7 +344,7 @@ const AllProducts = () => {
                                     {filteredProducts.map((product, index) => (
                                         <div 
                                             key={product._id || index}
-                                            className="bg-white rounded-lg shadow-sm p-4 flex flex-col md:flex-row gap-4 cursor-pointer hover:shadow-md transition"
+                                            className="bg-card-bg rounded-lg shadow-sm p-4 flex flex-col md:flex-row gap-4 cursor-pointer hover:shadow-md transition"
                                             onClick={() => router.push('/product/' + product._id)}
                                         >
                                             <div className="md:w-48 h-48 md:h-36 relative rounded-md overflow-hidden">
@@ -361,9 +361,9 @@ const AllProducts = () => {
                                                 )}
                                             </div>
                                             <div className="flex-1 flex flex-col">
-                                                <h3 className="font-medium text-lg mb-1">{product.name}</h3>
-                                                <p className="text-sm text-gray-500 mb-2">{product.category}</p>
-                                                <p className="text-sm text-gray-600 line-clamp-2 mb-2">{product.description}</p>
+                                                <h3 className="font-medium text-lg mb-1 text-text-primary">{product.name}</h3>
+                                                <p className="text-sm text-text-secondary mb-2">{product.category}</p>
+                                                <p className="text-sm text-text-secondary line-clamp-2 mb-2">{product.description}</p>
                                                 <div className="flex items-center gap-0.5 mb-2">
                                                     {Array.from({ length: 5 }).map((_, index) => (
                                                         <Image
@@ -377,13 +377,13 @@ const AllProducts = () => {
                                                             alt="star_icon"
                                                         />
                                                     ))}
-                                                    <span className="text-xs text-gray-500 ml-1">(4.5)</span>
+                                                    <span className="text-xs text-text-secondary ml-1">(4.5)</span>
                                                 </div>
                                                 <div className="mt-auto flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
-                                                        <p className="font-medium text-lg">${product.offerPrice || 0}</p>
+                                                        <p className="font-medium text-lg text-text-primary">${product.offerPrice || 0}</p>
                                                         {product.price > product.offerPrice && (
-                                                            <p className="text-sm text-gray-500 line-through">${product.price || 0}</p>
+                                                            <p className="text-sm text-text-secondary line-through">${product.price || 0}</p>
                                                         )}
                                                     </div>
                                                     <div className="flex gap-2">
@@ -392,7 +392,7 @@ const AllProducts = () => {
                                                                 e.stopPropagation();
                                                                 toggleWishlist(product._id);
                                                             }}
-                                                            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+                                                            className="p-2 rounded-full bg-card-bg hover:bg-border-color transition"
                                                         >
                                                             <Image
                                                                 className="h-5 w-5"
@@ -425,19 +425,19 @@ const AllProducts = () => {
                             {filteredProducts.length > 0 && (
                                 <div className="mt-8 flex justify-center">
                                     <nav className="flex items-center gap-1">
-                                        <button className="px-3 py-1 border rounded bg-white">
+                                        <button className="px-3 py-1 border rounded bg-card-bg text-text-secondary">
                                             &laquo;
                                         </button>
                                         <button className="px-3 py-1 border rounded bg-orange-500 text-white">
                                             1
                                         </button>
-                                        <button className="px-3 py-1 border rounded bg-white">
+                                        <button className="px-3 py-1 border rounded bg-card-bg text-text-secondary">
                                             2
                                         </button>
-                                        <button className="px-3 py-1 border rounded bg-white">
+                                        <button className="px-3 py-1 border rounded bg-card-bg text-text-secondary">
                                             3
                                         </button>
-                                        <button className="px-3 py-1 border rounded bg-white">
+                                        <button className="px-3 py-1 border rounded bg-card-bg text-text-secondary">
                                             &raquo;
                                         </button>
                                     </nav>

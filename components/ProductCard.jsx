@@ -83,7 +83,7 @@ const ProductCard = ({ product }) => {
             onMouseLeave={() => setIsHovered(false)}
             className="flex flex-col items-start gap-0.5 max-w-[220px] w-full cursor-pointer group"
         >
-            <div className="relative rounded-lg w-full h-60 flex items-center justify-center overflow-hidden">
+            <div className="relative rounded-lg w-full h-60 flex items-center justify-center overflow-hidden bg-card-bg transition-colors duration-200">
                 {discount > 0 && (
                     <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded z-10">
                         -{discount}%
@@ -103,7 +103,7 @@ const ProductCard = ({ product }) => {
                     <div className="flex flex-col gap-2">
                         <button 
                             onClick={handleQuickView}
-                            className="bg-white text-gray-800 px-4 py-2 text-sm rounded hover:bg-gray-100 transition"
+                            className="bg-background text-text-primary px-4 py-2 text-sm rounded hover:bg-card-bg transition-colors duration-200"
                         >
                             Quick View
                         </button>
@@ -118,7 +118,7 @@ const ProductCard = ({ product }) => {
                 
                 <button 
                     onClick={handleToggleWishlist}
-                    className={`absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition ${isLikeAnimating ? 'scale-125' : ''} transform duration-300`}
+                    className={`absolute top-2 right-2 bg-background p-2 rounded-full shadow-md hover:bg-card-bg transition-colors duration-200 ${isLikeAnimating ? 'scale-125' : ''} transform duration-300`}
                 >
                     <Image
                         className={`h-3 w-3 transition-all duration-300 ${isLiked ? 'filter-none' : 'grayscale opacity-60'}`}
@@ -144,17 +144,17 @@ const ProductCard = ({ product }) => {
                             alt="star_icon"
                         />
                     ))}
-                    <span className="text-xs text-gray-500 ml-1">(4.5)</span>
+                    <span className="text-xs text-text-secondary ml-1">(4.5)</span>
                 </div>
                 
-                <p className="text-sm text-gray-500 mb-1">{product.category || "Category"}</p>
-                <p className="font-medium truncate">{product.name || "Product"}</p>
-                <p className="text-sm text-gray-500/70 max-sm:hidden truncate">{product.description?.substring(0, 60) || ""}</p>
+                <p className="text-sm text-text-secondary mb-1">{product.category || "Category"}</p>
+                <p className="font-medium text-text-primary truncate">{product.name || "Product"}</p>
+                <p className="text-sm text-text-secondary max-sm:hidden truncate">{product.description?.substring(0, 60) || ""}</p>
                 
                 <div className="flex items-center gap-2 mt-2">
-                    <p className="font-medium">{currency}{product.offerPrice || 0}</p>
+                    <p className="font-medium text-text-primary">{currency}{product.offerPrice || 0}</p>
                     {product.price > product.offerPrice && (
-                        <p className="text-sm text-gray-500/70 line-through">{currency}{product.price || 0}</p>
+                        <p className="text-sm text-text-secondary line-through">{currency}{product.price || 0}</p>
                     )}
                 </div>
             </div>

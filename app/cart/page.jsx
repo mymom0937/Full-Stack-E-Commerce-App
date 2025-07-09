@@ -51,64 +51,64 @@ const Cart = () => {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full table-auto">
-                <thead className="text-left">
-                  <tr>
-                    <th className="text-nowrap pb-6 md:px-4 px-1 text-gray-600 font-medium">
-                      Product Details
-                    </th>
-                    <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
-                      Price
-                    </th>
-                    <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
-                      Quantity
-                    </th>
-                    <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
-                      Subtotal
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.keys(cartItems).map((itemId) => {
-                    const product = products.find(product => product._id === itemId);
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto">
+              <thead className="text-left">
+                <tr>
+                  <th className="text-nowrap pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                    Product Details
+                  </th>
+                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                    Price
+                  </th>
+                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                    Quantity
+                  </th>
+                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                    Subtotal
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(cartItems).map((itemId) => {
+                  const product = products.find(product => product._id === itemId);
 
-                    if (!product || cartItems[itemId] <= 0) return null;
-                    
-                    // Determine product image source with fallback
-                    const productImage = product.image && Array.isArray(product.image) && product.image.length > 0 
-                      ? product.image[0] 
-                      : product.images && Array.isArray(product.images) && product.images.length > 0 
-                        ? product.images[0] 
-                        : typeof product.image === 'string' 
-                          ? product.image 
-                          : typeof product.images === 'string' 
-                            ? product.images 
-                            : '/placeholder-image.png';
+                  if (!product || cartItems[itemId] <= 0) return null;
+                  
+                  // Determine product image source with fallback
+                  const productImage = product.image && Array.isArray(product.image) && product.image.length > 0 
+                    ? product.image[0] 
+                    : product.images && Array.isArray(product.images) && product.images.length > 0 
+                      ? product.images[0] 
+                      : typeof product.image === 'string' 
+                        ? product.image 
+                        : typeof product.images === 'string' 
+                          ? product.images 
+                          : '/placeholder-image.png';
 
-                    return (
+                  return (
                       <tr key={itemId} className="border-b border-gray-100">
-                        <td className="flex items-center gap-4 py-4 md:px-4 px-1">
+                      <td className="flex items-center gap-4 py-4 md:px-4 px-1">
                           <div className="flex-shrink-0">
                             <div onClick={() => router.push(`/product/${product._id}`)} 
                                  className="rounded-lg overflow-hidden w-20 h-20 cursor-pointer">
                               <OptimizedImage
-                                src={productImage}
-                                alt={product.name}
+                              src={productImage}
+                              alt={product.name}
                                 width={200}
                                 height={200}
                                 className="w-20 h-20"
                                 objectFit="contain"
-                              />
-                            </div>
-                            <button
-                              className="md:hidden text-xs text-orange-600 mt-1"
-                              onClick={() => updateCartQuantity(product._id, 0)}
-                            >
-                              Remove
-                            </button>
+                            />
                           </div>
-                          <div className="text-sm hidden md:block">
+                          <button
+                            className="md:hidden text-xs text-orange-600 mt-1"
+                            onClick={() => updateCartQuantity(product._id, 0)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="text-sm hidden md:block">
                             <p className="text-gray-800 font-medium hover:text-orange-500 cursor-pointer" 
                                onClick={() => router.push(`/product/${product._id}`)}>
                               {product.name}
@@ -116,27 +116,27 @@ const Cart = () => {
                             <p className="text-xs text-gray-500 mb-2">
                               {product.category || "Uncategorized"}
                             </p>
-                            <button
+                          <button
                               className="text-xs text-orange-600 hover:underline"
-                              onClick={() => updateCartQuantity(product._id, 0)}
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </td>
+                            onClick={() => updateCartQuantity(product._id, 0)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </td>
                         <td className="py-4 md:px-4 px-1 text-gray-600 font-medium">${product.offerPrice}</td>
-                        <td className="py-4 md:px-4 px-1">
+                      <td className="py-4 md:px-4 px-1">
                           <div className="flex items-center md:gap-2 gap-1 border rounded-md w-fit">
                             <button 
                               onClick={() => updateCartQuantity(product._id, cartItems[itemId] - 1)}
                               className="px-2 py-1 text-gray-500 hover:bg-gray-100"
                             >
-                              <Image
-                                src={assets.decrease_arrow}
-                                alt="decrease_arrow"
-                                className="w-4 h-4"
-                              />
-                            </button>
+                            <Image
+                              src={assets.decrease_arrow}
+                              alt="decrease_arrow"
+                              className="w-4 h-4"
+                            />
+                          </button>
                             <input 
                               onChange={e => updateCartQuantity(product._id, Number(e.target.value))} 
                               type="number" 
@@ -148,21 +148,21 @@ const Cart = () => {
                               onClick={() => addToCart(product._id)}
                               className="px-2 py-1 text-gray-500 hover:bg-gray-100"
                             >
-                              <Image
-                                src={assets.increase_arrow}
-                                alt="increase_arrow"
-                                className="w-4 h-4"
-                              />
-                            </button>
-                          </div>
-                        </td>
+                            <Image
+                              src={assets.increase_arrow}
+                              alt="increase_arrow"
+                              className="w-4 h-4"
+                            />
+                          </button>
+                        </div>
+                      </td>
                         <td className="py-4 md:px-4 px-1 font-medium">${(product.offerPrice * cartItems[itemId]).toFixed(2)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           )}
           
           <button onClick={()=> router.push('/all-products')} className="group flex items-center mt-6 gap-2 text-orange-600 hover:underline">

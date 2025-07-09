@@ -1,4 +1,5 @@
 import { AppContextProvider } from "@/context/AppContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
@@ -49,11 +50,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="dark">
         <body className={inter.className}>
           <AppContextProvider>
-            {children}
-            <Toaster position="top-center" />
+            <ThemeProvider>
+              {children}
+              <Toaster position="top-center" />
+            </ThemeProvider>
           </AppContextProvider>
         </body>
       </html>

@@ -28,17 +28,17 @@ const Breadcrumb = ({ items = [], currentPage, className = '' }) => {
     <nav aria-label="Breadcrumb" className={`flex items-center gap-2 text-sm my-4 ${className}`}>
       {breadcrumbItems.map((item, index) => (
         <React.Fragment key={index}>
-          {index > 0 && <span className="text-gray-400">/</span>}
+          {index > 0 && <span className="text-text-secondary">/</span>}
           
           {item.path ? (
             <Link 
               href={item.path}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-text-secondary hover:text-accent-color transition-colors"
             >
               {item.label}
             </Link>
           ) : (
-            <span className="text-gray-700 font-medium">{item.label}</span>
+            <span className="text-text-primary font-medium">{item.label}</span>
           )}
         </React.Fragment>
       ))}

@@ -27,13 +27,13 @@ const FeaturedProduct = () => {
   return (
     <div className="mt-14">
       <div className="flex flex-col items-center">
-        <p className="text-3xl font-medium">Featured Products</p>
+        <p className="text-3xl font-medium text-text-primary">Featured Products</p>
         <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-14 mt-12 md:px-14 px-4">
         {products.map(({ id, image, title, description }) => (
-          <div key={id} className="relative group">
+          <div key={id} className="relative group rounded-lg overflow-hidden shadow-sm">
             <Image
               src={image}
               alt={title}

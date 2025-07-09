@@ -1,20 +1,23 @@
 import React from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useTheme } from "@/context/ThemeContext";
 
 const Banner = () => {
+  const { theme } = useTheme();
+  
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between md:pl-20 py-14 md:py-0 bg-[#E6E9F2] my-16 rounded-xl overflow-hidden">
+    <div className={`flex flex-col md:flex-row items-center justify-between md:pl-20 py-14 md:py-0 ${theme === 'dark' ? 'bg-gray-800' : 'bg-[#E6E9F2]'} my-16 rounded-xl overflow-hidden transition-colors duration-200`}>
       <Image
         className="max-w-56"
         src={assets.jbl_soundbox_image}
         alt="jbl_soundbox_image"
       />
       <div className="flex flex-col items-center justify-center text-center space-y-2 px-4 md:px-0">
-        <h2 className="text-2xl md:text-3xl font-semibold max-w-[290px]">
+        <h2 className="text-2xl md:text-3xl font-semibold max-w-[290px] text-text-primary">
           Level Up Your Gaming Experience
         </h2>
-        <p className="max-w-[343px] font-medium text-gray-800/60">
+        <p className="max-w-[343px] font-medium text-text-secondary">
           From immersive sound to precise controls—everything you need to win
         </p>
         <button className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-orange-600 rounded text-white">

@@ -150,46 +150,46 @@ const Orders = () => {
               <p className="text-gray-400 mb-6 text-center max-w-md">You don't have any orders yet.</p>
             </div>
           ) : (
-            <div className="max-w-4xl rounded-md">
+          <div className="max-w-4xl rounded-md">
               {processedOrders.map((order, index) => (
-                <div
+              <div
                   key={order._id || index}
-                  className="flex flex-col md:flex-row gap-5 justify-between p-5 border-t border-gray-300"
-                >
-                  <div className="flex-1 flex gap-5 max-w-80">
-                    <Image
-                      className="max-w-16 max-h-16 object-cover"
-                      src={assets.box_icon}
-                      alt="box_icon"
-                    />
-                    <p className="flex flex-col gap-3">
-                      <span className="font-medium">
+                className="flex flex-col md:flex-row gap-5 justify-between p-5 border-t border-gray-300"
+              >
+                <div className="flex-1 flex gap-5 max-w-80">
+                  <Image
+                    className="max-w-16 max-h-16 object-cover"
+                    src={assets.box_icon}
+                    alt="box_icon"
+                  />
+                  <p className="flex flex-col gap-3">
+                    <span className="font-medium">
                         {formatItems(order.items)}
-                      </span>
+                    </span>
                       <span>Items: {(order.items || []).length}</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      {formatAddress(order.address)}
-                    </p>
-                  </div>
-                  <p className="font-medium my-auto">
-                    {currency}
-                    {order.amount || 0}
                   </p>
-                  <div>
-                    <p className="flex flex-col">
-                      <span>Method: {order.paymentMethod || 'COD'}</span>
-                      <span>
-                        Date: {order.date ? new Date(order.date).toLocaleDateString() : 'Unknown date'}
-                      </span>
-                      <span>Payment: {order.paymentStatus || 'Pending'}</span>
-                    </p>
-                  </div>
                 </div>
-              ))}
-            </div>
+                <div>
+                  <p>
+                      {formatAddress(order.address)}
+                  </p>
+                </div>
+                <p className="font-medium my-auto">
+                  {currency}
+                    {order.amount || 0}
+                </p>
+                <div>
+                  <p className="flex flex-col">
+                      <span>Method: {order.paymentMethod || 'COD'}</span>
+                    <span>
+                        Date: {order.date ? new Date(order.date).toLocaleDateString() : 'Unknown date'}
+                    </span>
+                      <span>Payment: {order.paymentStatus || 'Pending'}</span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
           )}
         </div>
       )}
