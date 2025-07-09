@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,13 +19,11 @@ export default function AboutPage() {
         </div>
 
         {/* About Image */}
-        <div className="relative h-96 mb-16 rounded-xl overflow-hidden">
-          <Image 
+        <div className="mb-16 rounded-xl overflow-hidden">
+          <img 
             src="/about-hero.jpg" 
             alt="About EzCart" 
-            fill 
-            className="object-cover"
-            priority
+            className="w-full h-auto max-h-96 object-cover"
           />
         </div>
 
@@ -57,12 +56,11 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Team Member 1 */}
             <div className="text-center">
-              <div className="relative h-64 mb-4 rounded-xl overflow-hidden">
-                <Image 
+              <div className="mb-4 rounded-xl overflow-hidden">
+                <img 
                   src="/team-1.jpg" 
                   alt="Team Member" 
-                  fill 
-                  className="object-cover"
+                  className="w-full h-64 object-cover"
                 />
               </div>
               <h3 className="text-xl font-semibold mb-1">Sarah Johnson</h3>
@@ -74,12 +72,11 @@ export default function AboutPage() {
             
             {/* Team Member 2 */}
             <div className="text-center">
-              <div className="relative h-64 mb-4 rounded-xl overflow-hidden">
-                <Image 
+              <div className="mb-4 rounded-xl overflow-hidden">
+                <img 
                   src="/team-2.jpg" 
                   alt="Team Member" 
-                  fill 
-                  className="object-cover"
+                  className="w-full h-64 object-cover"
                 />
               </div>
               <h3 className="text-xl font-semibold mb-1">Michael Chen</h3>
@@ -91,12 +88,11 @@ export default function AboutPage() {
             
             {/* Team Member 3 */}
             <div className="text-center">
-              <div className="relative h-64 mb-4 rounded-xl overflow-hidden">
-                <Image 
+              <div className="mb-4 rounded-xl overflow-hidden">
+                <img 
                   src="/team-3.jpg" 
                   alt="Team Member" 
-                  fill 
-                  className="object-cover"
+                  className="w-full h-64 object-cover"
                 />
               </div>
               <h3 className="text-xl font-semibold mb-1">Aisha Patel</h3>
