@@ -1,9 +1,10 @@
 "use client";
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
+import { assets } from '@/assets/assets';
 
 export default function AboutPage() {
   return (
@@ -19,88 +20,16 @@ export default function AboutPage() {
         </div>
 
         {/* About Image */}
-        <div className="mb-16 rounded-xl overflow-hidden">
-          <img 
-            src="/about-hero.jpg" 
-            alt="About EzCart" 
-            className="w-full h-auto max-h-96 object-cover"
-          />
-        </div>
-
-        {/* Our Story */}
-        <div className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Our Story</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <p className="text-gray-600 mb-4">
-                Founded in 2020, EzCart began with a simple idea: to create an online shopping experience that truly puts customers first. We noticed that many e-commerce platforms were complicated, filled with hidden fees, and didn't prioritize user experience.
-              </p>
-              <p className="text-gray-600">
-                EzCart was founded with a simple mission: to create an online shopping experience that is easy, transparent, and enjoyable. We believe that shopping online should be just as satisfying as shopping in person, with the added benefits of convenience and wider selection.
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-600 mb-4">
-                What started as a small operation has grown into a thriving marketplace with thousands of products across dozens of categories. But despite our growth, we've never lost sight of our core values: quality, affordability, and exceptional customer service.
-              </p>
-              <p className="text-gray-600">
-                Today, we're proud to serve customers nationwide, offering a carefully curated selection of products from trusted brands and sellers. Our team works tirelessly to ensure that every interaction with EzCart leaves you satisfied and eager to return.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Our Team */}
-        <div className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Meet Our Team</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Team Member 1 */}
-            <div className="text-center">
-              <div className="mb-4 rounded-xl overflow-hidden">
-                <img 
-                  src="/team-1.jpg" 
-                  alt="Team Member" 
-                  className="w-full h-64 object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-semibold mb-1">Sarah Johnson</h3>
-              <p className="text-gray-600 mb-2">Founder & CEO</p>
-              <p className="text-gray-600 text-sm">
-                With over 15 years in retail and e-commerce, Sarah brings vision and leadership to EzCart.
-              </p>
-            </div>
-            
-            {/* Team Member 2 */}
-            <div className="text-center">
-              <div className="mb-4 rounded-xl overflow-hidden">
-                <img 
-                  src="/team-2.jpg" 
-                  alt="Team Member" 
-                  className="w-full h-64 object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-semibold mb-1">Michael Chen</h3>
-              <p className="text-gray-600 mb-2">CTO</p>
-              <p className="text-gray-600 text-sm">
-                Michael leads our tech team, ensuring EzCart offers a seamless shopping experience.
-              </p>
-            </div>
-            
-            {/* Team Member 3 */}
-            <div className="text-center">
-              <div className="mb-4 rounded-xl overflow-hidden">
-                <img 
-                  src="/team-3.jpg" 
-                  alt="Team Member" 
-                  className="w-full h-64 object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-semibold mb-1">Aisha Patel</h3>
-              <p className="text-gray-600 mb-2">Head of Customer Experience</p>
-              <p className="text-gray-600 text-sm">
-                Aisha ensures every customer interaction with EzCart exceeds expectations.
-              </p>
-            </div>
+        <div className="mb-16 rounded-xl overflow-hidden shadow-lg max-w-3xl mx-auto">
+          <div className="relative" style={{ maxHeight: "450px", overflow: "hidden" }}>
+            <Image 
+              src={assets.about_hero_image}
+              alt="About EzCart" 
+              className="w-full h-auto object-cover"
+              width={900}
+              height={450}
+              priority
+            />
           </div>
         </div>
 

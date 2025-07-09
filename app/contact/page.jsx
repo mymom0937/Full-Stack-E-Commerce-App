@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import Breadcrumb from '@/components/Breadcrumb';
-import * as Toast from '@/lib/toast';
+import Toast from '@/components/Toast';
+import Image from 'next/image';
+import { assets } from '@/assets/assets';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -13,12 +13,13 @@ export default function ContactPage() {
     subject: '',
     message: ''
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    setFormData(prevState => ({
+      ...prevState,
       [name]: value
     }));
   };
@@ -45,11 +46,25 @@ export default function ContactPage() {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">Contact Us</h1>
           <p className="max-w-3xl mx-auto text-lg text-gray-600">
             Have questions or need assistance? We're here to help. Reach out to our team using any of the methods below.
           </p>
+        </div>
+        
+        {/* Hero Image */}
+        <div className="mb-16 rounded-xl overflow-hidden shadow-lg max-w-3xl mx-auto">
+          <div className="relative" style={{ maxHeight: "350px", overflow: "hidden" }}>
+            <Image 
+              src={assets.about_hero_image}
+              alt="Contact EzCart" 
+              className="w-full h-auto object-cover"
+              width={900}
+              height={350}
+              priority
+            />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 mb-16">
@@ -203,17 +218,6 @@ export default function ContactPage() {
                   <p className="mt-2 text-gray-600">Yes, we ship to select countries internationally. Shipping costs and delivery times vary by location.</p>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Map Section */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Find Us</h2>
-          <div className="h-96 bg-gray-200 rounded-xl relative overflow-hidden">
-            {/* This would be replaced with an actual map component */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-gray-600">Map placeholder - would integrate Google Maps or similar here</p>
             </div>
           </div>
         </div>

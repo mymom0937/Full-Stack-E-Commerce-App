@@ -59,29 +59,29 @@ const Product = () => {
         
         try {
             const product = products.find(product => product && product._id === id);
-            
-            if (product) {
-                setProductData(product);
+        
+        if (product) {
+            setProductData(product);
                 
                 // Check if product is in wishlist
                 setIsLiked(isInWishlist(product._id));
-                
-                // Handle both image and images fields
-                let images = [];
-                if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-                    images = product.images;
-                } else if (product.image && Array.isArray(product.image) && product.image.length > 0) {
-                    images = product.image;
-                } else if (typeof product.images === 'string') {
-                    images = [product.images];
-                } else if (typeof product.image === 'string') {
-                    images = [product.image];
-                }
-                
-                setProductImages(images);
-                if (images.length > 0) {
-                    setMainImage(images[0]);
-                }
+            
+            // Handle both image and images fields
+            let images = [];
+            if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+                images = product.images;
+            } else if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+                images = product.image;
+            } else if (typeof product.images === 'string') {
+                images = [product.images];
+            } else if (typeof product.image === 'string') {
+                images = [product.image];
+            }
+            
+            setProductImages(images);
+            if (images.length > 0) {
+                setMainImage(images[0]);
+            }
                 
                 // Generate structured data
                 setStructuredData(generateProductStructuredData(product));
@@ -299,7 +299,7 @@ const Product = () => {
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-0.5">
+                            <div className="flex items-center gap-0.5">
                             {Array.from({ length: 5 }).map((_, index) => (
                                 <Image
                                     key={index}
@@ -313,7 +313,7 @@ const Product = () => {
                                 />
                             ))}
                             <span className="text-sm text-gray-500 ml-1">(4.5)</span>
-                        </div>
+                            </div>
 
                         <p className="text-gray-600 leading-relaxed">{productData.description}</p>
 
