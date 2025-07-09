@@ -4,28 +4,41 @@ import { useAppContext } from "@/context/AppContext";
 import Loading from "./Loading";
 
 const HomeProducts = () => {
-
-  const { products, router, isLoading } = useAppContext()
-
-  if (isLoading) {
-    return <Loading />;
-  }
+  const { products, router, isLoading } = useAppContext();
 
   return (
     <div className="flex flex-col items-center pt-14">
-      <p className="text-2xl font-medium text-left w-full">Popular products</p>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-6 pb-14 w-full">
-        {products && products.length > 0 ? (
-          products.map((product, index) => (
-            <ProductCard key={product._id || index} product={product} />
-          ))
-        ) : (
-          <p className="col-span-full text-center py-10 text-gray-500">No products available</p>
-        )}
+      <div className="flex justify-between items-center w-full mb-6">
+        <p className="text-3xl font-medium">Popular <span className="text-orange-600">Products</span></p>
+        <button 
+          onClick={() => { router.push('/all-products') }} 
+          className="text-sm text-orange-600 hover:underline flex items-center gap-1 transition"
+        >
+          View All
+        </button>
       </div>
-      <button onClick={() => { router.push('/all-products') }} className="px-12 py-2.5 border rounded text-gray-500/70 hover:bg-slate-50/90 transition">
-        See more
-      </button>
+
+      {isLoading ? (
+        <Loading variant="products" count={10} />
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">
+          {products && products.length > 0 ? (
+            products.slice(0, 10).map((product, index) => (
+              product ? <ProductCard key={product._id || index} product={product} /> : null
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-16 bg-gray-50 rounded-lg">
+              <p className="text-xl text-gray-500 mb-4">No products available</p>
+              <button 
+                onClick={() => router.push('/seller')} 
+                className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+              >
+                Add Products
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

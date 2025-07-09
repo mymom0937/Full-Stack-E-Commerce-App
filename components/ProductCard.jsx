@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { assets } from '@/assets/assets'
 import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
+import OptimizedImage from './OptimizedImage';
 
 const ProductCard = ({ product }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    
     if (!product) return null;
     
-    const { currency, router } = useAppContext();
+    const { currency, router, addToCart } = useAppContext();
     
     // Handle different image formats (array, single string, or undefined)
     let productImage = '/placeholder-image.png';
@@ -29,21 +32,64 @@ const ProductCard = ({ product }) => {
             productImage = product.images;
         }
     }
+    
+    // Calculate discount percentage
+    const discount = product.price && product.offerPrice 
+        ? Math.round(((product.price - product.offerPrice) / product.price) * 100) 
+        : 0;
+
+    const handleQuickView = (e) => {
+        e.stopPropagation();
+        router.push('/product/' + product._id);
+        scrollTo(0, 0);
+    };
+    
+    const handleAddToCart = (e) => {
+        e.stopPropagation();
+        addToCart(product._id);
+    };
 
     return (
         <div
             onClick={() => { router.push('/product/' + product._id); scrollTo(0, 0) }}
-            className="flex flex-col items-start gap-0.5 max-w-[200px] w-full cursor-pointer"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="flex flex-col items-start gap-0.5 max-w-[220px] w-full cursor-pointer group"
         >
-            <div className="cursor-pointer group relative bg-gray-500/10 rounded-lg w-full h-52 flex items-center justify-center">
-                <Image
+            <div className="relative rounded-lg w-full h-60 flex items-center justify-center overflow-hidden">
+                {discount > 0 && (
+                    <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded z-10">
+                        -{discount}%
+                    </div>
+                )}
+                
+                <OptimizedImage
                     src={productImage}
                     alt={product.name || "Product"}
-                    className="group-hover:scale-105 transition object-cover w-4/5 h-4/5 md:w-full md:h-full"
+                    className={`transition-all duration-300 ${isHovered ? 'scale-110' : ''}`}
                     width={800}
                     height={800}
+                    objectFit="contain"
                 />
-                <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
+                
+                <div className={`absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className="flex flex-col gap-2">
+                        <button 
+                            onClick={handleQuickView}
+                            className="bg-white text-gray-800 px-4 py-2 text-sm rounded hover:bg-gray-100 transition"
+                        >
+                            Quick View
+                        </button>
+                        <button 
+                            onClick={handleAddToCart}
+                            className="bg-orange-500 text-white px-4 py-2 text-sm rounded hover:bg-orange-600 transition"
+                        >
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+                
+                <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
                     <Image
                         className="h-3 w-3"
                         src={assets.heart_icon}
@@ -52,11 +98,8 @@ const ProductCard = ({ product }) => {
                 </button>
             </div>
 
-            <p className="md:text-base font-medium pt-2 w-full truncate">{product.name || "Product"}</p>
-            <p className="w-full text-xs text-gray-500/70 max-sm:hidden truncate">{product.description || ""}</p>
-            <div className="flex items-center gap-2">
-                <p className="text-xs">{4.5}</p>
-                <div className="flex items-center gap-0.5">
+            <div className="w-full pt-3">
+                <div className="flex items-center gap-0.5 mb-1">
                     {Array.from({ length: 5 }).map((_, index) => (
                         <Image
                             key={index}
@@ -69,14 +112,19 @@ const ProductCard = ({ product }) => {
                             alt="star_icon"
                         />
                     ))}
+                    <span className="text-xs text-gray-500 ml-1">(4.5)</span>
                 </div>
-            </div>
-
-            <div className="flex items-end justify-between w-full mt-1">
-                <p className="text-base font-medium">{currency}{product.offerPrice || 0}</p>
-                <button className=" max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
-                    Buy now
-                </button>
+                
+                <p className="text-sm text-gray-500 mb-1">{product.category || "Category"}</p>
+                <p className="font-medium truncate">{product.name || "Product"}</p>
+                <p className="text-sm text-gray-500/70 max-sm:hidden truncate">{product.description?.substring(0, 60) || ""}</p>
+                
+                <div className="flex items-center gap-2 mt-2">
+                    <p className="font-medium">{currency}{product.offerPrice || 0}</p>
+                    {product.price > product.offerPrice && (
+                        <p className="text-sm text-gray-500/70 line-through">{currency}{product.price || 0}</p>
+                    )}
+                </div>
             </div>
         </div>
     )

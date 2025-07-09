@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import * as Toast from "@/lib/toast";
 
 export const AppContext = createContext();
 export const useAppContext = () => {
@@ -29,11 +30,11 @@ export const AppContextProvider = (props) => {
       const {data} = await axios.get("/api/product/list");
       if(data.success){
         setProducts(data.products);
-      }else{
-        toast.error(data.message);
+      } else {
+        Toast.showError(data.message || "Failed to load products");
       }
     } catch (error) {
-      toast.error(error.message);
+      Toast.handleApiError(error);
     } finally {
       setIsLoading(false);
     }
@@ -55,10 +56,10 @@ export const AppContextProvider = (props) => {
         setUserData(data.user);
         setCartItems(data.user.cartItems || {});
       } else {
-        toast.error(data.message);
+        Toast.showError(data.message || "Failed to load user data");
       }
     } catch (error) {
-      toast.error(error.message);
+      Toast.handleApiError(error);
     }
   };
 
@@ -82,9 +83,9 @@ export const AppContextProvider = (props) => {
             },
           }
         );
-        toast.success("Item added to cart successfully");
+        Toast.showSuccess("Item added to cart");
       } catch (error) {
-        toast.error(error.message);
+        Toast.handleApiError(error);
       }
     }
   };
@@ -109,9 +110,9 @@ export const AppContextProvider = (props) => {
             },
           }
         );
-        toast.success("Cart updated successfully");
+        Toast.showSuccess(quantity === 0 ? "Item removed from cart" : "Cart updated");
       } catch (error) {
-        toast.error(error.message);
+        Toast.handleApiError(error);
       }
     }
   };
@@ -137,12 +138,22 @@ export const AppContextProvider = (props) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
+  const handleLogout = () => {
+    setCartItems({});
+    setUserData(null);
+    setIsSeller(false);
+  };
+
   useEffect(() => {
     fetchProductData();
   }, []);
 
   useEffect(() => {
-    if (user) fetchUserData();
+    if (user) {
+      fetchUserData();
+    } else {
+      handleLogout();
+    }
   }, [user]);
 
   const value = {
