@@ -12,10 +12,11 @@ import * as Toast from "@/lib/toast";
 import OptimizedImage from "@/components/OptimizedImage";
 
 const MyOrders = () => {
-  const { currency, getToken, user, router } = useAppContext();
+  const { currency, getToken, user, router, products } = useAppContext();
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processedOrders, setProcessedOrders] = useState([]);
 
   const fetchOrders = async () => {
     try {
@@ -37,6 +38,57 @@ const MyOrders = () => {
       setLoading(false);
     }
   };
+  
+  // Process orders to resolve product references and handle potential undefined values
+  useEffect(() => {
+    if (orders.length > 0 && products.length > 0) {
+      const processed = orders.map(order => {
+        // Process items to resolve product references
+        const items = Array.isArray(order.items) ? order.items.map(item => {
+          let productData = products.find(p => p && p._id === item.product);
+          
+          // If product not found in context, use fallback
+          if (!productData) {
+            productData = { 
+              name: item.productName || "Product", 
+              _id: item.product,
+              images: []
+            };
+          }
+          
+          return {
+            ...item,
+            product: productData,
+            quantity: item.quantity || 1
+          };
+        }) : [];
+        
+        // Process address - convert from string reference to object if needed
+        let addressData = order.address;
+        if (typeof addressData === 'string' && order.addressDetails) {
+          addressData = order.addressDetails;
+        } else if (typeof addressData === 'string') {
+          // Fallback for address
+          addressData = {
+            fullName: "Customer",
+            area: "Address area",
+            city: "City",
+            state: "State",
+            phoneNumber: "Phone number"
+          };
+        }
+        
+        return {
+          ...order,
+          items,
+          address: addressData,
+          status: order.status || "Pending"
+        };
+      });
+      
+      setProcessedOrders(processed);
+    }
+  }, [orders, products]);
 
   useEffect(() => {
     if (user) {
@@ -58,6 +110,33 @@ const MyOrders = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+  
+  const formatOrderItems = (items) => {
+    if (!Array.isArray(items) || items.length === 0) return "No items";
+    
+    return items.map(item => {
+      const productName = item.product?.name || "Product";
+      return `${productName} × ${item.quantity}`;
+    }).join(", ");
+  };
+  
+  // Get shipping address as formatted text
+  const formatAddress = (address) => {
+    if (!address) return "No address";
+    
+    if (typeof address === 'object') {
+      const parts = [];
+      if (address.fullName) parts.push(address.fullName);
+      if (address.area) parts.push(address.area);
+      if (address.city || address.state) {
+        parts.push(`${address.city || ''}, ${address.state || ''}`);
+      }
+      if (address.phoneNumber) parts.push(address.phoneNumber);
+      return parts.filter(Boolean).join(" | ");
+    }
+    
+    return String(address);
+  };
 
   return (
     <>
@@ -73,7 +152,7 @@ const MyOrders = () => {
           
           {loading ? (
             <Loading />
-          ) : orders.length === 0 ? (
+          ) : processedOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-lg">
               <div className="mb-6">
                 <Image 
@@ -95,7 +174,7 @@ const MyOrders = () => {
             </div>
           ) : (
             <div className="max-w-5xl border border-gray-200 rounded-lg shadow-sm">
-              {orders.map((order, index) => (
+              {processedOrders.map((order, index) => (
                 <div
                   key={order._id || index}
                   className="flex flex-col md:flex-row gap-5 justify-between p-5 border-b border-gray-200 hover:bg-gray-50 transition"
@@ -105,7 +184,7 @@ const MyOrders = () => {
                       {(order.items || []).slice(0, 3).map((item, i) => (
                         <div key={i} className="relative w-16 h-16 rounded-md overflow-hidden border border-gray-200">
                           <OptimizedImage
-                            src={item.product?.image?.[0] || item.product?.images?.[0] || '/placeholder-image.png'}
+                            src={item.product?.images?.[0] || item.product?.image?.[0] || '/placeholder-image.png'}
                             alt={item.product?.name || 'Product'}
                             width={64}
                             height={64}
@@ -126,11 +205,13 @@ const MyOrders = () => {
                     </div>
                     <div className="flex flex-col gap-1">
                       <p className="font-medium text-base">
-                        {(order.items || []).map(item => item.product?.name || 'Product').join(", ").substring(0, 70)}
-                        {(order.items || []).map(item => item.product?.name || 'Product').join(", ").length > 70 ? '...' : ''}
+                        {formatOrderItems(order.items)}
                       </p>
                       <p className="text-sm text-gray-500">
                         Order #{order._id?.substring(0, 8) || index}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {formatAddress(order.address)}
                       </p>
                       <p className="text-sm text-gray-500">
                         {order.date ? new Date(order.date).toLocaleDateString('en-US', {
@@ -140,8 +221,8 @@ const MyOrders = () => {
                         }) : 'Unknown date'}
                       </p>
                       <div className="mt-1">
-                        <span className={`text-xs px-2 py-1 rounded-full ${getStatusClass(order.status || 'Pending')}`}>
-                          {order.status || 'Pending'}
+                        <span className={`text-xs px-2 py-1 rounded-full ${getStatusClass(order.status)}`}>
+                          {order.status}
                         </span>
                       </div>
                     </div>
@@ -152,7 +233,10 @@ const MyOrders = () => {
                       {currency}{order.amount || 0}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Payment: {order.paymentMethod || 'COD'}
+                      Method: {order.paymentMethod || 'COD'}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Payment: {order.paymentStatus || 'Pending'}
                     </p>
                     <button 
                       className="mt-2 text-sm text-orange-500 hover:text-orange-600 hover:underline"
