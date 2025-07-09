@@ -1,7 +1,4 @@
-"use server";
-
 import { EventSchemas, Inngest } from "inngest";
-import { cookies } from "next/headers";
 import connectDB from "./db";
 // Import the User model to interact with the database
 import User from "@/models/User"; 
