@@ -61,8 +61,8 @@
   
   .text-accent-color {
     color: var(--accent-color);
+    }
   }
-}
 
 ::-webkit-scrollbar {
   display: none;

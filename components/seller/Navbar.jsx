@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 const Navbar = () => {
   const { router, handleLogout: contextLogout } = useAppContext()
   const { theme, toggleTheme } = useTheme()
+  const isDarkMode = theme === 'dark'
   const { signOut } = useClerk()
 
   const handleLogout = async () => {
@@ -29,10 +30,17 @@ const Navbar = () => {
   }
 
   return (
-    <div className='flex items-center px-4 md:px-8 py-3 justify-between border-b border-border-color bg-background text-text-primary transition-colors duration-200'>
-      <div className="flex items-center gap-4">
-        <Image onClick={()=>router.push('/')} className='w-28 lg:w-32 cursor-pointer' src={assets.logo} alt="" />
-        
+    <div className='sticky top-0 z-50 flex items-center px-6 md:px-16 lg:px-32 py-4 justify-between border-b border-border-color bg-background text-text-primary shadow-sm transition-colors duration-200'>
+      <div className="flex items-center">
+        <Image 
+          onClick={()=>router.push('/')} 
+          className='w-28 md:w-32 cursor-pointer' 
+          src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark} 
+          alt="EzCart" 
+        />
+      </div>
+      
+      <div className="flex items-center gap-3">
         {/* Theme toggle button */}
         <button 
           onClick={toggleTheme} 
@@ -49,14 +57,14 @@ const Navbar = () => {
             </svg>
           )}
         </button>
-      </div>
       
-      <button 
-        onClick={handleLogout}
-        className='bg-gray-600 hover:bg-gray-700 transition-colors text-white px-5 py-2 sm:px-7 sm:py-2 rounded-full text-xs sm:text-sm'
-      >
-        Logout
-      </button>
+        <button 
+          onClick={handleLogout}
+          className='bg-[#EA580C] hover:bg-orange-700 transition-colors text-white px-5 py-2 sm:px-7 sm:py-2 rounded-full text-xs sm:text-sm'
+        >
+          Logout
+        </button>
+      </div>
     </div>
   )
 }

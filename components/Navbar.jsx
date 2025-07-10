@@ -9,10 +9,14 @@ import { useClerk, UserButton } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const { isSeller, router, user, getCartCount, wishlist, handleLogout: contextLogout } = useAppContext();
+  const { isSeller, router, user, getCartCount, wishlist, handleLogout: contextLogout, products } = useAppContext();
   const { theme, toggleTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
   const { openSignIn, signOut } = useClerk();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   
   const cartCount = getCartCount();
   const wishlistCount = wishlist?.length || 0;
@@ -52,13 +56,61 @@ const Navbar = () => {
     </div>
   );
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    // Filter products based on search query
+    const filteredProducts = products.filter(product => 
+      product.name.toLowerCase().includes(query.toLowerCase()) ||
+      (product.category && product.category.toLowerCase().includes(query.toLowerCase()))
+    );
+    
+    setSearchResults(filteredProducts.slice(0, 5)); // Limit to 5 results
+  };
+
+  // Handle search form submission
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/all-products?search=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+      setShowSearchResults(false);
+    }
+  };
+
+  // Handle clicking on a search result
+  const handleResultClick = (productId) => {
+    router.push(`/product/${productId}`);
+    setSearchQuery("");
+    setShowSearchResults(false);
+  };
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowSearchResults(false);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
     <nav className="sticky top-0 z-50 bg-background flex items-center justify-between px-6 md:px-16 lg:px-32 py-4 border-b border-border-color text-text-primary shadow-sm transition-colors duration-200">
       <Image
         className="cursor-pointer w-28 md:w-32"
         onClick={() => router.push("/")}
-        src={assets.logo}
-        alt="logo"
+        src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark}
+        alt="EzCart"
       />
       
       <div className="hidden md:flex items-center gap-4 lg:gap-8">
@@ -86,15 +138,60 @@ const Navbar = () => {
       </div>
 
       <div className="hidden md:flex items-center gap-5">
-        <div className="relative cursor-pointer group">
-          <IconWrapper src={assets.search_icon} alt="search icon" />
-          <div className="absolute right-0 mt-2 w-64 bg-card-bg shadow-lg rounded-md p-2 hidden group-hover:block">
+        <div className="relative cursor-pointer" onClick={(e) => {
+          e.stopPropagation();
+          setShowSearchResults(true);
+        }}>
+          <form onSubmit={handleSearchSubmit} className="flex items-center">
             <input
               type="text"
               placeholder="Search products..."
-              className="w-full border border-border-color rounded px-3 py-1.5 text-sm bg-background text-text-primary"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => setShowSearchResults(true)}
+              className="w-48 border border-border-color rounded-l px-3 py-1.5 text-sm bg-background text-text-primary focus:outline-none focus:ring-1 focus:ring-orange-500"
             />
-          </div>
+            <button 
+              type="submit" 
+              className="bg-background hover:bg-card-bg text-text-primary border border-l-0 border-border-color px-2 py-1.5 rounded-r"
+            >
+              <IconWrapper src={assets.search_icon} alt="search icon" />
+            </button>
+          </form>
+          
+          {showSearchResults && searchResults.length > 0 && (
+            <div className="absolute left-0 right-0 mt-1 bg-card-bg border border-border-color shadow-lg rounded-md p-2 z-50">
+              {searchResults.map(product => (
+                <div 
+                  key={product._id}
+                  onClick={() => handleResultClick(product._id)}
+                  className="p-2 hover:bg-background cursor-pointer rounded flex items-center gap-2"
+                >
+                  {product.image && (
+                    <div className="w-8 h-8 relative">
+                      <Image 
+                        src={Array.isArray(product.image) ? product.image[0] : product.image} 
+                        alt={product.name}
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-text-primary truncate">{product.name}</p>
+                    <p className="text-xs text-text-secondary">${product.offerPrice}</p>
+                  </div>
+                </div>
+              ))}
+              <div 
+                onClick={handleSearchSubmit}
+                className="p-2 text-center text-orange-500 hover:bg-background cursor-pointer rounded text-sm border-t border-border-color mt-1 pt-2"
+              >
+                See all results
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Theme toggle button */}
@@ -197,6 +294,75 @@ const Navbar = () => {
 
       {/* Mobile navigation */}
       <div className="flex items-center gap-4 md:hidden">
+        {/* Mobile search */}
+        <div className="relative">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSearchResults(!showSearchResults);
+            }}
+            className="p-1 rounded-full hover:bg-card-bg transition"
+          >
+            <IconWrapper src={assets.search_icon} alt="search icon" />
+          </button>
+          
+          {showSearchResults && (
+            <div className="absolute top-full right-0 mt-2 w-64 bg-card-bg border border-border-color shadow-lg rounded-md p-2 z-50">
+              <form onSubmit={handleSearchSubmit} className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-full border border-border-color rounded-l px-3 py-1.5 text-sm bg-background text-text-primary focus:outline-none"
+                />
+                <button 
+                  type="submit" 
+                  className="bg-background hover:bg-card-bg text-text-primary border border-l-0 border-border-color px-2 py-1.5 rounded-r"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                </button>
+              </form>
+              
+              {searchResults.length > 0 && (
+                <div className="mt-2 max-h-60 overflow-y-auto">
+                  {searchResults.map(product => (
+                    <div 
+                      key={product._id}
+                      onClick={() => handleResultClick(product._id)}
+                      className="p-2 hover:bg-background cursor-pointer rounded flex items-center gap-2"
+                    >
+                      {product.image && (
+                        <div className="w-8 h-8 relative">
+                          <Image 
+                            src={Array.isArray(product.image) ? product.image[0] : product.image} 
+                            alt={product.name}
+                            width={32}
+                            height={32}
+                            className="object-contain"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-text-primary truncate">{product.name}</p>
+                        <p className="text-xs text-text-secondary">${product.offerPrice}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <div 
+                    onClick={handleSearchSubmit}
+                    className="p-2 text-center text-orange-500 hover:bg-background cursor-pointer rounded text-sm border-t border-border-color mt-1 pt-2"
+                  >
+                    See all results
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
         {/* Theme toggle button for mobile */}
         <button 
           onClick={toggleTheme} 

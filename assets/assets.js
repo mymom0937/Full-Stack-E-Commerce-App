@@ -1,4 +1,6 @@
-import logo from "./EzCart Logo.png";
+// import logo from "./EzCart Logo.png";
+import ezcart_logo_dark from "./ezcart_logo_dark.png";
+import ezcart_logo_white from "./ezcart_logo_white.png";
 import search_icon from "./search_icon.svg";
 import user_icon from "./user_icon.svg";
 import cart_icon from "./cart_icon.svg";
@@ -7,6 +9,10 @@ import order_icon from "./order_icon.svg";
 import instagram_icon from "./instagram_icon.svg";
 import facebook_icon from "./facebook_icon.svg";
 import twitter_icon from "./twitter_icon.svg";
+import linkedin_dark from "./linkedin_dark.png";
+import linkedin_light from "./linkedin_light.png";
+import whatsapp_dark from "./whatsapp_dark.png";
+import whatsapp_light from "./whatsapp_light.png";
 import box_icon from "./box_icon.svg";
 import product_list_icon from "./product_list_icon.svg";
 import menu_icon from "./menu_icon.svg";
@@ -49,7 +55,8 @@ import product_details_page_apple_earphone_image4 from "./product_details_page_a
 import product_details_page_apple_earphone_image5 from "./product_details_page_apple_earphone_image5.png";
 
 export const assets = {
-  logo,
+  ezcart_logo_dark,
+  ezcart_logo_white,
   search_icon,
   user_icon,
   cart_icon,
@@ -58,6 +65,10 @@ export const assets = {
   instagram_icon,
   facebook_icon,
   twitter_icon,
+  linkedin_dark,
+  linkedin_light,
+  whatsapp_dark,
+  whatsapp_light,
   box_icon,
   product_list_icon,
   menu_icon,

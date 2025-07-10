@@ -12,11 +12,22 @@ export default function AboutPage() {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8 bg-background transition-colors duration-200">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-text-primary">About EzCart</h1>
-          <p className="max-w-3xl mx-auto text-lg text-text-secondary">
+          <p className="max-w-3xl mx-auto text-lg text-text-secondary mb-6">
             We're on a mission to make online shopping easier, more affordable, and more enjoyable for everyone.
           </p>
+          <div className="max-w-3xl mx-auto text-text-secondary">
+            <p className="mb-4">
+              Born from a vision of excellence, EzCart has established itself as a premier online marketplace for high-quality electronics and tech accessories. We connect discerning customers with trusted sellers to create a seamless shopping experience from browse to delivery.
+            </p>
+            <p className="mb-4">
+              Our platform offers a carefully curated selection of products, ensuring that every item meets our rigorous standards for quality, performance, and value. We believe that shopping online should be just as reliable and satisfying as shopping in person—if not more so.
+            </p>
+            <p>
+              With a focus on customer satisfaction, transparent business practices, and technological innovation, EzCart is redefining what consumers can expect from an e-commerce platform in today's digital marketplace.
+            </p>
+          </div>
         </div>
 
         {/* About Image */}
@@ -30,6 +41,37 @@ export default function AboutPage() {
               height={450}
               priority
             />
+          </div>
+        </div>
+
+        {/* Our Values Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-text-primary text-center">Our Core Values</h2>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <h3 className="text-xl font-semibold mb-3 text-text-primary">Customer-Centric Approach</h3>
+              <p className="text-text-secondary">
+                Every decision we make is guided by what's best for our customers. We continuously collect feedback and make improvements to enhance your shopping experience.
+              </p>
+            </div>
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <h3 className="text-xl font-semibold mb-3 text-text-primary">Quality Assurance</h3>
+              <p className="text-text-secondary">
+                We maintain strict standards for all products on our platform. Our team thoroughly vets each item to ensure it meets our quality benchmarks before it reaches you.
+              </p>
+            </div>
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <h3 className="text-xl font-semibold mb-3 text-text-primary">Transparency</h3>
+              <p className="text-text-secondary">
+                We believe in honest pricing, clear policies, and open communication. What you see is what you get—no hidden fees or misleading descriptions.
+              </p>
+            </div>
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <h3 className="text-xl font-semibold mb-3 text-text-primary">Innovation</h3>
+              <p className="text-text-secondary">
+                We continuously evolve our platform with the latest technology to make your shopping experience faster, safer, and more intuitive.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -86,7 +128,7 @@ export default function AboutPage() {
           </p>
           <Link 
             href="/all-products" 
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300"
+            className="inline-block bg-[#EA580C] hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300"
           >
             Shop Now
           </Link>

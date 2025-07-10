@@ -74,7 +74,7 @@ const AddProduct = () => {
     <div className="flex-1 min-h-screen flex flex-col justify-between">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
         <div>
-          <p className="text-base font-medium">Product Image</p>
+          <p className="text-base font-medium text-text-primary">Product Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
 
             {[...Array(4)].map((_, index) => (
@@ -94,7 +94,7 @@ const AddProduct = () => {
                 />
                 <Image
                   key={index}
-                  className="max-w-24 cursor-pointer object-cover h-24 w-24 border border-gray-300"
+                  className="max-w-24 cursor-pointer object-cover h-24 w-24 border border-border-color"
                   src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
                   alt=""
                   width={100}
@@ -106,14 +106,14 @@ const AddProduct = () => {
           </div>
         </div>
         <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-medium" htmlFor="product-name">
+          <label className="text-base font-medium text-text-primary" htmlFor="product-name">
             Product Name
           </label>
           <input
             id="product-name"
             type="text"
             placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-border-color bg-background text-text-primary"
             onChange={(e) => setName(e.target.value)}
             value={name}
             required
@@ -121,7 +121,7 @@ const AddProduct = () => {
         </div>
         <div className="flex flex-col gap-1 max-w-md">
           <label
-            className="text-base font-medium"
+            className="text-base font-medium text-text-primary"
             htmlFor="product-description"
           >
             Product Description
@@ -129,7 +129,7 @@ const AddProduct = () => {
           <textarea
             id="product-description"
             rows={4}
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-border-color bg-background text-text-primary resize-none"
             placeholder="Type here"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
@@ -138,12 +138,12 @@ const AddProduct = () => {
         </div>
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="category">
+            <label className="text-base font-medium text-text-primary" htmlFor="category">
               Category
             </label>
             <select
               id="category"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-border-color bg-background text-text-primary"
               onChange={(e) => setCategory(e.target.value)}
               defaultValue={category}
             >
@@ -157,28 +157,28 @@ const AddProduct = () => {
             </select>
           </div>
           <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="product-price">
+            <label className="text-base font-medium text-text-primary" htmlFor="product-price">
               Product Price
             </label>
             <input
               id="product-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-border-color bg-background text-text-primary"
               onChange={(e) => setPrice(e.target.value)}
               value={price}
               required
             />
           </div>
           <div className="flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="offer-price">
+            <label className="text-base font-medium text-text-primary" htmlFor="offer-price">
               Offer Price
             </label>
             <input
               id="offer-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-border-color bg-background text-text-primary"
               onChange={(e) => setOfferPrice(e.target.value)}
               value={offerPrice}
               required

@@ -11,7 +11,7 @@ export const ProductCardSkeleton = () => {
   const { theme } = useTheme();
   const bgColor = theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200';
   
-  return (
+    return (
     <div className="flex flex-col items-start gap-0.5 max-w-[220px] w-full animate-pulse">
       <div className={`${bgColor} rounded-lg w-full h-60 flex items-center justify-center transition-colors duration-200`}></div>
       <div className="w-full pt-3">

@@ -182,8 +182,8 @@ const Product = () => {
         <>
             <Navbar />
             <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 md:px-16 lg:px-32">
-                <h1 className="text-2xl font-medium text-gray-800 mb-4">{error}</h1>
-                <p className="text-gray-500 mb-6">We couldn't find the product you're looking for.</p>
+                <h1 className="text-2xl font-medium text-text-primary mb-4">{error}</h1>
+                <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
                 <button 
                     onClick={() => router.push('/all-products')}
                     className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
@@ -199,8 +199,8 @@ const Product = () => {
         <>
             <Navbar />
             <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 md:px-16 lg:px-32">
-                <h1 className="text-2xl font-medium text-gray-800 mb-4">Product Not Found</h1>
-                <p className="text-gray-500 mb-6">We couldn't find the product you're looking for.</p>
+                <h1 className="text-2xl font-medium text-text-primary mb-4">Product Not Found</h1>
+                <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
                 <button 
                     onClick={() => router.push('/all-products')}
                     className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
@@ -282,12 +282,12 @@ const Product = () => {
                     <div className="space-y-6">
                         <div className="flex justify-between items-start">
                             <div>
-                                <h1 className="text-2xl font-medium">{productData.name}</h1>
-                                <p className="text-gray-500 mt-1">{productData.category}</p>
+                                <h1 className="text-2xl font-medium text-text-primary">{productData.name}</h1>
+                                <p className="text-text-secondary mt-1">{productData.category}</p>
                             </div>
                             <button 
                                 onClick={handleToggleWishlist}
-                                className={`p-3 rounded-full hover:bg-gray-100 transition ${isLikeAnimating ? 'scale-125' : ''} transform duration-300`}
+                                className={`p-3 rounded-full hover:bg-card-bg transition ${isLikeAnimating ? 'scale-125' : ''} transform duration-300`}
                             >
                                 <Image
                                     className={`h-5 w-5 transition-all duration-300 ${isLiked ? 'filter-none' : 'grayscale opacity-60'}`}
@@ -312,42 +312,42 @@ const Product = () => {
                                     alt="star_icon"
                                 />
                             ))}
-                            <span className="text-sm text-gray-500 ml-1">(4.5)</span>
+                            <span className="text-sm text-text-secondary ml-1">(4.5)</span>
                             </div>
 
-                        <p className="text-gray-600 leading-relaxed">{productData.description}</p>
+                        <p className="text-text-secondary leading-relaxed">{productData.description}</p>
 
                         <div className="flex items-end gap-4">
-                            <p className="text-2xl font-medium">{process.env.NEXT_PUBLIC_CURRENCY}{productData.offerPrice}</p>
+                            <p className="text-2xl font-medium text-text-primary">{process.env.NEXT_PUBLIC_CURRENCY}{productData.offerPrice}</p>
                             {productData.price > productData.offerPrice && (
                                 <>
-                                    <p className="text-gray-500 line-through">{process.env.NEXT_PUBLIC_CURRENCY}{productData.price}</p>
+                                    <p className="text-text-secondary line-through">{process.env.NEXT_PUBLIC_CURRENCY}{productData.price}</p>
                                     <p className="text-green-600 text-sm">Save {process.env.NEXT_PUBLIC_CURRENCY}{(productData.price - productData.offerPrice).toFixed(2)}</p>
                                 </>
                             )}
                         </div>
 
-                        <div className="h-0.5 bg-gray-200 w-full"></div>
+                        <div className="h-0.5 bg-border-color w-full"></div>
 
                         <div className="space-y-4">
                             <p className="flex justify-between">
-                                <span className="text-gray-600">Availability</span>
+                                <span className="text-text-secondary">Availability</span>
                                 <span className="text-green-600">In Stock</span>
                             </p>
                             <p className="flex justify-between">
-                                <span className="text-gray-600">Category</span>
-                                <span>{productData.category || "Uncategorized"}</span>
+                                <span className="text-text-secondary">Category</span>
+                                <span className="text-text-primary">{productData.category || "Uncategorized"}</span>
                             </p>
                             <p className="flex justify-between">
-                                <span className="text-gray-600">SKU</span>
-                                <span>{productData._id?.substring(0, 8) || "Unknown"}</span>
+                                <span className="text-text-secondary">SKU</span>
+                                <span className="text-text-primary">{productData._id?.substring(0, 8) || "Unknown"}</span>
                             </p>
                         </div>
 
                         <div className="flex gap-4 pt-4">
                             <button
                                 onClick={handleAddToCart}
-                                className="px-8 py-3 border border-gray-300 rounded hover:bg-gray-50 transition flex-1 md:flex-none"
+                                className="px-8 py-3 border border-border-color rounded hover:bg-card-bg transition flex-1 md:flex-none text-text-primary"
                             >
                                 Add to Cart
                             </button>
@@ -362,7 +362,7 @@ const Product = () => {
                 </div>
 
                 <div className="space-y-8 py-10">
-                    <h2 className="text-2xl font-medium">Related Products</h2>
+                    <h2 className="text-2xl font-medium text-text-primary">Related Products</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         {products
                             .filter(

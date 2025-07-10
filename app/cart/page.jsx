@@ -23,15 +23,15 @@ const Cart = () => {
           {/* Breadcrumb */}
           <Breadcrumb currentPage="Cart" />
 
-          <div className="flex items-center justify-between mb-8 border-b border-gray-500/30 pb-6">
-            <p className="text-2xl md:text-3xl text-gray-500">
+          <div className="flex items-center justify-between mb-8 border-b border-border-color pb-6">
+            <p className="text-2xl md:text-3xl text-text-secondary">
               Your <span className="font-medium text-orange-600">Cart</span>
             </p>
-            <p className="text-lg md:text-xl text-gray-500/80">{getCartCount()} Items</p>
+            <p className="text-lg md:text-xl text-text-secondary">{getCartCount()} Items</p>
           </div>
 
           {isCartEmpty ? (
-            <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-lg mb-6">
+            <div className="flex flex-col items-center justify-center py-16 bg-card-bg rounded-lg mb-6">
               <div className="mb-6">
                 <Image 
                   src={assets.cart_icon} 
@@ -41,8 +41,8 @@ const Cart = () => {
                   className="opacity-30"
                 />
               </div>
-              <p className="text-xl text-gray-500 mb-4">Your cart is empty</p>
-              <p className="text-gray-400 mb-6 text-center max-w-md">Looks like you haven't added any products to your cart yet.</p>
+              <p className="text-xl text-text-primary mb-4">Your cart is empty</p>
+              <p className="text-text-secondary mb-6 text-center max-w-md">Looks like you haven't added any products to your cart yet.</p>
               <button 
                 onClick={() => router.push('/all-products')} 
                 className="px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
@@ -55,16 +55,16 @@ const Cart = () => {
             <table className="min-w-full table-auto">
               <thead className="text-left">
                 <tr>
-                  <th className="text-nowrap pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                  <th className="text-nowrap pb-6 md:px-4 px-1 text-text-secondary font-medium">
                     Product Details
                   </th>
-                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                  <th className="pb-6 md:px-4 px-1 text-text-secondary font-medium">
                     Price
                   </th>
-                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                  <th className="pb-6 md:px-4 px-1 text-text-secondary font-medium">
                     Quantity
                   </th>
-                  <th className="pb-6 md:px-4 px-1 text-gray-600 font-medium">
+                  <th className="pb-6 md:px-4 px-1 text-text-secondary font-medium">
                     Subtotal
                   </th>
                 </tr>
@@ -87,7 +87,7 @@ const Cart = () => {
                           : '/placeholder-image.png';
 
                   return (
-                      <tr key={itemId} className="border-b border-gray-100">
+                      <tr key={itemId} className="border-b border-border-color">
                       <td className="flex items-center gap-4 py-4 md:px-4 px-1">
                           <div className="flex-shrink-0">
                             <div onClick={() => router.push(`/product/${product._id}`)} 
@@ -109,11 +109,11 @@ const Cart = () => {
                           </button>
                         </div>
                         <div className="text-sm hidden md:block">
-                            <p className="text-gray-800 font-medium hover:text-orange-500 cursor-pointer" 
+                            <p className="text-text-primary font-medium hover:text-orange-500 cursor-pointer" 
                                onClick={() => router.push(`/product/${product._id}`)}>
                               {product.name}
                             </p>
-                            <p className="text-xs text-gray-500 mb-2">
+                            <p className="text-xs text-text-secondary mb-2">
                               {product.category || "Uncategorized"}
                             </p>
                           <button
@@ -124,12 +124,12 @@ const Cart = () => {
                           </button>
                         </div>
                       </td>
-                        <td className="py-4 md:px-4 px-1 text-gray-600 font-medium">${product.offerPrice}</td>
+                        <td className="py-4 md:px-4 px-1 text-text-secondary font-medium">${product.offerPrice}</td>
                       <td className="py-4 md:px-4 px-1">
-                          <div className="flex items-center md:gap-2 gap-1 border rounded-md w-fit">
+                          <div className="flex items-center md:gap-2 gap-1 border border-border-color rounded-md w-fit">
                             <button 
                               onClick={() => updateCartQuantity(product._id, cartItems[itemId] - 1)}
-                              className="px-2 py-1 text-gray-500 hover:bg-gray-100"
+                              className="px-2 py-1 text-text-secondary hover:bg-card-bg"
                             >
                             <Image
                               src={assets.decrease_arrow}
@@ -141,12 +141,12 @@ const Cart = () => {
                               onChange={e => updateCartQuantity(product._id, Number(e.target.value))} 
                               type="number" 
                               value={cartItems[itemId]} 
-                              className="w-10 text-center appearance-none border-x bg-transparent"
+                              className="w-10 text-center appearance-none border-x border-border-color bg-background text-text-primary"
                               min="1"
                             />
                             <button 
                               onClick={() => addToCart(product._id)}
-                              className="px-2 py-1 text-gray-500 hover:bg-gray-100"
+                              className="px-2 py-1 text-text-secondary hover:bg-card-bg"
                             >
                             <Image
                               src={assets.increase_arrow}
@@ -156,7 +156,7 @@ const Cart = () => {
                           </button>
                         </div>
                       </td>
-                        <td className="py-4 md:px-4 px-1 font-medium">${(product.offerPrice * cartItems[itemId]).toFixed(2)}</td>
+                        <td className="py-4 md:px-4 px-1 font-medium text-text-primary">${(product.offerPrice * cartItems[itemId]).toFixed(2)}</td>
                     </tr>
                   );
                 })}

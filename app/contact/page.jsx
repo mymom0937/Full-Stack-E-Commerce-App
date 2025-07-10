@@ -167,7 +167,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-text-primary">Address</h3>
-                    <p className="mt-1 text-text-secondary">123 Commerce Street<br />New York, NY 10001</p>
+                    <p className="mt-1 text-text-secondary">Addis Ababa, Ethiopia</p>
                   </div>
                 </div>
                 
@@ -179,7 +179,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-text-primary">Phone</h3>
-                    <p className="mt-1 text-text-secondary">+1 (555) 123-4567</p>
+                    <p className="mt-1 text-text-secondary">+251 (937) 597-917</p>
                     <p className="mt-1 text-text-secondary">Mon-Fri: 9AM - 6PM EST</p>
                   </div>
                 </div>

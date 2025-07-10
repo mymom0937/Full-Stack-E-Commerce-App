@@ -8,7 +8,7 @@ import Loading from "@/components/Loading";
 import Image from "next/image";
 import { assets } from "@/assets/assets";
 import Breadcrumb from "@/components/Breadcrumb";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const AllProducts = () => {
     const { products, isLoading, toggleWishlist, isInWishlist, addToCart } = useAppContext();
@@ -20,6 +20,7 @@ const AllProducts = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [view, setView] = useState("grid"); // grid or list view
     const router = useRouter();
+    const searchParams = useSearchParams();
     
     // Extract unique categories from products
     const categories = useMemo(() => {
@@ -40,6 +41,14 @@ const AllProducts = () => {
             max: Math.ceil(Math.max(...prices) * 1.1) // Add 10% buffer
         };
     }, [products]);
+
+    // Get search query from URL on initial load
+    useEffect(() => {
+        const queryParam = searchParams.get('search');
+        if (queryParam) {
+            setSearchQuery(queryParam);
+        }
+    }, [searchParams]);
     
     // Filter and sort products
     useEffect(() => {
@@ -116,6 +125,25 @@ const AllProducts = () => {
         setPriceRange(priceRangeValues);
         setSearchQuery("");
         setSortOption("default");
+        
+        // Remove search query from URL
+        const url = new URL(window.location);
+        url.searchParams.delete('search');
+        router.replace(url.pathname);
+    };
+
+    // Handle search form submission
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        
+        // Update URL with search query
+        const url = new URL(window.location);
+        if (searchQuery) {
+            url.searchParams.set('search', searchQuery);
+        } else {
+            url.searchParams.delete('search');
+        }
+        router.replace(url.pathname + url.search);
     };
 
     return (
@@ -183,7 +211,7 @@ const AllProducts = () => {
                                 {/* Search */}
                                 <div className="mb-6">
                                     <label className="block text-sm font-medium mb-2 text-text-primary">Search</label>
-                                    <div className="relative">
+                                    <form onSubmit={handleSearchSubmit} className="relative">
                                         <input 
                                             type="text" 
                                             value={searchQuery}
@@ -191,10 +219,15 @@ const AllProducts = () => {
                                             placeholder="Search products..."
                                             className="w-full border border-border-color rounded-lg p-2 pl-10 text-sm bg-background text-text-primary"
                                         />
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-text-secondary absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                        </svg>
-                                    </div>
+                                        <button 
+                                            type="submit"
+                                            className="absolute left-3 top-2.5"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                                 
                                 {/* Categories */}
