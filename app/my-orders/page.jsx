@@ -138,6 +138,30 @@ const MyOrders = () => {
     return String(address);
   };
 
+  // Add this function to handle updating payment status
+  const updatePaymentStatus = async (orderId) => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.post("/api/order/update-payment", 
+        { orderId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (data.success) {
+        Toast.showSuccess("Payment status updated successfully");
+        // Refresh the orders
+        fetchOrders();
+      } else {
+        Toast.showError(data.message || "Failed to update payment status");
+      }
+    } catch (error) {
+      Toast.handleApiError(error);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -236,7 +260,15 @@ const MyOrders = () => {
                       Method: {order.paymentMethod || 'COD'}
                     </p>
                     <p className="text-sm text-text-secondary">
-                      Payment: {order.paymentStatus || 'Pending'}
+                      Payment: {order.isPaid ? 'Paid' : 'Pending'}
+                      {!order.isPaid && (
+                        <button 
+                          onClick={() => updatePaymentStatus(order._id)}
+                          className="ml-2 text-xs text-blue-500 hover:text-blue-700 underline"
+                        >
+                          Mark as Paid
+                        </button>
+                      )}
                     </p>
                     <button 
                       className="mt-2 text-sm text-orange-500 hover:text-orange-600 hover:underline"
