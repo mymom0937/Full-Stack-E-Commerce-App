@@ -3,9 +3,22 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import { Inter } from "next/font/google";
+import { Outfit, Ovo } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+// Configure the fonts
+const outfit = Outfit({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-outfit",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const ovo = Ovo({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-ovo",
+  weight: "400",
+});
 
 export const metadata = {
   title: {
@@ -50,8 +63,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" className="dark">
-        <body className={inter.className}>
+      <html lang="en" className={`dark ${outfit.variable} ${ovo.variable}`}>
+        <body className="font-outfit">
           <AppContextProvider>
             <ThemeProvider>
               {children}

@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useTheme } from "@/context/ThemeContext";
+
+// Arrow component that adapts to theme
+const ThemedArrow = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  
+  return (
+    <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:translate-x-1 transition">
+      <path d="M0.999912 5.5L14.0908 5.5" stroke={isDark ? "#ffffff" : "#1f2937"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8.94796 1L14.0908 5.5L8.94796 10" stroke={isDark ? "#ffffff" : "#1f2937"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+};
 
 const HeaderSlider = () => {
   const sliderData = [
@@ -67,7 +81,7 @@ const HeaderSlider = () => {
                 </button>
                 <button className="group flex items-center gap-2 px-6 py-2.5 font-medium text-text-primary">
                   {slide.buttonText2}
-                  <Image className="group-hover:translate-x-1 transition" src={assets.arrow_icon} alt="arrow_icon" />
+                  <ThemedArrow />
                 </button>
               </div>
             </div>

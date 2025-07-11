@@ -34,7 +34,11 @@
     }
     
     body {
-      @apply bg-background text-text-primary transition-colors duration-200;
+      @apply bg-background text-text-primary transition-colors duration-200 font-outfit;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      @apply font-ovo;
     }
 }
 

@@ -99,15 +99,15 @@ const MyOrders = () => {
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
       case 'delivered':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100';
       case 'shipped':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100';
       case 'processing':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
     }
   };
   
@@ -153,7 +153,7 @@ const MyOrders = () => {
           {loading ? (
             <Loading />
           ) : processedOrders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center justify-center py-16 bg-card-bg rounded-lg border border-border-color">
               <div className="mb-6">
                 <Image 
                   src={assets.order_icon} 
@@ -163,8 +163,8 @@ const MyOrders = () => {
                   className="opacity-30"
                 />
               </div>
-              <p className="text-xl text-gray-500 mb-4">No orders found</p>
-              <p className="text-gray-400 mb-6 text-center max-w-md">You haven't placed any orders yet.</p>
+              <p className="text-xl text-text-secondary mb-4">No orders found</p>
+              <p className="text-text-secondary mb-6 text-center max-w-md">You haven't placed any orders yet.</p>
               <button 
                 onClick={() => router.push('/all-products')} 
                 className="px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
@@ -173,16 +173,16 @@ const MyOrders = () => {
               </button>
             </div>
           ) : (
-            <div className="max-w-5xl border border-gray-200 rounded-lg shadow-sm">
+            <div className="max-w-5xl border border-border-color rounded-lg shadow-sm">
               {processedOrders.map((order, index) => (
                 <div
                   key={order._id || index}
-                  className="flex flex-col md:flex-row gap-5 justify-between p-5 border-b border-gray-200 hover:bg-gray-50 transition"
+                  className="flex flex-col md:flex-row gap-5 justify-between p-5 border-b border-border-color hover:border hover:border-orange-500 hover:rounded-md transition-all duration-200"
                 >
                   <div className="flex-1 flex gap-5">
                     <div className="flex flex-wrap gap-2">
                       {(order.items || []).slice(0, 3).map((item, i) => (
-                        <div key={i} className="relative w-16 h-16 rounded-md overflow-hidden border border-gray-200">
+                        <div key={i} className="relative w-16 h-16 rounded-md overflow-hidden border border-border-color">
                           <OptimizedImage
                             src={item.product?.images?.[0] || item.product?.image?.[0] || '/placeholder-image.png'}
                             alt={item.product?.name || 'Product'}
@@ -198,22 +198,22 @@ const MyOrders = () => {
                         </div>
                       ))}
                       {(order.items || []).length > 3 && (
-                        <div className="flex items-center justify-center w-16 h-16 rounded-md bg-gray-100 text-gray-500 text-sm">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-md bg-card-bg text-text-secondary text-sm">
                           +{(order.items || []).length - 3} more
                         </div>
                       )}
                     </div>
                     <div className="flex flex-col gap-1">
-                      <p className="font-medium text-base">
+                      <p className="font-medium text-base text-text-primary">
                         {formatOrderItems(order.items)}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-text-secondary">
                         Order #{order._id?.substring(0, 8) || index}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-text-secondary">
                         {formatAddress(order.address)}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-text-secondary">
                         {order.date ? new Date(order.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
@@ -223,19 +223,19 @@ const MyOrders = () => {
                       <div className="mt-1">
                         <span className={`text-xs px-2 py-1 rounded-full ${getStatusClass(order.status)}`}>
                           {order.status}
-                      </span>
+                        </span>
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex flex-col gap-2 items-end justify-center">
-                    <p className="font-medium text-lg">
+                    <p className="font-medium text-lg text-text-primary">
                       {currency}{order.amount || 0}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-text-secondary">
                       Method: {order.paymentMethod || 'COD'}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-text-secondary">
                       Payment: {order.paymentStatus || 'Pending'}
                     </p>
                     <button 
