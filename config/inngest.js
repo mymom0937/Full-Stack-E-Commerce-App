@@ -140,7 +140,8 @@ export const createUserOrder = inngest.createFunction(
         date: event.data.date,
         status: "Order Placed",
         paymentType: event.data.paymentType || "Stripe", // Include paymentType with default
-        isPaid: event.data.isPaid !== undefined ? event.data.isPaid : false // Include isPaid with default
+        isPaid: event.data.isPaid !== undefined ? event.data.isPaid : false, // Include isPaid with default
+        stripeSessionId: event.data.stripeSessionId // Store the Stripe session ID
       };
       
       console.log("Order data prepared:", JSON.stringify(orderData));
