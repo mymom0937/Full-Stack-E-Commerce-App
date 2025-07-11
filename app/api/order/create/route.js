@@ -42,6 +42,8 @@ export async function POST(request) {
         items,
         amount: finalAmount, // Make sure this is 'amount' not 'ammount'
         date: Date.now(),
+        paymentType: "COD", // Assuming default payment type is COD
+        isPaid: false, // Add isPaid field with default value false for COD
       },
     });
     

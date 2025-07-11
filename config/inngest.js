@@ -138,7 +138,9 @@ export const createUserOrder = inngest.createFunction(
         amount: event.data.amount, // Ensure this is 'amount' not 'ammount'
         address: event.data.address,
         date: event.data.date,
-        status: "Order Placed"
+        status: "Order Placed",
+        paymentType: event.data.paymentType || "COD", // Include paymentType with default
+        isPaid: event.data.isPaid !== undefined ? event.data.isPaid : false // Include isPaid with default
       };
       
       console.log("Order data prepared:", JSON.stringify(orderData));

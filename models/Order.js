@@ -50,7 +50,9 @@ const orderSchema = new mongoose.Schema(
     date: { 
       type: Number, 
       required: [true, 'Order date is required']
-    }
+    },
+    paymentType: {type:String, required:true},
+    isPaid : {type:Boolean, required: true, default:false}
   },
   {
     timestamps: true // Add createdAt and updatedAt timestamps
