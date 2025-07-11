@@ -2,10 +2,10 @@
 import Order from "@/models/Order";
 import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import connectDB from "@/utils/connectDB";
 import Product from "@/models/Product";
 import { inngest } from "@/config/inngest";
 import Stripe from "stripe";
+import connectDB from "@/config/db";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
