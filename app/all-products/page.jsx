@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,7 +10,8 @@ import { assets } from "@/assets/assets";
 import Breadcrumb from "@/components/Breadcrumb";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const AllProducts = () => {
+// Separate component that uses useSearchParams
+const ProductsContent = () => {
     const { products, isLoading, toggleWishlist, isInWishlist, addToCart } = useAppContext();
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [sortOption, setSortOption] = useState("default");
@@ -482,6 +483,15 @@ const AllProducts = () => {
             </div>
             <Footer />
         </>
+    );
+};
+
+// Main component wrapped with Suspense
+const AllProducts = () => {
+    return (
+        <Suspense fallback={<Loading />}>
+            <ProductsContent />
+        </Suspense>
     );
 };
 
