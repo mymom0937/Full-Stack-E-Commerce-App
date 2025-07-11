@@ -139,7 +139,7 @@ export const createUserOrder = inngest.createFunction(
         address: event.data.address,
         date: event.data.date,
         status: "Order Placed",
-        paymentType: event.data.paymentType || "COD", // Include paymentType with default
+        paymentType: event.data.paymentType || "Stripe", // Include paymentType with default
         isPaid: event.data.isPaid !== undefined ? event.data.isPaid : false // Include isPaid with default
       };
       
