@@ -64,42 +64,38 @@ export async function POST(request) {
         const finalAmount = totalAmount + Math.floor(totalAmount * 0.02);
         console.log(`Order amount calculated: ${finalAmount}`);
         
-        // Store metadata for the order
-        const orderMetadata = {
+        // Create the order in database first so we have the orderId
+        const orderData = {
           userId,
-          address,
-          items: JSON.stringify(items),
+          items,
           amount: finalAmount,
+          address,
           date: Date.now(),
+          status: "Order Placed",
+          paymentType: "Stripe",
+          isPaid: false
         };
         
-        // Create a Stripe Checkout session
+        // Create order in database
+        const order = new Order(orderData);
+        const savedOrder = await order.save();
+        const orderId = savedOrder._id.toString();
+        console.log(`Created order with ID: ${orderId}`);
+        
+        // Create a Stripe Checkout session with the orderId in metadata
         const session = await stripe.checkout.sessions.create({
           line_items: lineItems,
           mode: 'payment',
           success_url: `${origin}/order-placed`,
           cancel_url: `${origin}/cart`,
           metadata: {
+            orderId, // Include the orderId directly in metadata
             userId,
             address,
-            orderData: JSON.stringify(orderMetadata),
           },
         });
         
-        // Send event to Inngest
-        await inngest.send({
-          name: "order/created",
-          data: {
-            userId,
-            address,
-            items,
-            amount: finalAmount,
-            date: Date.now(),
-            paymentType: "Stripe",
-            isPaid: false,
-            stripeSessionId: session.id,
-          },
-        });
+        // No need to send event to Inngest since we've already created the order
         
         return NextResponse.json({
           success: true,

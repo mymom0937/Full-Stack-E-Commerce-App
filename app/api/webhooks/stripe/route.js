@@ -162,51 +162,23 @@ export async function POST(request) {
           await connectDB();
           
           try {
+            // Look for orderId directly in the metadata - this should be our primary approach now
+            if (session.metadata && session.metadata.orderId) {
+              console.log(`Found orderId in metadata: ${session.metadata.orderId}`);
+              const updated = await updateOrderPaymentStatus(session.metadata.orderId, true);
+              if (updated) {
+                console.log(`Successfully updated order ${session.metadata.orderId}`);
+                return NextResponse.json({ received: true, updated: true });
+              }
+            }
+            
+            // If direct orderId wasn't found or update failed, fall back to other methods
             let order = null;
-            let userId = null;
+            let userId = session.metadata?.userId;
             let date = null;
             let amount = null;
             
-            // Extract metadata
-            if (session.metadata) {
-              console.log("Session metadata:", JSON.stringify(session.metadata));
-              
-              // If orderId is directly available in metadata
-              if (session.metadata.orderId) {
-                console.log(`Found orderId in metadata: ${session.metadata.orderId}`);
-                await updateOrderPaymentStatus(session.metadata.orderId, true);
-                return NextResponse.json({ received: true, updated: true });
-              } 
-              
-              // Extract userId from metadata
-              userId = session.metadata.userId;
-              
-              // If we stored orderData JSON
-              if (session.metadata.orderData) {
-                try {
-                  const orderData = JSON.parse(session.metadata.orderData);
-                  console.log("Parsed orderData:", JSON.stringify(orderData));
-                  
-                  // Extract useful information
-                  userId = orderData.userId || userId;
-                  date = orderData.date;
-                  amount = orderData.amount;
-                } catch (parseError) {
-                  console.error("Error parsing orderData:", parseError);
-                }
-              }
-            } else {
-              console.log("No metadata found in checkout session");
-            }
-            
-            // Use customer information if userId is not available from metadata
-            if (!userId && session.customer) {
-              console.log(`Using customer ID as fallback: ${session.customer}`);
-              // Note: This assumes your customer IDs match your user IDs
-              userId = session.customer;
-            }
-            
-            // Try to find the order
+            // If userId is available, try to find the most recent unpaid order for this user
             if (userId) {
               // Try to find the order using multiple approaches
               order = await findOrderByUserIdAndDate(userId, date, amount);
