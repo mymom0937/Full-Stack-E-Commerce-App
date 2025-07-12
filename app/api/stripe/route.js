@@ -1,35 +1,52 @@
 import connectDB from "@/config/db";
 import Order from "@/models/Order";
-import { connect } from "mongoose";
-import Script from "next/script";
 import { NextResponse } from "next/server";
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+import User from "@/models/User";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request) {
   try {
     const body = await request.text();
-    sig = request.headers.get("stripe-signature");
+    const signature = request.headers.get("stripe-signature");
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     const event = stripe.webhooks.constructEvent(
       body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+      signature,
+      webhookSecret
     );
 
-    const handlePaymentIntent = async (paymentIntentId) => {
+    const handlePaymentIntent = async (paymentIntentId, isPaid) => {
       const session = await stripe.checkout.sessions.list({
         payment_intent: paymentIntentId,
       });
 
-      const { orderId, userId } = session.data[0].metadata;
+      if (!session.data || session.data.length === 0) {
+        console.error(`No session found for payment intent: ${paymentIntentId}`);
+        return;
+      }
+
+      const metadata = session.data[0].metadata || {};
+      const orderId = metadata.orderId;
+      const userId = metadata.userId;
+      
+      if (!orderId) {
+        console.error(`No orderId found in session metadata`);
+        return;
+      }
+      
       await connectDB();
       if (isPaid) {
         await Order.findByIdAndUpdate(orderId, {
           isPaid: true,
           paymentType: "Stripe",
         });
-        await User.findByIdAndUpdate(userId, { cartItems: {} });
+        
+        if (userId) {
+          await User.findByIdAndUpdate(userId, { cartItems: {} });
+        }
       }
     };
 
@@ -49,7 +66,6 @@ export async function POST(request) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error("Error handling Stripe webhook:", error);
-
     return NextResponse.json({ message: error.message });
   }
 }
