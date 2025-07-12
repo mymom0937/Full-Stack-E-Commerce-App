@@ -82,20 +82,34 @@ export async function POST(request) {
         const orderId = savedOrder._id.toString();
         console.log(`Created order with ID: ${orderId}`);
         
+        // DEBUG: Log the full order data
+        console.log(`Full order data: ${JSON.stringify(savedOrder)}`);
+        
         // Create a Stripe Checkout session with the orderId in metadata
         const session = await stripe.checkout.sessions.create({
           line_items: lineItems,
           mode: 'payment',
-          success_url: `${origin}/order-placed`,
+          success_url: `${origin}/order-placed?order_id=${orderId}`,
           cancel_url: `${origin}/cart`,
           metadata: {
             orderId, // Include the orderId directly in metadata
             userId,
             address,
+            orderIdConfirm: orderId, // Duplicate the orderId with a different name for redundancy
+          },
+          payment_intent_data: {
+            metadata: {
+              orderId, // Also include orderId in payment_intent metadata
+            },
           },
         });
         
-        // No need to send event to Inngest since we've already created the order
+        // Log the created session ID for debugging
+        console.log(`Created Stripe session ID: ${session.id} for order: ${orderId}`);
+        
+        // Update the order with the session ID for reference
+        savedOrder.stripeSessionId = session.id;
+        await savedOrder.save();
         
         return NextResponse.json({
           success: true,

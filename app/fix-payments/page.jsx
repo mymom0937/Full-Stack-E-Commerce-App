@@ -7,6 +7,7 @@ const FixPayments = () => {
   const { getToken } = useAppContext();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [orderId, setOrderId] = useState("");
   
   const fixAllOrders = async () => {
     try {
@@ -50,12 +51,55 @@ const FixPayments = () => {
     }
   };
 
+  const fixSpecificOrder = async () => {
+    if (!orderId.trim()) {
+      setMessage("Please enter a valid order ID");
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/order/update-payment",
+        { orderId: orderId.trim() },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMessage(data.message || "Order updated successfully");
+    } catch (error) {
+      setMessage(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="bg-card-bg p-8 rounded-lg shadow-lg max-w-md w-full">
         <h1 className="text-2xl font-bold text-text-primary mb-6">Fix Payment Status</h1>
         
         <div className="space-y-6">
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Enter Order ID"
+              value={orderId}
+              onChange={(e) => setOrderId(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            <button
+              onClick={fixSpecificOrder}
+              disabled={loading || !orderId.trim()}
+              className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 disabled:opacity-50"
+            >
+              {loading ? "Processing..." : "Fix This Specific Order"}
+            </button>
+          </div>
+          
           <div>
             <button
               onClick={fixAllOrders}
