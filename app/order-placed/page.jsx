@@ -1,7 +1,5 @@
 'use client'
-import { assets } from '@/assets/assets'
 import { useAppContext } from '@/context/AppContext'
-import Image from 'next/image'
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import axios from 'axios'
@@ -9,7 +7,7 @@ import axios from 'axios'
 // Create a separate component for the parts that need searchParams
 const OrderPlacedContent = () => {
   const { router, getToken } = useAppContext()
-  const [message, setMessage] = useState("Order Placed Successfully")
+  const [message, setMessage] = useState("Purchase Complete")
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -59,7 +57,7 @@ const OrderPlacedContent = () => {
         }
       } catch (error) {
         console.error("Error verifying payment:", error)
-        setMessage("Order placed. Redirecting to your orders...")
+        setMessage("Order confirmed. Redirecting...")
       }
     }
     
@@ -69,19 +67,26 @@ const OrderPlacedContent = () => {
     // Redirect after delay
     const redirectTimer = setTimeout(() => {
       router.push('/my-orders')
-    }, 2000)
+    }, 1000)
     
     // Clean up timeout
     return () => clearTimeout(redirectTimer)
   }, [router, searchParams, getToken])
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-5'>
-      <div className="flex justify-center items-center relative">
-        <Image className="absolute p-5" src={assets.checkmark} alt='' />
-        <div className="animate-spin rounded-full h-24 w-24 border-4 border-t-green-300 border-gray-200"></div>
+    <div className='h-screen flex flex-col justify-center items-center gap-6 bg-background'>
+      <div className="relative">
+        <div className="w-20 h-20 rounded-full border-4 border-green-500 border-opacity-25"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
       </div>
-      <div className="text-center text-2xl font-semibold">{message}</div>
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold text-text-primary mb-1">{message}</h2>
+        <p className="text-text-secondary text-sm">Thank you for your order</p>
+      </div>
     </div>
   )
 }
@@ -90,11 +95,9 @@ const OrderPlacedContent = () => {
 const OrderPlaced = () => {
   return (
     <Suspense fallback={
-      <div className='h-screen flex flex-col justify-center items-center gap-5'>
-        <div className="flex justify-center items-center relative">
-          <div className="animate-spin rounded-full h-24 w-24 border-4 border-t-green-300 border-gray-200"></div>
-        </div>
-        <div className="text-center text-2xl font-semibold">Loading...</div>
+      <div className='h-screen flex flex-col justify-center items-center gap-5 bg-background'>
+        <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="text-center text-lg font-medium text-text-primary">Processing...</div>
       </div>
     }>
       <OrderPlacedContent />

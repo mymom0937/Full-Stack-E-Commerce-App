@@ -166,7 +166,7 @@ const MyOrders = () => {
     <>
       <Navbar />
       <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-[calc(100vh-300px)]">
-        <div className="space-y-5">
+        <div className="space-y-5 max-w-5xl mx-auto w-full">
           {/* Breadcrumb */}
           <Breadcrumb currentPage="My Orders" />
 
@@ -201,7 +201,7 @@ const MyOrders = () => {
               </button>
             </div>
           ) : (
-            <div className="max-w-5xl border border-border-color rounded-lg shadow-sm">
+            <div className="w-full border border-border-color rounded-lg shadow-sm">
               {processedOrders.map((order, index) => (
                 <div
                   key={order._id || index}
