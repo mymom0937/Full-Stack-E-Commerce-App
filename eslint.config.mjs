@@ -9,7 +9,11 @@ const eslintConfig = [
     },
     rules: {
       ...js.configs.recommended.rules,
-      'next/core-web-vitals': 'error',
+      // Use the proper format for Next.js rules
+      'next/no-html-link-for-pages': 'error',
+      'next/no-img-element': 'error',
+      'next/no-unwanted-polyfillio': 'error',
+      'next/no-css-tags': 'error',
     },
     ignores: ['node_modules/**', '.next/**'],
   },
