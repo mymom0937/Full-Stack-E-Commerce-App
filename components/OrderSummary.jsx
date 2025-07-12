@@ -1,36 +1,38 @@
-import { addressDummyData } from "@/assets/assets";
+import { addressDummyData, assets } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const OrderSummary = () => {
 
-  const { currency, router, getCartCount, getCartAmount,getToken,user,cartItems, setCartItems } = useAppContext()
+  const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
 
   const [userAddresses, setUserAddresses] = useState([]);
 
   const fetchUserAddresses = async () => {
     try {
       const token = await getToken();
-      const {data}=await axios.get("/api/user/get-address", {
+      const {data} = await axios.get("/api/user/get-address", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       if (data.success) {
-        setUserAddresses(data.address); // Changed from addresses to address
-        if (data.address.length > 0) {  // Changed from addresses to address
-          setSelectedAddress(data.address[0]); // Changed from addresses to address
+        setUserAddresses(data.address);
+        if (data.address.length > 0) {
+          setSelectedAddress(data.address[0]);
         }
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
-      
     }
   }
 
@@ -39,18 +41,43 @@ const OrderSummary = () => {
     setIsDropdownOpen(false);
   };
 
+  const handlePlaceOrder = () => {
+    if (!selectedAddress) {
+      toast.error("Please select an address");
+      return;
+    }
+    
+    let cartItemsArray = Object.keys(cartItems).map((key) => 
+      ({ product: key, quantity: cartItems[key] }));
+    cartItemsArray = cartItemsArray.filter((item) => item.quantity > 0);
+
+    if (cartItemsArray.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+    
+    setShowPaymentOptions(true);
+  };
+
   const createOrder = async () => {
-     try {
+    try {
+      setLoading(true);
       if (!selectedAddress) {
         toast.error("Please select an address");
+        setLoading(false);
+        return;
       }
-      let cartItemsArray=Object.keys(cartItems).map((key) => 
+      
+      let cartItemsArray = Object.keys(cartItems).map((key) => 
         ({ product: key, quantity: cartItems[key] }));
-       cartItemsArray=cartItemsArray.filter((item) => item.quantity > 0);
+      cartItemsArray = cartItemsArray.filter((item) => item.quantity > 0);
 
-       if(cartItemsArray.length===0){
+      if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
-       }
+        setLoading(false);
+        return;
+      }
+      
       const token = await getToken();
       const { data } = await axios.post("/api/order/create", 
         {
@@ -63,6 +90,7 @@ const OrderSummary = () => {
           },
         }
       );
+      
       if (data.success) {
         toast.success(data.message);
         setCartItems({});
@@ -70,18 +98,23 @@ const OrderSummary = () => {
       } else {
         toast.error(data.message);
       }
-
-     } catch (error) {
+    } catch (error) {
       toast.error(error.message);
-     }
+    } finally {
+      setLoading(false);
+    }
   }
 
 
   const createOrderStripe = async () => {
     try {
+      setLoading(true);
       if (!selectedAddress) {
         toast.error("Please select an address");
+        setLoading(false);
+        return;
       }
+      
       let cartItemsArray = Object.keys(cartItems).map((key) => ({
         product: key,
         quantity: cartItems[key],
@@ -90,7 +123,10 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
+        setLoading(false);
+        return;
       }
+      
       const token = await getToken();
       const { data } = await axios.post(
         "/api/order/stripe",
@@ -104,16 +140,17 @@ const OrderSummary = () => {
           },
         }
       );
+      
       if (data.success) {
         // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
         toast.error(data.message);
       }
-
     } catch (error) {
       toast.error(error.message);
-      
+    } finally {
+      setLoading(false);
     }
   };  
 
@@ -144,10 +181,21 @@ const OrderSummary = () => {
                   ? `${selectedAddress.fullName}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state}`
                   : "Select Address"}
               </span>
-              <svg className={`w-5 h-5 inline float-right transition-transform duration-200 ${isDropdownOpen ? "rotate-0" : "-rotate-90"}`}
-                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              <svg
+                className={`w-5 h-5 inline float-right transition-transform duration-200 ${
+                  isDropdownOpen ? "rotate-180" : "rotate-0"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
@@ -159,7 +207,8 @@ const OrderSummary = () => {
                     className="px-4 py-2 hover:bg-card-bg cursor-pointer text-text-primary"
                     onClick={() => handleAddressSelect(address)}
                   >
-                    {address.fullName}, {address.area}, {address.city}, {address.state}
+                    {address.fullName}, {address.area}, {address.city},{" "}
+                    {address.state}
                   </li>
                 ))}
                 <li
@@ -193,8 +242,13 @@ const OrderSummary = () => {
 
         <div className="space-y-4">
           <div className="flex justify-between text-base font-medium">
-            <p className="uppercase text-text-secondary">Items {getCartCount()}</p>
-            <p className="text-text-primary">{currency}{getCartAmount()}</p>
+            <p className="uppercase text-text-secondary">
+              Items {getCartCount()}
+            </p>
+            <p className="text-text-primary">
+              {currency}
+              {getCartAmount()}
+            </p>
           </div>
           <div className="flex justify-between">
             <p className="text-text-secondary">Shipping Fee</p>
@@ -202,18 +256,47 @@ const OrderSummary = () => {
           </div>
           <div className="flex justify-between">
             <p className="text-text-secondary">Tax (2%)</p>
-            <p className="font-medium text-text-primary">{currency}{Math.floor(getCartAmount() * 0.02)}</p>
+            <p className="font-medium text-text-primary">
+              {currency}
+              {Math.floor(getCartAmount() * 0.02)}
+            </p>
           </div>
           <div className="flex justify-between text-lg md:text-xl font-medium border-t border-border-color pt-3">
             <p className="text-text-primary">Total</p>
-            <p className="text-text-primary">{currency}{getCartAmount() + Math.floor(getCartAmount() * 0.02)}</p>
+            <p className="text-text-primary">
+              {currency}
+              {getCartAmount() + Math.floor(getCartAmount() * 0.02)}
+            </p>
           </div>
         </div>
       </div>
+      
+      {showPaymentOptions ? (
+        <div className="flex gap-2">
+          <button
+            onClick={createOrder}
+            disabled={loading}
+            className="w-1/2 bg-orange-600 text-white py-2 mt-5 hover:bg-orange-700 disabled:bg-gray-400"
+          >
+            {loading ? "Processing..." : "Cash on Delivery"}
+          </button>
 
-      <button onClick={createOrderStripe} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
-        Place Order
-      </button>
+          <button
+            onClick={createOrderStripe}
+            disabled={loading}
+            className="w-1/2 flex justify-center items-center border border-indigo-500 bg-white hover:bg-gray-100 py-2 mt-5 disabled:bg-gray-100 disabled:border-gray-300"
+          >
+            <Image className="w-12" src={assets.stripe_logo} alt="logo"/>
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={handlePlaceOrder}
+          className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700"
+        >
+          Place Order
+        </button>
+      )}
     </div>
   );
 };

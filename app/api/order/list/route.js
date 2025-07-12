@@ -15,7 +15,7 @@ export async function GET(request) {
 
         await connectDB();
 
-        // Direct query to orders collection
+        // Direct query to orders collection - show all orders for this user
         const db = mongoose.connection.db;
         const orders = await db.collection('orders').find({ userId }).toArray();
         

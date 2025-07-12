@@ -8,7 +8,7 @@ import axios from "axios";
 import * as Toast from "@/lib/toast";
 
 const Orders = () => {
-  const { currency, getToken, user, products } = useAppContext();
+  const { currency, getToken, user, products, router } = useAppContext();
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -173,18 +173,76 @@ const Orders = () => {
                       {formatAddress(order.address)}
                   </p>
                 </div>
-                <p className="font-medium my-auto">
-                  {currency}
+                <div className="flex flex-col gap-1 items-end justify-center">
+                  <div className="text-sm flex items-center">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Amount:</span>
+                    <span className="ml-1 text-gray-900 dark:text-white font-medium text-lg">
+                      {currency.symbol}
                     {order.amount || 0}
-                </p>
-                <div>
-                  <p className="flex flex-col">
-                      <span>Method: {order.paymentMethod || 'COD'}</span>
-                    <span>
-                        Date: {order.date ? new Date(order.date).toLocaleDateString() : 'Unknown date'}
                     </span>
-                      <span>Payment: {order.paymentStatus || 'Pending'}</span>
-                  </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1 min-w-[160px]">
+                  <div className="text-sm flex items-center">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Payment Method:</span>
+                    <span className="ml-1">
+                      {order.paymentType === "Stripe" ? (
+                        <span className="inline-flex items-center">
+                          <span className="text-indigo-600 dark:text-indigo-400 font-medium">Stripe</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-1 text-indigo-600 dark:text-indigo-400">
+                            <path d="M2.273 5.625A4.483 4.483 0 0 1 5.25 4.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0 0 18.75 3H5.25a3 3 0 0 0-2.977 2.625ZM2.273 8.625A4.483 4.483 0 0 1 5.25 7.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0 0 18.75 6H5.25a3 3 0 0 0-2.977 2.625ZM5.25 9a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h13.5a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3H15a.75.75 0 0 0-.75.75 2.25 2.25 0 0 1-4.5 0A.75.75 0 0 0 9 9H5.25Z" />
+                          </svg>
+                        </span>
+                      ) : order.paymentType === "COD" ? (
+                        <span className="inline-flex items-center">
+                          <span className="text-green-600 dark:text-green-400 font-medium">Cash on Delivery</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-1 text-green-600 dark:text-green-400">
+                            <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                            <path fillRule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875h-17.25c-1.036 0-1.875-.84-1.875-1.875v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clipRule="evenodd" />
+                            <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
+                          </svg>
+                        </span>
+                      ) : (
+                        <span className="text-gray-800 dark:text-gray-200">{order.paymentType || "COD"}</span>
+                      )}
+                    </span>
+                  </div>
+                  
+                  <div className="text-sm flex items-center">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Date:</span>
+                    <span className="ml-1 text-gray-800 dark:text-gray-200">
+                      {order.date ? new Date(order.date).toLocaleDateString() : 'Unknown date'}
+                    </span>
+                  </div>
+                  
+                  <div className="text-sm flex items-center">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Payment:</span>
+                    {order.isPaid ? (
+                      <span className="ml-1 inline-flex items-center text-green-600 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 mr-1">
+                          <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                        </svg>
+                        Paid
+                      </span>
+                    ) : (
+                      <span className="ml-1 inline-flex items-center text-amber-600 dark:text-amber-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 mr-1">
+                          <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clipRule="evenodd" />
+                        </svg>
+                        Pending
+                      </span>
+                    )}
+                  </div>
+                  
+                  <button
+                    className="mt-2 text-sm text-orange-500 hover:text-orange-600 hover:underline flex items-center"
+                    onClick={() => router.push(`/order-details/${order._id}`)}
+                  >
+                    <span>View Details</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 ml-1">
+                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clipRule="evenodd" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}
