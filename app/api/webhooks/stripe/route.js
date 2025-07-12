@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import connectDB from "@/config/db";
 import Order from "@/models/Order";
 import mongoose from "mongoose";
+import { inngest } from "@/config/inngest"; // Import inngest client
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -29,6 +30,34 @@ async function updateOrderPaymentStatus(orderId, isPaid) {
       order.isPaid = isPaid;
       await order.save();
       console.log(`Order ${orderId} payment status updated to ${isPaid ? 'paid' : 'unpaid'}`);
+
+      // Send Inngest event when order is marked as paid
+      if (isPaid) {
+        try {
+          // Convert order to a plain object for Inngest
+          const orderData = order.toObject();
+          
+          // Send the order/created event to Inngest
+          await inngest.send({
+            name: "order/created",
+            data: {
+              userId: orderData.userId,
+              items: orderData.items,
+              amount: orderData.amount,
+              address: orderData.address,
+              date: orderData.date,
+              paymentType: orderData.paymentType || "Stripe",
+              isPaid: true,
+              orderId: orderId
+            },
+          });
+          
+          console.log(`Sent order/created event to Inngest for order ${orderId}`);
+        } catch (inngestError) {
+          console.error(`Failed to send Inngest event for order ${orderId}:`, inngestError);
+        }
+      }
+      
       return true;
     } else {
       console.log(`Order ${orderId} not found`);

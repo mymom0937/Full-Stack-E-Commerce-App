@@ -34,6 +34,25 @@ const OrderPlacedContent = () => {
           
           if (response.data.success) {
             console.log("Order payment status verified and updated if needed")
+            
+            // Also trigger an Inngest event for this order
+            try {
+              await axios.post(
+                "/api/order/fix-payments",
+                { 
+                  orderId,
+                  triggerInngest: true 
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              )
+              console.log("Triggered Inngest event for the order")
+            } catch (inngestError) {
+              console.error("Error triggering Inngest event:", inngestError)
+            }
           }
         } else {
           console.log("No order_id found in URL")
