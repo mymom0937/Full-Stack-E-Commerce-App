@@ -69,7 +69,7 @@ const OrderPlacedContent = () => {
     // Redirect after delay
     const redirectTimer = setTimeout(() => {
       router.push('/my-orders')
-    }, 5000)
+    }, 2000)
     
     // Clean up timeout
     return () => clearTimeout(redirectTimer)

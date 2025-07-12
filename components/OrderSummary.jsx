@@ -10,7 +10,8 @@ const OrderSummary = () => {
   const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingCOD, setLoadingCOD] = useState(false);
+  const [loadingStripe, setLoadingStripe] = useState(false);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
 
   const [userAddresses, setUserAddresses] = useState([]);
@@ -61,10 +62,10 @@ const OrderSummary = () => {
 
   const createOrder = async () => {
     try {
-      setLoading(true);
+      setLoadingCOD(true);
       if (!selectedAddress) {
         toast.error("Please select an address");
-        setLoading(false);
+        setLoadingCOD(false);
         return;
       }
       
@@ -74,7 +75,7 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
-        setLoading(false);
+        setLoadingCOD(false);
         return;
       }
       
@@ -101,17 +102,17 @@ const OrderSummary = () => {
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setLoading(false);
+      setLoadingCOD(false);
     }
   }
 
 
   const createOrderStripe = async () => {
     try {
-      setLoading(true);
+      setLoadingStripe(true);
       if (!selectedAddress) {
         toast.error("Please select an address");
-        setLoading(false);
+        setLoadingStripe(false);
         return;
       }
       
@@ -123,7 +124,7 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
-        setLoading(false);
+        setLoadingStripe(false);
         return;
       }
       
@@ -150,7 +151,7 @@ const OrderSummary = () => {
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setLoading(false);
+      setLoadingStripe(false);
     }
   };  
 
@@ -275,18 +276,22 @@ const OrderSummary = () => {
         <div className="flex gap-2">
           <button
             onClick={createOrder}
-            disabled={loading}
+            disabled={loadingCOD || loadingStripe}
             className="w-1/2 bg-orange-600 text-white py-2 mt-5 hover:bg-orange-700 disabled:bg-gray-400"
           >
-            {loading ? "Processing..." : "Cash on Delivery"}
+            {loadingCOD ? "Processing..." : "Cash on Delivery"}
           </button>
 
           <button
             onClick={createOrderStripe}
-            disabled={loading}
+            disabled={loadingCOD || loadingStripe}
             className="w-1/2 flex justify-center items-center border border-indigo-500 bg-white hover:bg-gray-100 py-2 mt-5 disabled:bg-gray-100 disabled:border-gray-300"
           >
-            <Image className="w-12" src={assets.stripe_logo} alt="logo"/>
+            {loadingStripe ? (
+              <span className="text-indigo-600">Processing...</span>
+            ) : (
+              <Image className="w-12" src={assets.stripe_logo} alt="logo"/>
+            )}
           </button>
         </div>
       ) : (

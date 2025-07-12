@@ -40,6 +40,32 @@
     h1, h2, h3, h4, h5, h6 {
       @apply font-ovo;
     }
+
+    button {
+      @apply rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50;
+    }
+}
+
+@layer components {
+  .btn {
+    @apply rounded-md transition-all duration-200 px-4 py-2 font-medium;
+  }
+
+  .btn-primary {
+    @apply bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+  }
+
+  .btn-outline {
+    @apply border border-orange-500 text-orange-600 hover:bg-orange-50 focus:ring-orange-400 dark:hover:bg-opacity-10;
+  }
+
+  .input-field {
+    @apply rounded-md border border-border-color bg-background px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50;
+  }
 }
 
 @layer utilities {
