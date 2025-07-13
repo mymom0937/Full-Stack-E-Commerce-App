@@ -62,13 +62,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider 
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      tokenCache={{
-        expiresIn: 3600, // 1 hour (in seconds)
-        // You can adjust this value as needed
-      }}
-    >
+    <ClerkProvider>
       <html lang="en" className={`dark ${outfit.variable} ${ovo.variable}`}>
         <body className="font-outfit">
           <AppContextProvider>
