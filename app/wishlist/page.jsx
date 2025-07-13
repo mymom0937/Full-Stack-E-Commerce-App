@@ -5,7 +5,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import Loading from '@/components/Loading';
-import Breadcrumb from '@/components/Breadcrumb';
 import Image from 'next/image';
 import { assets } from '@/assets/assets';
 
@@ -28,8 +27,6 @@ const WishlistPage = () => {
     <>
       <Navbar />
       <div className="min-h-[calc(100vh-300px)] px-6 md:px-16 lg:px-32 py-10">
-        {/* Breadcrumb */}
-        <Breadcrumb currentPage="My Wishlist" />
         
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-medium">My Wishlist</h1>

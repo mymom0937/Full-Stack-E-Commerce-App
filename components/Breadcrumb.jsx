@@ -19,6 +19,7 @@ const Breadcrumb = ({ items = [], currentPage, className = '' }) => {
   const skipHome = pathname === '/cart' || 
                    pathname === '/my-orders' || 
                    pathname === '/all-products' ||
+                   pathname === '/wishlist' ||
                    pathname.includes('/order-details/') ||
                    pathname.includes('/product/');
   
