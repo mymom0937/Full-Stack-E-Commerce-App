@@ -146,7 +146,7 @@ const OrderDetails = ({ params }) => {
             <p className="text-xl text-text-secondary mb-4">Please log in to view your order details</p>
             <button
               onClick={() => router.push("/login")}
-              className="px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+              className="px-6 py-3 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
             >
               Log In
             </button>
@@ -167,21 +167,13 @@ const OrderDetails = ({ params }) => {
         <div className="space-y-5">
           {/* Breadcrumb */}
           {!isSeller && (
-            <Breadcrumb
-              links={[
-                { label: "Home", href: "/" },
-                { label: "My Orders", href: "/my-orders" },
-                { label: "Order Details", href: "#" },
-              ]}
-              currentPage="Order Details"
-            />
+            <Breadcrumb currentPage="Order Details" />
           )}
 
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-medium">Order Details</h2>
             <button
               onClick={() => router.push(isSeller ? "/seller/orders" : "/my-orders")}
-              className="flex items-center text-sm text-orange-500 hover:text-orange-600"
+              className="flex items-center text-sm text-[#F8BD19] hover:text-[#F8BD19]/80"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1 rotate-180">
                 <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clipRule="evenodd" />
@@ -199,7 +191,7 @@ const OrderDetails = ({ params }) => {
               </p>
               <button
                 onClick={() => router.push("/my-orders")}
-                className="px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                className="px-6 py-3 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
               >
                 Go Back to Orders
               </button>

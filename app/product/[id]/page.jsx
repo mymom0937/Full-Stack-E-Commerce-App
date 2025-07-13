@@ -186,7 +186,7 @@ const Product = () => {
                 <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
                 <button 
                     onClick={() => router.push('/all-products')}
-                    className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                    className="px-6 py-2 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
                 >
                     View All Products
                 </button>
@@ -203,7 +203,7 @@ const Product = () => {
                 <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
                 <button 
                     onClick={() => router.push('/all-products')}
-                    className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                    className="px-6 py-2 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
                 >
                     View All Products
                 </button>
@@ -244,7 +244,7 @@ const Product = () => {
                     <div className="px-5 lg:px-16 xl:px-20">
                         <div className="rounded-lg overflow-hidden mb-4 relative">
                             {discount > 0 && (
-                                <div className="absolute top-4 left-4 bg-orange-500 text-white text-sm px-3 py-1 rounded z-10">
+                                <div className="absolute top-4 left-4 bg-[#F8BD19] text-white text-sm px-3 py-1 rounded z-10">
                                     -{discount}% OFF
                                 </div>
                             )}
@@ -353,7 +353,7 @@ const Product = () => {
                             </button>
                             <button
                                 onClick={handleBuyNow}
-                                className="px-8 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition flex-1 md:flex-none"
+                                className="px-8 py-3 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition flex-1 md:flex-none"
                             >
                                 Buy Now
                             </button>

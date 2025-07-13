@@ -134,7 +134,7 @@ const AddAddress = () => {
           </div>
           <button
             type="submit"
-            className="max-w-sm w-full mt-6 bg-orange-600 text-white py-3 hover:bg-orange-700 uppercase"
+            className="max-w-sm w-full mt-6 bg-[#F8BD19] text-white py-3 hover:bg-[#F8BD19]/90 uppercase"
           >
             Save address
           </button>

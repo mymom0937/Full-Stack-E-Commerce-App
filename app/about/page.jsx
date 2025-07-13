@@ -128,7 +128,7 @@ export default function AboutPage() {
           </p>
           <Link 
             href="/all-products" 
-            className="inline-block bg-[#EA580C] hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300"
+            className="inline-block bg-[#F8BD19] hover:bg-[#F8BD19]/90 text-white font-medium py-3 px-6 rounded-lg transition duration-300"
           >
             Shop Now
           </Link>

@@ -118,7 +118,7 @@ const FixPayments = () => {
           <button
             onClick={fixAllPayments}
             disabled={loading}
-            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50"
+            className="px-4 py-2 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 disabled:opacity-50"
           >
             {loading ? "Processing..." : "Fix All Stripe Payments"}
           </button>

@@ -55,7 +55,7 @@ const WishlistPage = () => {
             </p>
             <button 
               onClick={() => router.push('/all-products')} 
-              className="px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+              className="px-6 py-3 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
             >
               Browse Products
             </button>

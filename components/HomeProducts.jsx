@@ -31,7 +31,7 @@ const HomeProducts = () => {
               <p className="text-xl text-text-secondary mb-4">No products available</p>
               <button 
                 onClick={() => router.push('/seller')} 
-                className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                className="px-6 py-2 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
               >
                 Add Products
               </button>

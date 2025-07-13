@@ -20,7 +20,7 @@ const Banner = () => {
         <p className="max-w-[343px] font-medium text-text-secondary">
           From immersive sound to precise controls—everything you need to win
         </p>
-        <button className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-orange-600 rounded text-white">
+        <button className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-[#F8BD19] rounded text-white">
           Buy now
           <Image className="group-hover:translate-x-1 transition" src={assets.arrow_icon_white} alt="arrow_icon_white" />
         </button>

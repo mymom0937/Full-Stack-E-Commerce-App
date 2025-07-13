@@ -223,7 +223,7 @@ const Navbar = () => {
         <div className="relative cursor-pointer" onClick={() => router.push("/cart")}>
           <IconWrapper src={assets.cart_icon} alt="cart icon" />
           {cartCount > 0 && (
-            <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            <div className="absolute -top-2 -right-2 bg-[#F8BD19] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {cartCount}
             </div>
           )}
@@ -392,7 +392,7 @@ const Navbar = () => {
         <div className="relative cursor-pointer" onClick={() => router.push("/cart")}>
           <IconWrapper src={assets.cart_icon} alt="cart icon" />
           {cartCount > 0 && (
-            <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            <div className="absolute -top-2 -right-2 bg-[#F8BD19] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {cartCount}
             </div>
           )}
@@ -433,7 +433,7 @@ const Navbar = () => {
                 Wishlist {wishlistCount > 0 && <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
               </Link>
               <Link href="/cart" className="hover:text-accent-color transition py-2 border-b border-border-color" onClick={() => setIsMenuOpen(false)}>
-                Cart {cartCount > 0 && <span className="ml-2 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
+                Cart {cartCount > 0 && <span className="ml-2 bg-[#F8BD19] text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
               </Link>
               <Link href="/about" className="hover:text-accent-color transition py-2 border-b border-border-color" onClick={() => setIsMenuOpen(false)}>
                 About Us

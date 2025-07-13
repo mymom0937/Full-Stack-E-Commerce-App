@@ -233,7 +233,7 @@ const OrderSummary = () => {
               placeholder="Enter promo code"
               className="flex-grow w-full outline-none p-2.5 text-text-primary bg-background border border-border-color"
             />
-            <button className="bg-orange-600 text-white px-9 py-2 hover:bg-orange-700">
+            <button className="bg-[#F8BD19] text-white px-9 py-2 hover:bg-[#F8BD19]/90">
               Apply
             </button>
           </div>
@@ -277,7 +277,7 @@ const OrderSummary = () => {
           <button
             onClick={createOrder}
             disabled={loadingCOD || loadingStripe}
-            className="w-1/2 bg-orange-600 text-white py-2 mt-5 hover:bg-orange-700 disabled:bg-gray-400"
+            className="w-1/2 bg-[#F8BD19] text-white py-2 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400"
           >
             {loadingCOD ? "Processing..." : "Cash on Delivery"}
           </button>
@@ -297,7 +297,7 @@ const OrderSummary = () => {
       ) : (
         <button
           onClick={handlePlaceOrder}
-          className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700"
+          className="w-full bg-[#F8BD19] text-white py-3 mt-5 hover:bg-[#F8BD19]/90"
         >
           Place Order
         </button>

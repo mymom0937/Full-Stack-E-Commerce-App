@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 /**
@@ -13,12 +13,17 @@ import Link from 'next/link';
  */
 const Breadcrumb = ({ items = [], currentPage, className = '' }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  
+  // Skip Home link for cart, my-orders, and order-details pages
+  const skipHome = pathname === '/cart' || 
+                   pathname === '/my-orders' || 
+                   pathname.includes('/order-details/');
   
   // Build breadcrumb items array
-  const breadcrumbItems = [
-    { label: 'Home', path: '/' },
-    ...items,
-  ];
+  const breadcrumbItems = skipHome 
+    ? [...items] 
+    : [{ label: 'Home', path: '/' }, ...items];
   
   if (currentPage) {
     breadcrumbItems.push({ label: currentPage, path: null });

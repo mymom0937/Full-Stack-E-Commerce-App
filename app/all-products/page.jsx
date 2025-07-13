@@ -293,7 +293,7 @@ const ProductsContent = () => {
                                 {/* Mobile close button */}
                                 <button
                                     onClick={() => setIsFilterOpen(false)}
-                                    className="w-full py-2 bg-orange-500 text-white rounded md:hidden"
+                                    className="w-full py-2 bg-[#F8BD19] text-white rounded md:hidden"
                                 >
                                     Apply Filters
                                 </button>
@@ -362,7 +362,7 @@ const ProductsContent = () => {
                                     <p className="text-text-secondary mb-4">Try adjusting your search or filter criteria</p>
                                     <button 
                                         onClick={resetFilters}
-                                        className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                                        className="px-4 py-2 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
                                     >
                                         Reset Filters
                                     </button>
@@ -389,7 +389,7 @@ const ProductsContent = () => {
                                                     className="object-contain"
                                                 />
                                                 {product.price && product.offerPrice && product.price > product.offerPrice && (
-                                                    <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
+                                                    <div className="absolute top-2 left-2 bg-[#F8BD19] text-white text-xs px-2 py-1 rounded">
                                                         -{Math.round(((product.price - product.offerPrice) / product.price) * 100)}%
                                                     </div>
                                                 )}
@@ -441,7 +441,7 @@ const ProductsContent = () => {
                                                                 e.stopPropagation();
                                                                 addToCart(product._id);
                                                             }}
-                                                            className="p-2 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition"
+                                                            className="p-2 rounded-full bg-[#F8BD19] text-white hover:bg-[#F8BD19]/90 transition"
                                                         >
                                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -462,7 +462,7 @@ const ProductsContent = () => {
                                         <button className="px-3 py-1 border rounded bg-card-bg text-text-secondary">
                                             &laquo;
                                         </button>
-                                        <button className="px-3 py-1 border rounded bg-orange-500 text-white">
+                                        <button className="px-3 py-1 border rounded bg-[#F8BD19] text-white">
                                             1
                                         </button>
                                         <button className="px-3 py-1 border rounded bg-card-bg text-text-secondary">

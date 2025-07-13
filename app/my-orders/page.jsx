@@ -170,10 +170,6 @@ const MyOrders = () => {
           {/* Breadcrumb */}
           <Breadcrumb currentPage="My Orders" />
 
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-medium">My Orders</h2>
-          </div>
-
           {loading ? (
             <Loading />
           ) : processedOrders.length === 0 ? (
@@ -195,7 +191,7 @@ const MyOrders = () => {
               </p>
               <button
                 onClick={() => router.push("/all-products")}
-                className="px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                className="px-6 py-3 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
               >
                 Browse Products
               </button>
@@ -226,7 +222,7 @@ const MyOrders = () => {
                             className="w-16 h-16"
                           />
                           {item.quantity > 1 && (
-                            <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-1 rounded-bl">
+                            <div className="absolute top-0 right-0 bg-[#F8BD19] text-white text-xs px-1 rounded-bl">
                               x{item.quantity}
                             </div>
                           )}

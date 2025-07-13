@@ -85,7 +85,7 @@ const ProductCard = ({ product }) => {
         >
             <div className="relative rounded-lg w-full h-60 flex items-center justify-center overflow-hidden bg-card-bg transition-colors duration-200">
                 {discount > 0 && (
-                    <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded z-10">
+                    <div className="absolute top-2 left-2 bg-[#F8BD19] text-white text-xs px-2 py-1 rounded z-10">
                         -{discount}%
                     </div>
                 )}
@@ -109,7 +109,7 @@ const ProductCard = ({ product }) => {
                         </button>
                         <button 
                             onClick={handleAddToCart}
-                            className="bg-orange-500 text-white px-4 py-2 text-sm rounded hover:bg-orange-600 transition"
+                            className="bg-[#F8BD19] text-white px-4 py-2 text-sm rounded hover:bg-[#F8BD19]/90 transition"
                         >
                             Add to Cart
                         </button>

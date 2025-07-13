@@ -76,7 +76,7 @@ const HeaderSlider = () => {
                 {slide.title}
               </h1>
               <div className="flex items-center mt-4 md:mt-6 ">
-                <button className="md:px-10 px-7 md:py-2.5 py-2 bg-orange-600 rounded-full text-white font-medium">
+                <button className="md:px-10 px-7 md:py-2.5 py-2 bg-[#F8BD19] rounded-full text-white font-medium">
                   {slide.buttonText1}
                 </button>
                 <button className="group flex items-center gap-2 px-6 py-2.5 font-medium text-text-primary">
