@@ -15,10 +15,12 @@ const Breadcrumb = ({ items = [], currentPage, className = '' }) => {
   const router = useRouter();
   const pathname = usePathname();
   
-  // Skip Home link for cart, my-orders, and order-details pages
+  // Skip Home link for cart, my-orders, order-details, all-products, and product detail pages
   const skipHome = pathname === '/cart' || 
                    pathname === '/my-orders' || 
-                   pathname.includes('/order-details/');
+                   pathname === '/all-products' ||
+                   pathname.includes('/order-details/') ||
+                   pathname.includes('/product/');
   
   // Build breadcrumb items array
   const breadcrumbItems = skipHome 
