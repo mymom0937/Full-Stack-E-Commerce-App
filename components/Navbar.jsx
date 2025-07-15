@@ -121,7 +121,7 @@ const Navbar = () => {
           Shop
         </Link>
         <Link href="/about" className="hover:text-accent-color font-medium transition">
-          About Us
+          About
         </Link>
         <Link href="/contact" className="hover:text-accent-color font-medium transition">
           Contact
@@ -132,7 +132,7 @@ const Navbar = () => {
             onClick={() => router.push("/seller")}
             className="text-xs border border-border-color px-4 py-1.5 rounded-full hover:bg-card-bg transition"
           >
-            Seller Dashboard
+            Merchant Portal
           </button>
         )}
       </div>
@@ -448,7 +448,7 @@ const Navbar = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
                 </svg>
-                About Us
+                About
               </Link>
               <Link href="/contact" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
                 <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -465,7 +465,7 @@ const Navbar = () => {
                   className="hover:text-accent-color transition py-2 border-b border-border-color text-left flex items-center gap-2"
                 >
                   <IconWrapper src={assets.product_list_icon} alt="seller dashboard icon" />
-                  Seller Dashboard
+                  Merchant Portal
                 </button>
               )}
               {user && (
