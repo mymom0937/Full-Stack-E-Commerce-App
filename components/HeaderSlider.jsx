@@ -28,6 +28,14 @@ const HeaderSlider = () => {
     },
     {
       id: 2,
+      title: "Apple Watch Ultra 2 - Ultimate Adventure Companion",
+      offer: "Designed for Explorers and Athletes",
+      buttonText1: "Buy Now",
+      buttonText2: "Learn Features",
+      imgSrc: assets.Apple_Watch_Ultra_2,
+    },
+    {
+      id: 3,
       title: "Garmin Venu 2 - Advanced Fitness Smartwatch",
       offer: "Track your fitness journey with precision!",
       buttonText1: "Shop Now",
@@ -35,7 +43,7 @@ const HeaderSlider = () => {
       imgSrc: assets.venu_watch_image,
     },
     {
-      id: 3,
+      id: 4,
       title: "ASUS ROG Gaming Laptop - Ultimate Performance",
       offer: "Special Gaming Edition - Limited Stock",
       buttonText1: "Order Now",
@@ -43,7 +51,7 @@ const HeaderSlider = () => {
       imgSrc: assets.asus_laptop_image,
     },
     {
-      id: 4,
+      id: 5,
       title: "Sony WF-1000XM5 - Premium Wireless Earbuds",
       offer: "Industry-leading Noise Cancellation",
       buttonText1: "Shop Now",
@@ -51,13 +59,41 @@ const HeaderSlider = () => {
       imgSrc: assets.Sony_WF_1000XM5,
     },
     {
-      id: 5,
+      id: 6,
       title: "Samsung Galaxy S23 - Cutting Edge Technology",
       offer: "Experience the Next Level of Mobile Innovation",
       buttonText1: "Buy Now",
       buttonText2: "Discover More",
       imgSrc: assets.samsung_s23phone_image,
     },
+    
+    {
+      id: 7,
+      title: "MacBook Air M4 - Unmatched Performance",
+      offer: "The World's Thinnest Laptop",
+      buttonText1: "Buy Now",
+      buttonText2: "View Specs",
+      imgSrc: assets.MacBook_Air_M4,
+    },
+    {
+      id: 8,
+      title: "Galaxy S25 Ultra - Flagship Innovation",
+      offer: "Elevate Your Mobile Experience",
+      buttonText1: "Buy Now",
+      buttonText2: "Learn More",
+      imgSrc: assets.Galaxy_S25_Ultra,
+    },
+
+    {
+      id: 9,
+      title: "Apple iPhone 16e - Revolutionary Performance",
+      offer: "Next Generation Apple Intelligence",
+      buttonText1: "Pre-Order",
+      buttonText2: "View Specs",
+      imgSrc: assets.Apple_iPhone_16e,
+    },
+    
+    
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);

@@ -1,15 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { useAppContext } from "@/context/AppContext";
 import Loading from "./Loading";
 
 const HomeProducts = () => {
   const { products, router, isLoading } = useAppContext();
+  const [randomizedProducts, setRandomizedProducts] = useState([]);
+  
+  // Function to shuffle an array (Fisher-Yates algorithm)
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+  
+  // Randomize product order when products change
+  useEffect(() => {
+    if (products && products.length > 0) {
+      const shuffled = shuffleArray(products);
+      setRandomizedProducts(shuffled);
+    }
+  }, [products]);
 
   return (
     <div className="flex flex-col items-center pt-14">
       <div className="flex justify-between items-center w-full mb-6">
-        <p className="text-3xl font-medium text-text-primary">Popular <span className="text-orange-600">Products</span></p>
+        <p className="text-3xl font-medium text-text-primary">Top <span className="text-orange-600">Picks</span></p>
         <button 
           onClick={() => { router.push('/all-products') }} 
           className="text-sm text-orange-600 hover:underline flex items-center gap-1 transition"
@@ -22,8 +41,8 @@ const HomeProducts = () => {
         <Loading variant="products" count={10} />
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">
-        {products && products.length > 0 ? (
-            products.slice(0, 10).map((product, index) => (
+        {randomizedProducts && randomizedProducts.length > 0 ? (
+            randomizedProducts.slice(0, 10).map((product, index) => (
               product ? <ProductCard key={product._id || index} product={product} /> : null
           ))
         ) : (

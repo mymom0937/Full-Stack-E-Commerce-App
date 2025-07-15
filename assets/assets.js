@@ -5,6 +5,15 @@ import Apple_AirPods_Pro2 from "./Apple_AirPods_Pro2.jpg";
 // import venu_watch_image from "./venu_watch_image.png";
 import Samsung_Galaxy_S24_Ultra from "./Samsung_Galaxy_S24_Ultra.jpg";
 import Sony_WF_1000XM5 from "./Sony WF-1000XM5.webp";
+import Apple_Watch_Ultra_2 from "./Apple_watch_ultra2.jpg";
+import Apple_iPhone_16e from "./Apple-iPhone-16e.jpg";
+import Galaxy_S25_Ultra from "./galaxy-s25-ultra.jpg";
+import Huawei_Watch_5 from "./huawei-watch-fit4-pro.webp";
+import Huawei_Watch_Fit_4_Pro from "./huawei-watch-fit4-pro.webp";
+import Huawei_Watch_Fit4_Pro from "./huawei-watch-fit4-pro.webp";
+import iPad_Air from "./iPad Air.jpg";
+import MacBook_Air_M4 from "./MacBook Air (M4) .jpg";
+import Galaxy_Z_Flip7 from "./Galaxy Z Flip7.jpg";
 
 
 import ezcart_logo_dark from "./ezcart_logo_dark.png";
@@ -64,7 +73,8 @@ import product_details_page_apple_earphone_image4 from "./product_details_page_a
 import product_details_page_apple_earphone_image5 from "./product_details_page_apple_earphone_image5.png";
 
 export const assets = {
-  macbook_pro_image, Apple_iPhone15_pro_max, Apple_AirPods_Pro2, Samsung_Galaxy_S24_Ultra, Sony_WF_1000XM5,
+  macbook_pro_image, Apple_iPhone15_pro_max, Apple_AirPods_Pro2, Samsung_Galaxy_S24_Ultra, Sony_WF_1000XM5, Apple_Watch_Ultra_2,
+  Apple_iPhone_16e, Galaxy_S25_Ultra, Huawei_Watch_5, Huawei_Watch_Fit_4_Pro, Huawei_Watch_Fit4_Pro, iPad_Air, MacBook_Air_M4, Galaxy_Z_Flip7,
   stripe_logo,
   ezcart_logo_dark,
   ezcart_logo_white,

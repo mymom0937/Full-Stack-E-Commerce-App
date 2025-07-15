@@ -81,6 +81,9 @@ async function connectDB() {
                 throw new Error('MONGODB_URL environment variable is not set');
             }
 
+            // Log the MongoDB connection URL (without sensitive info)
+            console.log(`MongoDB URL: ${mongoUrl.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@')}`);
+            
             // Force the database name to be ecommerce by constructing the proper URL
             let connectionUrl = mongoUrl;
             // If URL already contains a database name, remove it and replace with ecommerce
@@ -91,6 +94,7 @@ async function connectDB() {
                 const baseUrl = urlParts.slice(0, 3).join('/');
                 // Create new URL with explicit database name
                 connectionUrl = `${baseUrl}/ecommerce`;
+                console.log(`Modified connection URL to force ecommerce database. Base URL: ${baseUrl.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@')}/ecommerce`);
             }
             
             console.log(`Connecting to MongoDB with database: ecommerce`);
@@ -100,6 +104,10 @@ async function connectDB() {
               .then(async (mongoose) => {
                 // Verify the database name after connection
                 console.log(`MongoDB connected to database: ${mongoose.connection.db.databaseName}`);
+                
+                // List available collections to debug
+                const collections = await mongoose.connection.db.listCollections().toArray();
+                console.log(`Available collections: ${collections.map(c => c.name).join(', ')}`);
                 
                 // Explicitly use the ecommerce database regardless of connection
                 if (mongoose.connection.db.databaseName !== 'ecommerce') {

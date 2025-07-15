@@ -4,6 +4,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import {v2 as cloudinary} from "cloudinary";
 import { NextResponse } from "next/server";
 import authSeller from "@/lib/authSeller";
+import mongoose from "mongoose";
 
 // configure cloudinary - trim env vars to remove any spaces
 cloudinary.config({
@@ -15,9 +16,12 @@ cloudinary.config({
 export async function POST(request) {
     try {
       const {userId}=getAuth(request)
+      
+      console.log("Processing product add request for user:", userId);
        
       const isSeller = await authSeller(userId);
       if (!isSeller) {
+        console.log("Authorization failed: User is not a seller");
         return NextResponse.json({ success: false, message: "You are not authorized to add products" }, { status: 403 });
       }
         const formData = await request.formData();
@@ -28,8 +32,11 @@ export async function POST(request) {
         const price = formData.get("price");
         const offerPrice = formData.get("offerPrice");
 
+        console.log("Product details:", { name, category, price, offerPrice });
+
         const files = formData.getAll("images");
         if (!files || files.length === 0) {
+            console.log("No images found in request");
             return NextResponse.json({ success: false, message: "Please upload at least one image" }, { status: 400 });
         }
 
@@ -37,8 +44,11 @@ export async function POST(request) {
         const validFiles = files.filter(file => file && file.size > 0);
 
         if (validFiles.length === 0) {
+            console.log("No valid images found");
             return NextResponse.json({ success: false, message: "Please upload at least one valid image" }, { status: 400 });
         }
+
+        console.log(`Processing ${validFiles.length} valid image files`);
 
         const result = await Promise.all(
             validFiles.map(async (file) => {
@@ -59,6 +69,7 @@ export async function POST(request) {
                                 console.error("Cloudinary upload error:", error);
                                 reject(error);
                             } else {
+                                console.log("Image uploaded successfully:", result.secure_url);
                                 resolve(result);
                             }
                         }
@@ -69,8 +80,12 @@ export async function POST(request) {
         );
 
         const images = result.map((res) => res.secure_url);
+        console.log("Connecting to database");
+        
         await connectDB();
-        const newProduct = await Product.create({
+        console.log("Database connected, creating product");
+        
+        const productData = {
             userId,
             name,
             description,
@@ -79,12 +94,36 @@ export async function POST(request) {
             offerPrice: Number(offerPrice),
             images,
             date: Date.now(),
-        });
+        };
+        
+        console.log("Creating new product with data:", productData);
+        
+        // Get current database and collection info
+        console.log("Current database:", mongoose.connection.db.databaseName);
+        const productCollection = mongoose.connection.db.collection('products');
+        console.log("Product collection exists:", !!productCollection);
+        
+        // Directly insert using MongoDB native driver as a fallback check
+        const directInsertResult = await productCollection.insertOne(productData);
+        console.log("Direct MongoDB insert result:", directInsertResult);
+        
+        if (!directInsertResult.acknowledged) {
+            throw new Error("Failed to insert product directly into MongoDB");
+        }
+        
+        // Get the inserted product to verify
+        const verifiedProduct = await productCollection.findOne({ _id: directInsertResult.insertedId });
+        console.log("Verified product exists:", !!verifiedProduct);
 
-        return NextResponse.json({ success: true, message: "Product added successfully", newProduct }, { status: 201 });
+        return NextResponse.json({ 
+            success: true, 
+            message: "Product added successfully", 
+            newProduct: verifiedProduct 
+        }, { status: 201 });
 
     } catch (error) {
-        console.error("Product add error:", error);
+        console.error("Product add error details:", error);
+        console.error("Error stack:", error.stack);
         return NextResponse.json({ success: false, message: error.message }, { status: 500 }); 
     }
 }
