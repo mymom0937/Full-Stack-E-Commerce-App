@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 const AddProduct = () => {
 
-  const {getToken}= useAppContext();
+  const { getToken, router } = useAppContext();
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
@@ -53,12 +53,16 @@ const AddProduct = () => {
       });
       if (data.success) {
         toast.success(data.message);
+        // Reset form fields
         setFiles([]);
         setName('');
         setDescription('');
         setCategory('Earphone');
         setPrice('');
         setOfferPrice('');
+        
+        // Redirect to product list page
+        router.push('/seller/product-list');
       } else {
         toast.error(data.message);
       }

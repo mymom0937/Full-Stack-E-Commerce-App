@@ -7,6 +7,9 @@ import Loading from "@/components/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useTheme } from "@/context/ThemeContext";
+import { FiEdit } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
+import { FaRegEye } from "react-icons/fa";
 
 const ProductList = () => {
   const { router, getToken, user } = useAppContext();
@@ -256,21 +259,21 @@ const ProductList = () => {
                     <div className="flex justify-between gap-2">
                       <button
                         onClick={() => handleEditClick(product)}
-                        className="flex-1 py-2 bg-blue-500 text-white rounded-md text-sm font-medium"
+                        className="flex-1 py-2 bg-blue-500 text-white rounded-md text-sm font-medium flex items-center justify-center gap-1"
                       >
-                        Edit
+                        <FiEdit className="text-lg" /> Edit
                       </button>
                       <button
                         onClick={() => handleDeleteClick(product)}
-                        className="flex-1 py-2 bg-red-500 text-white rounded-md text-sm font-medium"
+                        className="flex-1 py-2 bg-red-500 text-white rounded-md text-sm font-medium flex items-center justify-center gap-1"
                       >
-                        Delete
+                        <MdDeleteOutline className="text-lg" /> Delete
                       </button>
                       <button
                         onClick={() => router.push(`/product/${product._id}`)}
-                        className="flex-1 py-2 bg-[#F8BD19] text-white rounded-md text-sm font-medium"
+                        className="flex-1 py-2 bg-[#F8BD19] text-white rounded-md text-sm font-medium flex items-center justify-center gap-1"
                       >
-                        View
+                        <FaRegEye className="text-lg" /> View
                       </button>
                     </div>
                   </div>
@@ -321,21 +324,24 @@ const ProductList = () => {
                           <div className="flex justify-center gap-2">
                             <button
                               onClick={() => handleEditClick(product)}
-                              className="px-3 py-1 bg-blue-500 text-white rounded-md"
+                              className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
+                              title="Edit"
                             >
-                              Edit
+                              <FiEdit size={18} />
                             </button>
                             <button
                               onClick={() => handleDeleteClick(product)}
-                              className="px-3 py-1 bg-red-500 text-white rounded-md"
+                              className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center justify-center"
+                              title="Delete"
                             >
-                              Delete
+                              <MdDeleteOutline size={18} />
                             </button>
                             <button
                               onClick={() => router.push(`/product/${product._id}`)}
-                              className="px-3 py-1 bg-[#F8BD19] text-white rounded-md"
+                              className="p-2 bg-[#F8BD19] text-white rounded-md hover:bg-[#e5ad14] transition-colors flex items-center justify-center"
+                              title="View"
                             >
-                              View
+                              <FaRegEye size={18} />
                             </button>
                           </div>
                         </td>
