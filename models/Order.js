@@ -62,7 +62,29 @@ const orderSchema = new mongoose.Schema(
 // Create a compound index for faster queries
 orderSchema.index({ userId: 1, date: -1 });
 
-// If the model exists, reuse it; otherwise create a new one
-const Order = mongoose.models.order || mongoose.model("order", orderSchema);
+// Get current database name if connected
+const currentDb = mongoose.connection.db ? mongoose.connection.db.databaseName : null;
+console.log(`Current database when initializing Order model: ${currentDb || 'not connected yet'}`);
+
+let Order;
+
+// Handle different database connection scenarios
+if (mongoose.connection.readyState === 1) {
+  // If we're connected but not to ecommerce, switch to it
+  if (currentDb && currentDb !== 'ecommerce') {
+    console.log(`Switching from ${currentDb} to ecommerce database for Order model`);
+    const ecommerceDb = mongoose.connection.useDb('ecommerce');
+    Order = ecommerceDb.models.orders || ecommerceDb.model('orders', orderSchema);
+  } else {
+    // Normal case when connected to ecommerce already
+    Order = mongoose.models.orders || mongoose.model('orders', orderSchema);
+  }
+} else {
+  // Not connected yet, create model normally (connection will determine database)
+  Order = mongoose.models.orders || mongoose.model('orders', orderSchema);
+}
+
+console.log(`Order model initialized with collection name: ${Order.collection.name}`);
+console.log(`Order model database: ${mongoose.connection.db ? mongoose.connection.db.databaseName : 'not connected yet'}`);
 
 export default Order;
