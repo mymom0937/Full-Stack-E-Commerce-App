@@ -21,6 +21,19 @@ const MIN_ORDER_INTERVAL_MS = 5000; // 5 seconds minimum between orders
 const processedOrderRequestIds = new Map();
 const ORDER_REQUEST_EXPIRY_MS = 3600000; // 1 hour
 
+// Function to generate a hash for order details to detect duplicates
+function generateOrderHash(userId, address, items) {
+  // Create a string representation of the items sorted by product ID
+  const sortedItems = [...items].sort((a, b) => {
+    if (a.product < b.product) return -1;
+    if (a.product > b.product) return 1;
+    return 0;
+  });
+  
+  const itemsString = sortedItems.map(item => `${item.product}:${item.quantity}`).join(',');
+  return `${userId}:${address}:${itemsString}`;
+}
+
 export async function POST(request) {
     try {
         const { userId } = getAuth(request);
@@ -54,6 +67,21 @@ export async function POST(request) {
             console.log("Connecting to MongoDB database...");
             await connectDB();
             console.log("Connected to MongoDB database successfully");
+            
+            // Generate order hash for duplicate detection
+            const orderHash = generateOrderHash(userId, address, items);
+            console.log(`Generated order hash: ${orderHash}`);
+            
+            // Check for existing order with the same hash (exact duplicate)
+            const existingOrderByHash = await Order.findOne({ orderHash });
+            if (existingOrderByHash) {
+              console.log(`Found existing order with hash ${orderHash}`);
+              return NextResponse.json({
+                success: false,
+                message: "This exact order has already been placed. Check your orders page.",
+                orderId: existingOrderByHash._id
+              }, { status: 409 });
+            }
             
             // Check for existing order with the same orderRequestId
             if (orderRequestId) {
@@ -168,6 +196,9 @@ export async function POST(request) {
         const finalAmount = totalAmount + Math.floor(totalAmount * 0.02);
         console.log(`Order amount calculated: ${finalAmount}`);
         
+        // Generate order hash for duplicate detection
+        const orderHash = generateOrderHash(userId, address, items);
+        
         // Create the order in database first so we have the orderId
         const orderData = {
           userId,
@@ -179,7 +210,8 @@ export async function POST(request) {
           paymentType: "Stripe",
           isPaid: false,
           orderRequestId: orderRequestId || undefined,
-          clientTimestamp: clientTimestamp || undefined
+          clientTimestamp: clientTimestamp || undefined,
+          orderHash // Add the hash for duplicate detection
         };
         
         let orderId;
@@ -203,6 +235,16 @@ export async function POST(request) {
           console.log(`Full order data: ${JSON.stringify(savedOrder)}`);
         } catch (orderError) {
           console.error("Error creating order:", orderError);
+          
+          if (orderError.code === 11000) {
+            // This is a duplicate key error, which means we tried to create a duplicate order
+            console.log("Duplicate key error - order with this orderRequestId or hash already exists");
+            return NextResponse.json({
+              success: false,
+              message: "This order has already been processed. Please check your orders page."
+            }, { status: 409 });
+          }
+          
           return NextResponse.json(
             {
               success: false,

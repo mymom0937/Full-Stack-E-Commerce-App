@@ -22,6 +22,19 @@ const MIN_ORDER_INTERVAL_MS = 5000; // 5 seconds minimum between orders
 // A simple mutex implementation to ensure only one order is processed at a time per user
 const userOrderLocks = new Map();
 
+// Function to generate a hash for order details to detect duplicates
+function generateOrderHash(userId, address, items) {
+  // Create a string representation of the items sorted by product ID
+  const sortedItems = [...items].sort((a, b) => {
+    if (a.product < b.product) return -1;
+    if (a.product > b.product) return 1;
+    return 0;
+  });
+  
+  const itemsString = sortedItems.map(item => `${item.product}:${item.quantity}`).join(',');
+  return `${userId}:${address}:${itemsString}`;
+}
+
 // Function to wait for a specific amount of time
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -67,25 +80,46 @@ export async function POST(request) {
         }, { status: 429 });
       }
       
-      // Check for existing order with the same orderRequestId
+      // Connect to database with detailed logging
+      console.log("Connecting to MongoDB database...");
+      await connectDB();
+      console.log(`Connected to MongoDB database: ${mongoose.connection.db?.databaseName || 'unknown'}`);
+      
+      // Generate order hash for duplicate detection
+      const orderHash = generateOrderHash(userId, address, items);
+      console.log(`Generated order hash: ${orderHash}`);
+      
+      // Check for existing order with the same hash (exact duplicate)
       try {
-        // Connect to database with detailed logging
-        console.log("Connecting to MongoDB database...");
-        await connectDB();
-        console.log(`Connected to MongoDB database: ${mongoose.connection.db?.databaseName || 'unknown'}`);
-        
-        const existingOrder = await Order.findOne({ orderRequestId });
-        if (existingOrder) {
-          console.log(`Found existing order with requestId ${orderRequestId}`);
+        const existingOrderByHash = await Order.findOne({ orderHash });
+        if (existingOrderByHash) {
+          console.log(`Found existing order with hash ${orderHash}`);
           return NextResponse.json({
             success: false,
-            message: "This order has already been placed. Check your orders page.",
-            orderId: existingOrder._id
+            message: "This exact order has already been placed. Check your orders page.",
+            orderId: existingOrderByHash._id
           }, { status: 409 });
         }
-      } catch (dbError) {
-        console.error("Error checking for existing order:", dbError);
+      } catch (hashError) {
+        console.error("Error checking for order hash:", hashError);
         // Continue processing as this is just a precautionary check
+      }
+      
+      // Check for existing order with the same orderRequestId
+      if (orderRequestId) {
+        try {
+          const existingOrder = await Order.findOne({ orderRequestId });
+          if (existingOrder) {
+            console.log(`Found existing order with requestId ${orderRequestId}`);
+            return NextResponse.json({
+              success: false,
+              message: "This order has already been placed. Check your orders page.",
+              orderId: existingOrder._id
+            }, { status: 409 });
+          }
+        } catch (idError) {
+          console.error("Error checking for existing order by ID:", idError);
+        }
       }
       
       if (!address || !items || items.length === 0) {
@@ -124,7 +158,8 @@ export async function POST(request) {
         status: "Order Placed",
         // Store the orderRequestId for future duplicate detection
         orderRequestId: orderRequestId || undefined,
-        clientTimestamp: clientTimestamp || undefined
+        clientTimestamp: clientTimestamp || undefined,
+        orderHash // Add the hash for duplicate detection
       };
   
       console.log("Order data to be saved:", JSON.stringify(orderData));
@@ -162,7 +197,7 @@ export async function POST(request) {
         
         if (dbError.code === 11000) {
           // This is a duplicate key error, which means we tried to create a duplicate order
-          console.log("Duplicate key error - order with this orderRequestId already exists");
+          console.log("Duplicate key error - order with this orderRequestId or hash already exists");
           return NextResponse.json({
             success: false,
             message: "This order has already been processed. Please check your orders page."

@@ -17,9 +17,19 @@ const Cart = () => {
 
   // Reset any stuck order processing flag when cart page loads
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.__orderBeingPlaced) {
-      console.log('Resetting stuck order processing flag');
+    if (typeof window !== 'undefined') {
+      // Reset all global order state variables
+      console.log('Resetting all global order state variables');
       window.__orderBeingPlaced = false;
+      window.__lastOrderTimestamp = 0;
+      window.__orderCount = 0;
+      
+      // Enable all buttons that might have been disabled
+      setTimeout(() => {
+        document.querySelectorAll('button[disabled], input[disabled], select[disabled]').forEach(element => {
+          element.removeAttribute('disabled');
+        });
+      }, 500);
     }
   }, []);
 

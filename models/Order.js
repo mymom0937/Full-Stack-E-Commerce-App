@@ -14,6 +14,19 @@ const orderItemSchema = new mongoose.Schema({
   }
 });
 
+// Pre-save middleware to generate a unique orderHash
+function generateOrderHash(userId, address, items) {
+  // Create a string representation of the items sorted by product ID
+  const sortedItems = [...items].sort((a, b) => {
+    if (a.product < b.product) return -1;
+    if (a.product > b.product) return 1;
+    return 0;
+  });
+  
+  const itemsString = sortedItems.map(item => `${item.product}:${item.quantity}`).join(',');
+  return `${userId}:${address}:${itemsString}`;
+}
+
 const orderSchema = new mongoose.Schema(
   {
     userId: { 
@@ -64,6 +77,12 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       index: true, // Index for faster lookups
       sparse: true // Only index documents that have this field
+    },
+    // Add a hash of the order details to detect duplicates
+    orderHash: {
+      type: String,
+      index: true,
+      sparse: true
     }
   },
   {
@@ -86,6 +105,21 @@ orderSchema.index({ userId: 1, clientTimestamp: 1 }, {
   unique: true,
   sparse: true,
   partialFilterExpression: { clientTimestamp: { $exists: true } }
+});
+
+// Add a unique index on orderHash to prevent duplicate orders
+orderSchema.index({ orderHash: 1 }, {
+  unique: true,
+  sparse: true,
+  partialFilterExpression: { orderHash: { $exists: true } }
+});
+
+// Pre-save middleware to generate orderHash
+orderSchema.pre('save', function(next) {
+  if (!this.orderHash && this.userId && this.address && this.items) {
+    this.orderHash = generateOrderHash(this.userId, this.address, this.items);
+  }
+  next();
 });
 
 // Get current database name if connected
