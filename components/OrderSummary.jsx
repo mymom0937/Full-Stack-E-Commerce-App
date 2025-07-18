@@ -11,6 +11,11 @@ const generateOrderId = () => {
   return Date.now().toString(36) + Math.random().toString(36).substring(2);
 };
 
+// Global variable to prevent multiple order submissions across renders
+if (typeof window !== 'undefined') {
+  window.__orderBeingPlaced = window.__orderBeingPlaced || false;
+}
+
 const OrderSummary = () => {
   const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -22,9 +27,19 @@ const OrderSummary = () => {
   const orderInProgress = useRef(false);
   const orderIdRef = useRef(generateOrderId());
   const buttonClickedOnce = useRef(false);
+  const orderPlaced = useRef(false);
   
   // Track button click timestamps to prevent duplicate submissions
   const lastClickTime = useRef(0);
+  
+  // Check global flag on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.__orderBeingPlaced) {
+      setIsProcessingOrder(true);
+      orderInProgress.current = true;
+      buttonClickedOnce.current = true;
+    }
+  }, []);
 
   const [userAddresses, setUserAddresses] = useState([]);
 
@@ -50,12 +65,20 @@ const OrderSummary = () => {
   }
 
   const handleAddressSelect = (address) => {
+    if (isProcessingOrder) return; // Prevent changes during order processing
     setSelectedAddress(address);
     setIsDropdownOpen(false);
   };
 
   const handlePlaceOrder = (e) => {
     e.preventDefault(); // Prevent default form submission
+    
+    // Super aggressive protection against duplicate orders
+    if (typeof window !== 'undefined' && window.__orderBeingPlaced) {
+      console.log("Order already being placed globally");
+      toast.error("An order is already being processed. Please wait.");
+      return;
+    }
     
     // Prevent rapid multiple clicks
     const now = Date.now();
@@ -88,6 +111,16 @@ const OrderSummary = () => {
     // Prevent the default form submission
     if (e) e.preventDefault();
     
+    // Extra aggressive global protection
+    if (typeof window !== 'undefined') {
+      if (window.__orderBeingPlaced) {
+        console.log("Order already being placed globally");
+        toast.error("An order is already being processed");
+        return;
+      }
+      window.__orderBeingPlaced = true;
+    }
+    
     // Multi-layer protection against duplicate orders
     if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
       console.log("Order creation already in progress, preventing duplicate submission");
@@ -108,13 +141,19 @@ const OrderSummary = () => {
       return;
     }
     buttonClickedOnce.current = true;
+    
+    // Set state immediately to prevent further interactions
+    setIsProcessingOrder(true);
+    setLoadingCOD(true);
+    orderInProgress.current = true;
+    orderPlaced.current = true;
+    
+    // For absolute certainty, disable all inputs and controls
+    document.querySelectorAll('button, input, select').forEach(element => {
+      element.setAttribute('disabled', 'disabled');
+    });
 
     try {
-      // Immediately disable buttons
-      setLoadingCOD(true);
-      setIsProcessingOrder(true);
-      orderInProgress.current = true;
-      
       if (!selectedAddress) {
         toast.error("Please select an address");
         return;
@@ -132,6 +171,9 @@ const OrderSummary = () => {
       // Add unique identifier to help prevent duplicate orders
       const orderRequestId = orderIdRef.current;
       
+      // Clear cart immediately to prevent reordering if page is refreshed
+      setCartItems({});
+      
       const token = await getToken();
       const { data } = await axios.post("/api/order/create", 
         {
@@ -148,31 +190,32 @@ const OrderSummary = () => {
       
       if (data.success) {
         toast.success(data.message);
-        setCartItems({});
-        // Navigate away from this page to prevent further submissions
-        router.push('/order-placed');
+        
+        // Navigate away immediately, don't wait for any further processing
+        setTimeout(() => {
+          window.location.href = '/order-placed';
+        }, 100);
       } else {
         toast.error(data.message || "Failed to create order");
-        // Reset button click protection if order fails
-        buttonClickedOnce.current = false;
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message || "Error creating order");
-      // Reset button click protection if order fails
-      buttonClickedOnce.current = false;
-    } finally {
-      setLoadingCOD(false);
-      // Wait before resetting processing state
-      setTimeout(() => {
-        setIsProcessingOrder(false);
-        orderInProgress.current = false;
-      }, 5000); // Longer timeout to prevent rapid re-clicks
     }
   }
 
   const createOrderStripe = async (e) => {
     // Prevent the default form submission
     if (e) e.preventDefault();
+    
+    // Extra aggressive global protection
+    if (typeof window !== 'undefined') {
+      if (window.__orderBeingPlaced) {
+        console.log("Order already being placed globally");
+        toast.error("An order is already being processed");
+        return;
+      }
+      window.__orderBeingPlaced = true;
+    }
     
     // Multi-layer protection against duplicate orders
     if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
@@ -194,13 +237,19 @@ const OrderSummary = () => {
       return;
     }
     buttonClickedOnce.current = true;
+    
+    // Set state immediately to prevent further interactions
+    setIsProcessingOrder(true);
+    setLoadingStripe(true);
+    orderInProgress.current = true;
+    orderPlaced.current = true;
+    
+    // For absolute certainty, disable all inputs and controls
+    document.querySelectorAll('button, input, select').forEach(element => {
+      element.setAttribute('disabled', 'disabled');
+    });
 
     try {
-      // Immediately disable buttons
-      setLoadingStripe(true);
-      setIsProcessingOrder(true);
-      orderInProgress.current = true;
-      
       if (!selectedAddress) {
         toast.error("Please select an address");
         return;
@@ -219,6 +268,9 @@ const OrderSummary = () => {
       
       // Add unique identifier to help prevent duplicate orders
       const orderRequestId = orderIdRef.current;
+      
+      // Clear cart immediately to prevent reordering if page is refreshed
+      setCartItems({});
       
       const token = await getToken();
       const { data } = await axios.post(
@@ -240,20 +292,9 @@ const OrderSummary = () => {
         window.location.href = data.url;
       } else {
         toast.error(data.message || "Failed to create order");
-        // Reset button click protection if order fails
-        buttonClickedOnce.current = false;
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message || "Error creating order");
-      // Reset button click protection if order fails
-      buttonClickedOnce.current = false;
-    } finally {
-      setLoadingStripe(false);
-      // Wait before resetting processing state
-      setTimeout(() => {
-        setIsProcessingOrder(false);
-        orderInProgress.current = false;
-      }, 5000); // Longer timeout to prevent rapid re-clicks
     }
   };
 
@@ -274,8 +315,22 @@ const OrderSummary = () => {
     return () => {
       buttonClickedOnce.current = false;
       orderInProgress.current = false;
+      if (typeof window !== 'undefined') {
+        window.__orderBeingPlaced = false;
+      }
     };
   }, [user]);
+
+  // Effect to navigate away if order was placed
+  useEffect(() => {
+    if (orderPlaced.current) {
+      const timer = setTimeout(() => {
+        router.push('/order-placed');
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [orderPlaced.current, router]);
 
   return (
     <div className="w-full md:w-96 bg-card-bg p-5">
@@ -291,7 +346,8 @@ const OrderSummary = () => {
           <div className="relative inline-block w-full text-sm border border-border-color">
             <button
               className="peer w-full text-left px-4 pr-2 py-2 bg-background text-text-primary focus:outline-none"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={() => !isProcessingOrder && setIsDropdownOpen(!isDropdownOpen)}
+              disabled={isProcessingOrder}
             >
               <span>
                 {selectedAddress
@@ -316,7 +372,7 @@ const OrderSummary = () => {
               </svg>
             </button>
 
-            {isDropdownOpen && (
+            {isDropdownOpen && !isProcessingOrder && (
               <ul className="absolute w-full bg-background border border-border-color shadow-md mt-1 z-10 py-1.5">
                 {userAddresses.map((address, index) => (
                   <li
@@ -329,7 +385,7 @@ const OrderSummary = () => {
                   </li>
                 ))}
                 <li
-                  onClick={() => router.push("/add-address")}
+                  onClick={() => !isProcessingOrder && router.push("/add-address")}
                   className="px-4 py-2 hover:bg-card-bg cursor-pointer text-center text-text-primary"
                 >
                   + Add New Address
@@ -348,8 +404,12 @@ const OrderSummary = () => {
               type="text"
               placeholder="Enter promo code"
               className="flex-grow w-full outline-none p-2.5 text-text-primary bg-background border border-border-color"
+              disabled={isProcessingOrder}
             />
-            <button className="bg-[#F8BD19] text-white px-9 py-2 hover:bg-[#F8BD19]/90">
+            <button 
+              className="bg-[#F8BD19] text-white px-9 py-2 hover:bg-[#F8BD19]/90 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={isProcessingOrder}
+            >
               Apply
             </button>
           </div>
@@ -393,7 +453,7 @@ const OrderSummary = () => {
           <button
             onClick={createOrder}
             disabled={loadingCOD || loadingStripe || isProcessingOrder}
-            className="w-1/2 bg-[#F8BD19] text-white py-2 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400"
+            className="w-1/2 bg-[#F8BD19] text-white py-2 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loadingCOD ? "Processing..." : "Cash on Delivery"}
           </button>
@@ -401,7 +461,7 @@ const OrderSummary = () => {
           <button
             onClick={createOrderStripe}
             disabled={loadingCOD || loadingStripe || isProcessingOrder}
-            className="w-1/2 flex justify-center items-center border border-indigo-500 bg-white hover:bg-gray-100 py-2 mt-5 disabled:bg-gray-100 disabled:border-gray-300"
+            className="w-1/2 flex justify-center items-center border border-indigo-500 bg-white hover:bg-gray-100 py-2 mt-5 disabled:bg-gray-100 disabled:border-gray-300 disabled:cursor-not-allowed"
           >
             {loadingStripe ? (
               <span className="text-indigo-600">Processing...</span>
@@ -414,10 +474,16 @@ const OrderSummary = () => {
         <button
           onClick={handlePlaceOrder}
           disabled={isProcessingOrder}
-          className="w-full bg-[#F8BD19] text-white py-3 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400"
+          className="w-full bg-[#F8BD19] text-white py-3 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Place Order
+          {isProcessingOrder ? "Processing..." : "Place Order"}
         </button>
+      )}
+      
+      {isProcessingOrder && (
+        <div className="text-center mt-4 text-amber-500 font-medium">
+          Processing order, please wait...
+        </div>
       )}
     </div>
   );
