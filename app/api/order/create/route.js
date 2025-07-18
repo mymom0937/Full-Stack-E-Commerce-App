@@ -7,10 +7,36 @@ import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
+// Store recent order processing to prevent duplicates
+const recentOrders = new Map();
+const DUPLICATE_ORDER_WINDOW_MS = 10000; // 10 seconds
+
 export async function POST(request) {
   try {
     const { userId } = getAuth(request);
     const { address, items } = await request.json();
+    
+    // Generate a unique identifier for this order request
+    const orderKey = `${userId}:${JSON.stringify(items)}:${address}`;
+    
+    // Check if this is a duplicate order within the time window
+    const lastOrderTime = recentOrders.get(orderKey);
+    const now = Date.now();
+    if (lastOrderTime && now - lastOrderTime < DUPLICATE_ORDER_WINDOW_MS) {
+      console.log(`Potential duplicate order detected for ${userId}, ignoring within ${DUPLICATE_ORDER_WINDOW_MS}ms window`);
+      return NextResponse.json({
+        success: false,
+        message: "Order was already submitted. Please wait a moment before trying again."
+      }, { status: 429 });
+    }
+    
+    // Mark this order as being processed
+    recentOrders.set(orderKey, now);
+    
+    // Set a timeout to remove the entry from the map after the window expires
+    setTimeout(() => {
+      recentOrders.delete(orderKey);
+    }, DUPLICATE_ORDER_WINDOW_MS);
     
     // Connect to database with detailed logging
     console.log("Connecting to MongoDB database...");
@@ -25,6 +51,22 @@ export async function POST(request) {
         },
         { status: 400 }
       );
+    }
+    
+    // Check for recent orders in the database as a second layer of protection
+    const recentDbOrder = await Order.findOne({
+      userId,
+      address,
+      'items.product': { $all: items.map(item => item.product) },
+      date: { $gt: Date.now() - 60000 } // Orders within the last minute
+    });
+
+    if (recentDbOrder) {
+      console.log(`Duplicate order detected in database for user ${userId}`);
+      return NextResponse.json({
+        success: false,
+        message: "You have recently placed a similar order. Please wait before placing another."
+      }, { status: 429 });
     }
     
     // Calculate total amount - fixing the async reduce function
@@ -104,6 +146,9 @@ export async function POST(request) {
     const user = await User.findById(userId);
     user.cartItems = {};
     await user.save();
+    
+    // Clean up this order from the recent orders map
+    recentOrders.delete(orderKey);
     
     return NextResponse.json({
       success: true,

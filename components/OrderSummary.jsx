@@ -2,7 +2,7 @@ import { addressDummyData, assets } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 
 const OrderSummary = () => {
@@ -13,6 +13,8 @@ const OrderSummary = () => {
   const [loadingCOD, setLoadingCOD] = useState(false);
   const [loadingStripe, setLoadingStripe] = useState(false);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
+  const orderInProgress = useRef(false);
 
   const [userAddresses, setUserAddresses] = useState([]);
 
@@ -61,11 +63,19 @@ const OrderSummary = () => {
   };
 
   const createOrder = async () => {
+    // Prevent duplicate orders
+    if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
+      console.log("Order creation already in progress, preventing duplicate submission");
+      return;
+    }
+
     try {
       setLoadingCOD(true);
+      setIsProcessingOrder(true);
+      orderInProgress.current = true;
+      
       if (!selectedAddress) {
         toast.error("Please select an address");
-        setLoadingCOD(false);
         return;
       }
       
@@ -75,7 +85,6 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
-        setLoadingCOD(false);
         return;
       }
       
@@ -103,16 +112,29 @@ const OrderSummary = () => {
       toast.error(error.message);
     } finally {
       setLoadingCOD(false);
+      // Add a small delay before allowing new orders to prevent accidental double-clicks
+      setTimeout(() => {
+        setIsProcessingOrder(false);
+        orderInProgress.current = false;
+      }, 1000);
     }
   }
 
 
   const createOrderStripe = async () => {
+    // Prevent duplicate orders
+    if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
+      console.log("Order creation already in progress, preventing duplicate submission");
+      return;
+    }
+
     try {
       setLoadingStripe(true);
+      setIsProcessingOrder(true);
+      orderInProgress.current = true;
+      
       if (!selectedAddress) {
         toast.error("Please select an address");
-        setLoadingStripe(false);
         return;
       }
       
@@ -124,7 +146,6 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
-        setLoadingStripe(false);
         return;
       }
       
@@ -152,6 +173,11 @@ const OrderSummary = () => {
       toast.error(error.message);
     } finally {
       setLoadingStripe(false);
+      // Add a small delay before allowing new orders to prevent accidental double-clicks
+      setTimeout(() => {
+        setIsProcessingOrder(false);
+        orderInProgress.current = false;
+      }, 1000);
     }
   };  
 
@@ -276,7 +302,7 @@ const OrderSummary = () => {
         <div className="flex gap-2">
           <button
             onClick={createOrder}
-            disabled={loadingCOD || loadingStripe}
+            disabled={loadingCOD || loadingStripe || isProcessingOrder}
             className="w-1/2 bg-[#F8BD19] text-white py-2 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400"
           >
             {loadingCOD ? "Processing..." : "Cash on Delivery"}
@@ -284,7 +310,7 @@ const OrderSummary = () => {
 
           <button
             onClick={createOrderStripe}
-            disabled={loadingCOD || loadingStripe}
+            disabled={loadingCOD || loadingStripe || isProcessingOrder}
             className="w-1/2 flex justify-center items-center border border-indigo-500 bg-white hover:bg-gray-100 py-2 mt-5 disabled:bg-gray-100 disabled:border-gray-300"
           >
             {loadingStripe ? (
@@ -297,7 +323,8 @@ const OrderSummary = () => {
       ) : (
         <button
           onClick={handlePlaceOrder}
-          className="w-full bg-[#F8BD19] text-white py-3 mt-5 hover:bg-[#F8BD19]/90"
+          disabled={isProcessingOrder}
+          className="w-full bg-[#F8BD19] text-white py-3 mt-5 hover:bg-[#F8BD19]/90 disabled:bg-gray-400"
         >
           Place Order
         </button>
