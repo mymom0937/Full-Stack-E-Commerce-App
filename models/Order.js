@@ -52,7 +52,13 @@ const orderSchema = new mongoose.Schema(
       required: [true, 'Order date is required']
     },
     paymentType: {type:String, required:true},
-    isPaid : {type:Boolean, required: true, default:false}
+    isPaid : {type:Boolean, required: true, default:false},
+    // Add orderRequestId field to track unique request IDs from the client
+    orderRequestId: {
+      type: String,
+      index: true, // Index this field for faster lookups
+      sparse: true // Only index documents that have this field
+    }
   },
   {
     timestamps: true // Add createdAt and updatedAt timestamps
@@ -61,6 +67,13 @@ const orderSchema = new mongoose.Schema(
 
 // Create a compound index for faster queries
 orderSchema.index({ userId: 1, date: -1 });
+
+// Add a unique index on orderRequestId to prevent duplicate orders
+orderSchema.index({ orderRequestId: 1 }, { 
+  unique: true, 
+  sparse: true,  // Only apply uniqueness to documents that have this field
+  partialFilterExpression: { orderRequestId: { $exists: true } } // Only apply to docs with this field
+});
 
 // Get current database name if connected
 const currentDb = mongoose.connection.db ? mongoose.connection.db.databaseName : null;

@@ -13,6 +13,7 @@ import * as Toast from "@/lib/toast";
 import Script from "next/script";
 import OptimizedImage from "@/components/OptimizedImage";
 import Breadcrumb from "@/components/Breadcrumb";
+import { useProducts } from "@/hooks/useProducts";
 
 // Helper function to generate product structured data
 const generateProductStructuredData = (product) => {
@@ -42,29 +43,21 @@ const generateProductStructuredData = (product) => {
 
 const Product = () => {
     const { id } = useParams();
-    const { products, router, addToCart, isLoading: globalLoading, isInWishlist, toggleWishlist } = useAppContext();
+    const { router, addToCart, isInWishlist, toggleWishlist } = useAppContext();
+    const { useProductById, products } = useProducts({ refreshInterval: 5000 }); // Refresh every 5 seconds
+    const { product, isLoading: productLoading, isError } = useProductById(id);
     
     const [mainImage, setMainImage] = useState(null);
-    const [productData, setProductData] = useState(null);
     const [productImages, setProductImages] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [structuredData, setStructuredData] = useState(null);
     const [isLiked, setIsLiked] = useState(false);
     const [isLikeAnimating, setIsLikeAnimating] = useState(false);
 
-    const fetchProductData = async () => {
-        setIsLoading(true);
-        setError(null);
-        
-        try {
-        const product = products.find(product => product && product._id === id);
-        
+    // Process product data whenever it changes
+    useEffect(() => {
         if (product) {
-            setProductData(product);
-                
-                // Check if product is in wishlist
-                setIsLiked(isInWishlist(product._id));
+            // Check if product is in wishlist
+            setIsLiked(isInWishlist(product._id));
             
             // Handle both image and images fields
             let images = [];
@@ -83,37 +76,31 @@ const Product = () => {
                 setMainImage(images[0]);
             }
                 
-                // Generate structured data
-                setStructuredData(generateProductStructuredData(product));
-            } else {
-                setError("Product not found");
-                Toast.showError("Product not found");
-            }
-        } catch (err) {
-            console.error("Error fetching product:", err);
-            setError("Failed to load product");
-            Toast.showError("Failed to load product");
-        } finally {
-            setIsLoading(false);
+            // Generate structured data
+            setStructuredData(generateProductStructuredData(product));
         }
-    }
+    }, [product, isInWishlist]);
 
     const handleAddToCart = () => {
-        addToCart(productData._id);
+        if (!product) return;
+        addToCart(product._id);
         Toast.showSuccess("Added to cart");
     };
 
     const handleBuyNow = () => {
-        addToCart(productData._id);
+        if (!product) return;
+        addToCart(product._id);
         router.push('/cart');
     };
     
     const handleToggleWishlist = async () => {
+        if (!product) return;
+        
         // Start animation
         setIsLikeAnimating(true);
         
         // Toggle wishlist status
-        const result = await toggleWishlist(productData._id);
+        const result = await toggleWishlist(product._id);
         
         // Update local state if we got a valid result
         if (result !== null) {
@@ -125,28 +112,24 @@ const Product = () => {
             setIsLikeAnimating(false);
         }, 500);
     };
-
-    useEffect(() => {
-        fetchProductData();
-    }, [id, products]);
     
     // Update liked status when wishlist changes
     useEffect(() => {
-        if (productData) {
-            setIsLiked(isInWishlist(productData._id));
+        if (product) {
+            setIsLiked(isInWishlist(product._id));
         }
-    }, [isInWishlist, productData]);
+    }, [isInWishlist, product]);
 
     // Calculate page title and meta description for SEO
-    const pageTitle = productData 
-        ? `${productData.name} | ${productData.category || 'Product'}`
+    const pageTitle = product 
+        ? `${product.name} | ${product.category || 'Product'}`
         : 'Product Details';
         
-    const pageDescription = productData
-        ? `${productData.description?.substring(0, 150)}...`
+    const pageDescription = product
+        ? `${product.description?.substring(0, 150)}...`
         : 'View product details, specifications, and pricing.';
 
-    if (globalLoading || isLoading) return (
+    if (productLoading) return (
         <>
             <Navbar />
             <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
@@ -178,28 +161,11 @@ const Product = () => {
         </>
     );
     
-    if (error) return (
+    if (isError || !product) return (
         <>
             <Navbar />
             <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 md:px-16 lg:px-32">
-                <h1 className="text-2xl font-medium text-text-primary mb-4">{error}</h1>
-                <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
-                <button 
-                    onClick={() => router.push('/all-products')}
-                    className="px-6 py-2 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition"
-                >
-                    View All Products
-                </button>
-            </div>
-            <Footer />
-        </>
-    );
-    
-    if (!productData) return (
-        <>
-            <Navbar />
-            <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 md:px-16 lg:px-32">
-                <h1 className="text-2xl font-medium text-text-primary mb-4">Product Not Found</h1>
+                <h1 className="text-2xl font-medium text-text-primary mb-4">Product not found</h1>
                 <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
                 <button 
                     onClick={() => router.push('/all-products')}
@@ -218,9 +184,14 @@ const Product = () => {
     }
 
     // Calculate discount percentage
-    const discount = productData.price && productData.offerPrice 
-        ? Math.round(((productData.price - productData.offerPrice) / productData.price) * 100) 
+    const discount = product.price && product.offerPrice 
+        ? Math.round(((product.price - product.offerPrice) / product.price) * 100) 
         : 0;
+
+    // Filter for related products
+    const relatedProducts = products
+        .filter(p => p && p._id !== id && p.category === product.category)
+        .slice(0, 5);
 
     return (
         <>
@@ -235,7 +206,7 @@ const Product = () => {
                 {/* Breadcrumb */}
                 <Breadcrumb 
                     items={[]} 
-                    currentPage={productData.name}
+                    currentPage={product.name}
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
@@ -248,110 +219,110 @@ const Product = () => {
                             )}
                             <OptimizedImage
                                 src={mainImage || productImages[0]}
-                                alt={productData.name || "Product"}
+                                alt={product.name || "Product"}
                                 className="w-full h-auto"
                                 width={1280}
-                                height={720}
-                                priority
-                                objectFit="contain"
+                                height={800}
                             />
-                        </div>
 
-                        <div className="grid grid-cols-4 gap-4">
-                            {productImages.map((image, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => setMainImage(image)}
-                                    className={`cursor-pointer rounded-lg overflow-hidden ${mainImage === image ? 'ring-2 ring-orange-500' : ''}`}
-                                >
-                                    <OptimizedImage
-                                        src={image}
-                                        alt={`Product view ${index + 1}`}
-                                        className="w-full h-auto"
-                                        width={300}
-                                        height={300}
-                                        objectFit="contain"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h1 className="text-2xl font-medium text-text-primary">{productData.name}</h1>
-                                <p className="text-text-secondary mt-1">{productData.category}</p>
-                            </div>
                             <button 
                                 onClick={handleToggleWishlist}
-                                className={`p-3 rounded-full hover:bg-card-bg transition ${isLikeAnimating ? 'scale-125' : ''} transform duration-300`}
+                                className={`absolute top-4 right-4 bg-white p-2 rounded-full transition-transform ${isLikeAnimating ? 'scale-125' : 'scale-100'}`}
                             >
-                                <Image
-                                    className={`h-5 w-5 transition-all duration-300 ${isLiked ? 'filter-none' : 'grayscale opacity-60'}`}
-                                    src={isLiked ? '/heart-filled.svg' : assets.heart_icon}
-                                    alt="heart_icon"
-                                    width={20}
-                                    height={20}
-                                />
+                                {isLiked ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-red-500">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 text-gray-600">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                    </svg>
+                                )}
                             </button>
                         </div>
-
-                            <div className="flex items-center gap-0.5">
-                            {Array.from({ length: 5 }).map((_, index) => (
-                                <Image
-                                    key={index}
-                                    className="h-4 w-4"
-                                    src={
-                                        index < Math.floor(4)
-                                            ? assets.star_icon
-                                            : assets.star_dull_icon
-                                    }
-                                    alt="star_icon"
-                                />
-                            ))}
-                            <span className="text-sm text-text-secondary ml-1">(4.5)</span>
+                        
+                        {productImages.length > 1 && (
+                            <div className="grid grid-cols-4 gap-3">
+                                {productImages.map((image, index) => (
+                                    <button 
+                                        key={index} 
+                                        onClick={() => setMainImage(image)}
+                                        className={`
+                                            border-2 rounded-md overflow-hidden
+                                            ${mainImage === image ? 'border-[#F8BD19]' : 'border-transparent hover:border-[#F8BD19]/50'}
+                                            transition duration-200
+                                        `}
+                                    >
+                                        <OptimizedImage
+                                            src={image}
+                                            alt={`Thumbnail ${index + 1}`}
+                                            className="w-full h-16 object-contain"
+                                            width={100}
+                                            height={100}
+                                        />
+                                    </button>
+                                ))}
                             </div>
+                        )}
+                    </div>
 
-                        <p className="text-text-secondary leading-relaxed">{productData.description}</p>
+                    <div>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h1 className="text-2xl font-medium text-text-primary">{product.name}</h1>
+                                <p className="text-text-secondary mt-1">{product.category}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {/* Star ratings placeholder - could be dynamic */}
+                                <div className="flex">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Image
+                                            key={star}
+                                            src={star <= 4 ? assets.star_icon : assets.star_dull_icon}
+                                            alt="star"
+                                            className="w-4 h-4"
+                                        />
+                                    ))}
+                                </div>
+                                <span className="text-sm text-text-secondary">(4.0)</span>
+                            </div>
+                        </div>
+
+                        <p className="text-text-secondary leading-relaxed">{product.description}</p>
 
                         <div className="flex items-end gap-4">
-                            <p className="text-2xl font-medium text-text-primary">{process.env.NEXT_PUBLIC_CURRENCY}{productData.offerPrice}</p>
-                            {productData.price > productData.offerPrice && (
+                            <p className="text-2xl font-medium text-text-primary">{process.env.NEXT_PUBLIC_CURRENCY}{product.offerPrice}</p>
+                            {product.price > product.offerPrice && (
                                 <>
-                                    <p className="text-text-secondary line-through">{process.env.NEXT_PUBLIC_CURRENCY}{productData.price}</p>
-                                    <p className="text-green-600 text-sm">Save {process.env.NEXT_PUBLIC_CURRENCY}{(productData.price - productData.offerPrice).toFixed(2)}</p>
+                                    <p className="text-text-secondary line-through">{process.env.NEXT_PUBLIC_CURRENCY}{product.price}</p>
+                                    <p className="text-green-600 text-sm">Save {process.env.NEXT_PUBLIC_CURRENCY}{(product.price - product.offerPrice).toFixed(2)}</p>
                                 </>
                             )}
                         </div>
 
-                        <div className="h-0.5 bg-border-color w-full"></div>
+                        <div className="h-px bg-border-color my-6"></div>
 
-                        <div className="space-y-4">
-                            <p className="flex justify-between">
-                                <span className="text-text-secondary">Availability</span>
-                                <span className="text-green-600">In Stock</span>
-                            </p>
+                        <div className="space-y-4 text-sm">
                             <p className="flex justify-between">
                                 <span className="text-text-secondary">Category</span>
-                                <span className="text-text-primary">{productData.category || "Uncategorized"}</span>
+                                <span className="text-text-primary">{product.category || "Uncategorized"}</span>
                             </p>
                             <p className="flex justify-between">
                                 <span className="text-text-secondary">SKU</span>
-                                <span className="text-text-primary">{productData._id?.substring(0, 8) || "Unknown"}</span>
+                                <span className="text-text-primary">{product._id?.substring(0, 8) || "Unknown"}</span>
                             </p>
                         </div>
 
-                        <div className="flex gap-4 pt-4">
+                        <div className="mt-8 flex gap-4">
                             <button
                                 onClick={handleAddToCart}
-                                className="px-8 py-3 border border-border-color rounded hover:bg-card-bg transition flex-1 md:flex-none text-text-primary"
+                                className="flex-1 py-3 border border-[#F8BD19] text-[#F8BD19] font-medium rounded hover:bg-[#F8BD19]/10 transition-colors"
                             >
                                 Add to Cart
                             </button>
                             <button
                                 onClick={handleBuyNow}
-                                className="px-8 py-3 bg-[#F8BD19] text-white rounded hover:bg-[#F8BD19]/90 transition flex-1 md:flex-none"
+                                className="flex-1 py-3 bg-[#F8BD19] text-white font-medium rounded hover:bg-[#F8BD19]/90 transition-colors"
                             >
                                 Buy Now
                             </button>
@@ -359,22 +330,16 @@ const Product = () => {
                     </div>
                 </div>
 
-                <div className="space-y-8 py-10">
-                    <h2 className="text-2xl font-medium text-text-primary">Related Products</h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                        {products
-                            .filter(
-                                (product) =>
-                                    product &&
-                                    product._id !== id &&
-                                    product.category === productData.category
-                            )
-                            .slice(0, 5)
-                            .map((product, index) => (
-                                <ProductCard key={index} product={product} />
+                {relatedProducts.length > 0 && (
+                    <div className="mt-16">
+                        <h2 className="text-2xl font-medium text-text-primary">Related Products</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                            {relatedProducts.map((relatedProduct) => (
+                                <ProductCard key={relatedProduct._id} product={relatedProduct} />
                             ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
             <Footer />
         </>

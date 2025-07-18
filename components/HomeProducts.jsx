@@ -1,10 +1,14 @@
+'use client';
+
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { useAppContext } from "@/context/AppContext";
 import Loading from "./Loading";
+import { useProducts } from "@/hooks/useProducts";
 
 const HomeProducts = () => {
-  const { products, router, isLoading } = useAppContext();
+  const { router } = useAppContext();
+  const { products, isLoadingProducts } = useProducts({ refreshInterval: 5000 }); // Auto-refresh every 5 seconds
   const [randomizedProducts, setRandomizedProducts] = useState([]);
   
   // Function to shuffle an array (Fisher-Yates algorithm)
@@ -22,6 +26,8 @@ const HomeProducts = () => {
     if (products && products.length > 0) {
       const shuffled = shuffleArray(products);
       setRandomizedProducts(shuffled);
+    } else {
+      setRandomizedProducts([]);
     }
   }, [products]);
 
@@ -37,7 +43,7 @@ const HomeProducts = () => {
         </button>
       </div>
 
-      {isLoading ? (
+      {isLoadingProducts ? (
         <Loading variant="products" count={10} />
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">

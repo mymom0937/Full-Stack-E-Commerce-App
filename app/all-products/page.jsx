@@ -9,10 +9,12 @@ import Image from "next/image";
 import { assets } from "@/assets/assets";
 import Breadcrumb from "@/components/Breadcrumb";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useProducts } from "@/hooks/useProducts";
 
 // Separate component that uses useSearchParams
 const ProductsContent = () => {
-    const { products, isLoading, toggleWishlist, isInWishlist, addToCart } = useAppContext();
+    const { toggleWishlist, isInWishlist, addToCart } = useAppContext();
+    const { products, isLoadingProducts } = useProducts({ refreshInterval: 15000 }); // Auto-refresh every 15 seconds
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [sortOption, setSortOption] = useState("default");
     const [filterCategory, setFilterCategory] = useState("all");
@@ -349,7 +351,7 @@ const ProductsContent = () => {
                             </div>
                             
                             {/* Products */}
-                            {isLoading ? (
+                            {isLoadingProducts ? (
                                 <Loading variant="products" count={8} />
                             ) : filteredProducts.length === 0 ? (
                                 <div className="bg-card-bg p-8 rounded-lg shadow-sm text-center transition-colors duration-200">

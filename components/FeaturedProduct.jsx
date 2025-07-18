@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
-import { useAppContext } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
+import { useProducts } from "@/hooks/useProducts";
 
 const FeaturedProduct = () => {
-  const { products } = useAppContext();
+  const { products } = useProducts({ refreshInterval: 5000 }); // Auto-refresh every 5 seconds
   const router = useRouter();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   
@@ -30,6 +30,8 @@ const FeaturedProduct = () => {
         .filter(Boolean); // Remove any undefined products
       
       setFeaturedProducts(foundProducts);
+    } else {
+      setFeaturedProducts([]);
     }
   }, [products]);
 

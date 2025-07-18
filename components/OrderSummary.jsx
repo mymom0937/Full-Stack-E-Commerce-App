@@ -4,9 +4,14 @@ import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
+import { v4 as uuidv4 } from 'uuid';
+
+// Simple UUID generation if uuid library is not available
+const generateOrderId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
 
 const OrderSummary = () => {
-
   const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,6 +20,11 @@ const OrderSummary = () => {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const orderInProgress = useRef(false);
+  const orderIdRef = useRef(generateOrderId());
+  const buttonClickedOnce = useRef(false);
+  
+  // Track button click timestamps to prevent duplicate submissions
+  const lastClickTime = useRef(0);
 
   const [userAddresses, setUserAddresses] = useState([]);
 
@@ -44,7 +54,17 @@ const OrderSummary = () => {
     setIsDropdownOpen(false);
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    
+    // Prevent rapid multiple clicks
+    const now = Date.now();
+    if (now - lastClickTime.current < 2000) {
+      console.log("Button clicked too soon after previous click");
+      return;
+    }
+    lastClickTime.current = now;
+    
     if (!selectedAddress) {
       toast.error("Please select an address");
       return;
@@ -59,17 +79,38 @@ const OrderSummary = () => {
       return;
     }
     
+    // Generate a new order ID for this session
+    orderIdRef.current = generateOrderId();
     setShowPaymentOptions(true);
   };
 
-  const createOrder = async () => {
-    // Prevent duplicate orders
+  const createOrder = async (e) => {
+    // Prevent the default form submission
+    if (e) e.preventDefault();
+    
+    // Multi-layer protection against duplicate orders
     if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
       console.log("Order creation already in progress, preventing duplicate submission");
       return;
     }
+    
+    // Prevent rapid multiple clicks
+    const now = Date.now();
+    if (now - lastClickTime.current < 3000) {
+      console.log("Button clicked too soon after previous click");
+      return;
+    }
+    lastClickTime.current = now;
+    
+    // One-time button click protection
+    if (buttonClickedOnce.current) {
+      console.log("Button already clicked once");
+      return;
+    }
+    buttonClickedOnce.current = true;
 
     try {
+      // Immediately disable buttons
       setLoadingCOD(true);
       setIsProcessingOrder(true);
       orderInProgress.current = true;
@@ -88,11 +129,15 @@ const OrderSummary = () => {
         return;
       }
       
+      // Add unique identifier to help prevent duplicate orders
+      const orderRequestId = orderIdRef.current;
+      
       const token = await getToken();
       const { data } = await axios.post("/api/order/create", 
         {
           address: selectedAddress._id,
           items: cartItemsArray,
+          orderRequestId
         },
         {
           headers: {
@@ -104,31 +149,54 @@ const OrderSummary = () => {
       if (data.success) {
         toast.success(data.message);
         setCartItems({});
+        // Navigate away from this page to prevent further submissions
         router.push('/order-placed');
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Failed to create order");
+        // Reset button click protection if order fails
+        buttonClickedOnce.current = false;
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message || "Error creating order");
+      // Reset button click protection if order fails
+      buttonClickedOnce.current = false;
     } finally {
       setLoadingCOD(false);
-      // Add a small delay before allowing new orders to prevent accidental double-clicks
+      // Wait before resetting processing state
       setTimeout(() => {
         setIsProcessingOrder(false);
         orderInProgress.current = false;
-      }, 1000);
+      }, 5000); // Longer timeout to prevent rapid re-clicks
     }
   }
 
-
-  const createOrderStripe = async () => {
-    // Prevent duplicate orders
+  const createOrderStripe = async (e) => {
+    // Prevent the default form submission
+    if (e) e.preventDefault();
+    
+    // Multi-layer protection against duplicate orders
     if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
       console.log("Order creation already in progress, preventing duplicate submission");
       return;
     }
+    
+    // Prevent rapid multiple clicks
+    const now = Date.now();
+    if (now - lastClickTime.current < 3000) {
+      console.log("Button clicked too soon after previous click");
+      return;
+    }
+    lastClickTime.current = now;
+    
+    // One-time button click protection
+    if (buttonClickedOnce.current) {
+      console.log("Button already clicked once");
+      return;
+    }
+    buttonClickedOnce.current = true;
 
     try {
+      // Immediately disable buttons
       setLoadingStripe(true);
       setIsProcessingOrder(true);
       orderInProgress.current = true;
@@ -149,12 +217,16 @@ const OrderSummary = () => {
         return;
       }
       
+      // Add unique identifier to help prevent duplicate orders
+      const orderRequestId = orderIdRef.current;
+      
       const token = await getToken();
       const { data } = await axios.post(
         "/api/order/stripe",
         {
           address: selectedAddress._id,
           items: cartItemsArray,
+          orderRequestId
         },
         {
           headers: {
@@ -167,24 +239,42 @@ const OrderSummary = () => {
         // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Failed to create order");
+        // Reset button click protection if order fails
+        buttonClickedOnce.current = false;
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message || "Error creating order");
+      // Reset button click protection if order fails
+      buttonClickedOnce.current = false;
     } finally {
       setLoadingStripe(false);
-      // Add a small delay before allowing new orders to prevent accidental double-clicks
+      // Wait before resetting processing state
       setTimeout(() => {
         setIsProcessingOrder(false);
         orderInProgress.current = false;
-      }, 1000);
+      }, 5000); // Longer timeout to prevent rapid re-clicks
     }
-  };  
+  };
 
   useEffect(() => {
     if(user){
       fetchUserAddresses();
     }
+    
+    // Reset button click state when component mounts
+    buttonClickedOnce.current = false;
+    orderInProgress.current = false;
+    lastClickTime.current = 0;
+    
+    // Generate a new order ID
+    orderIdRef.current = generateOrderId();
+    
+    // Clean up function
+    return () => {
+      buttonClickedOnce.current = false;
+      orderInProgress.current = false;
+    };
   }, [user]);
 
   return (

@@ -10,14 +10,14 @@ import { useTheme } from "@/context/ThemeContext";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaRegEye } from "react-icons/fa";
+import { useProducts } from "@/hooks/useProducts";
 
 const ProductList = () => {
   const { router, getToken, user } = useAppContext();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const { sellerProducts, isLoadingSellerProducts, refreshSellerProducts } = useProducts({ refreshInterval: 10000 });
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -33,35 +33,6 @@ const ProductList = () => {
   const [newImages, setNewImages] = useState([]);
   const [productToDelete, setProductToDelete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const fetchSellerProduct = async () => {
-    try {
-      setLoading(true);
-      const token = await getToken();
-      const { data } = await axios.get("/api/product/seller-list", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (data.success) {
-        setProducts(data.products);
-        setLoading(false);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchSellerProduct();
-    }
-  }, [user]);
 
   // Handle opening edit modal
   const handleEditClick = async (product) => {
@@ -164,7 +135,7 @@ const ProductList = () => {
         toast.success(data.message);
         // Close modal and refresh product list
         setIsEditModalOpen(false);
-        fetchSellerProduct();
+        refreshSellerProducts();
       } else {
         toast.error(data.message);
       }
@@ -196,7 +167,7 @@ const ProductList = () => {
         // Close modal and refresh product list
         setIsDeleteModalOpen(false);
         setProductToDelete(null);
-        fetchSellerProduct();
+        refreshSellerProducts();
       } else {
         toast.error(data.message);
       }
@@ -221,7 +192,7 @@ const ProductList = () => {
 
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between">
-      {loading ? (
+      {isLoadingSellerProducts ? (
         <Loading />
       ) : (
         <div className="w-full md:p-10 p-4">
@@ -231,13 +202,13 @@ const ProductList = () => {
           
           {/* Mobile Card View (visible only on small screens) */}
           <div className="md:hidden w-full">
-            {products.length === 0 ? (
+            {sellerProducts.length === 0 ? (
               <div className="text-center p-8 bg-card-bg rounded-md border border-border-color">
                 No products found. Add your first product!
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {products.map((product) => (
+                {sellerProducts.map((product) => (
                   <div key={product._id} className="bg-card-bg rounded-md border border-border-color p-4 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="bg-gray-500/10 rounded p-2">
@@ -295,14 +266,14 @@ const ProductList = () => {
                   </tr>
                 </thead>
                 <tbody className="text-sm text-text-secondary">
-                  {products.length === 0 ? (
+                  {sellerProducts.length === 0 ? (
                     <tr>
                       <td colSpan="4" className="px-4 py-8 text-center">
                         No products found. Add your first product!
                       </td>
                     </tr>
                   ) : (
-                    products.map((product) => (
+                    sellerProducts.map((product) => (
                       <tr key={product._id} className="border-t border-border-color">
                         <td className="px-4 py-3">
                           <div className="flex items-center space-x-3">

@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Outfit, Ovo } from "next/font/google";
+import { SWRProvider } from "@/lib/swr";
 
 // Configure the fonts
 const outfit = Outfit({
@@ -67,8 +68,10 @@ export default function RootLayout({ children }) {
         <body className="font-outfit">
           <AppContextProvider>
             <ThemeProvider>
-              {children}
-              <Toaster position="top-center" />
+              <SWRProvider>
+                {children}
+                <Toaster position="top-center" />
+              </SWRProvider>
             </ThemeProvider>
           </AppContextProvider>
         </body>

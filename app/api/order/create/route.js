@@ -9,12 +9,25 @@ import mongoose from "mongoose";
 
 // Store recent order processing to prevent duplicates
 const recentOrders = new Map();
-const DUPLICATE_ORDER_WINDOW_MS = 10000; // 10 seconds
+const DUPLICATE_ORDER_WINDOW_MS = 30000; // 30 seconds
+
+// Store already processed orderRequestIds
+const processedOrderRequestIds = new Map();
+const ORDER_REQUEST_EXPIRY_MS = 3600000; // 1 hour
 
 export async function POST(request) {
   try {
     const { userId } = getAuth(request);
-    const { address, items } = await request.json();
+    const { address, items, orderRequestId } = await request.json();
+    
+    // Check if this is an exact duplicate request with the same orderRequestId
+    if (orderRequestId && processedOrderRequestIds.has(orderRequestId)) {
+      console.log(`Rejected duplicate order request with ID ${orderRequestId}`);
+      return NextResponse.json({
+        success: false,
+        message: "This order has already been processed. Please refresh the page if you'd like to place a new order."
+      }, { status: 429 });
+    }
     
     // Generate a unique identifier for this order request
     const orderKey = `${userId}:${JSON.stringify(items)}:${address}`;
@@ -92,7 +105,9 @@ export async function POST(request) {
       date: Date.now(),
       paymentType: "COD", // Default payment type for this route is COD
       isPaid: false, // Default for COD is unpaid
-      status: "Order Placed"
+      status: "Order Placed",
+      // Store the orderRequestId for future duplicate detection
+      orderRequestId: orderRequestId || undefined
     };
 
     console.log("Order data to be saved:", JSON.stringify(orderData));
@@ -105,6 +120,16 @@ export async function POST(request) {
       const savedOrder = await order.save();
       orderId = savedOrder._id.toString();
       console.log("Order created in MongoDB:", orderId);
+      
+      // Mark this orderRequestId as processed
+      if (orderRequestId) {
+        processedOrderRequestIds.set(orderRequestId, true);
+        
+        // Expire the processed ID after a certain time
+        setTimeout(() => {
+          processedOrderRequestIds.delete(orderRequestId);
+        }, ORDER_REQUEST_EXPIRY_MS);
+      }
     } catch (dbError) {
       console.error("Error saving order to database:", dbError);
       console.error("Error details:", dbError.message);
@@ -115,6 +140,16 @@ export async function POST(request) {
         const result = await mongoose.connection.db.collection('orders').insertOne(orderData);
         orderId = result.insertedId.toString();
         console.log("Order created directly in MongoDB:", orderId);
+        
+        // Mark this orderRequestId as processed
+        if (orderRequestId) {
+          processedOrderRequestIds.set(orderRequestId, true);
+          
+          // Expire the processed ID after a certain time
+          setTimeout(() => {
+            processedOrderRequestIds.delete(orderRequestId);
+          }, ORDER_REQUEST_EXPIRY_MS);
+        }
       } catch (directError) {
         console.error("Direct MongoDB insert also failed:", directError.message);
       }

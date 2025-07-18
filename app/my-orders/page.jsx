@@ -10,39 +10,18 @@ import Breadcrumb from "@/components/Breadcrumb";
 import axios from "axios";
 import * as Toast from "@/lib/toast";
 import OptimizedImage from "@/components/OptimizedImage";
+import { useOrders } from "@/hooks/useOrders";
 
 const MyOrders = () => {
   const { currency, getToken, user, router, products } = useAppContext();
-
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { customerOrders, isLoadingCustomerOrders, refreshCustomerOrders } = useOrders({ refreshInterval: 10000 });
+  
   const [processedOrders, setProcessedOrders] = useState([]);
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const token = await getToken();
-      const { data } = await axios.get("/api/order/list", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (data.success) {
-        setOrders(data.orders.reverse());
-      } else {
-        Toast.showError(data.message || "Failed to fetch orders");
-      }
-    } catch (error) {
-      Toast.handleApiError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
   // Process orders to resolve product references and handle potential undefined values
   useEffect(() => {
-    if (orders.length > 0 && products.length > 0) {
-      const processed = orders.map(order => {
+    if (customerOrders.length > 0 && products.length > 0) {
+      const processed = customerOrders.map(order => {
         // Process items to resolve product references
         const items = Array.isArray(order.items) ? order.items.map(item => {
           let productData = products.find(p => p && p._id === item.product);
@@ -87,14 +66,10 @@ const MyOrders = () => {
       });
       
       setProcessedOrders(processed);
+    } else {
+      setProcessedOrders([]);
     }
-  }, [orders, products]);
-
-  useEffect(() => {
-    if (user) {
-      fetchOrders();
-    }
-  }, [user]);
+  }, [customerOrders, products]);
 
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -159,7 +134,7 @@ const MyOrders = () => {
       if (data.success) {
         Toast.showSuccess("Payment status updated successfully");
         // Refresh the orders
-        fetchOrders();
+        refreshCustomerOrders();
       } else {
         Toast.showError(data.message || "Failed to update payment status");
       }
@@ -176,7 +151,7 @@ const MyOrders = () => {
           {/* Breadcrumb */}
           <Breadcrumb currentPage="My Orders" />
 
-          {loading ? (
+          {isLoadingCustomerOrders ? (
             <Loading />
           ) : processedOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 bg-card-bg rounded-lg border border-border-color">
