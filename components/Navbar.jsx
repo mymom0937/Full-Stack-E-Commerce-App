@@ -124,6 +124,20 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('overflow-x-hidden');
+      document.documentElement.classList.add('overflow-x-hidden');
+    } else {
+      document.body.classList.remove('overflow-x-hidden');
+      document.documentElement.classList.remove('overflow-x-hidden');
+    }
+    return () => {
+      document.body.classList.remove('overflow-x-hidden');
+      document.documentElement.classList.remove('overflow-x-hidden');
+    };
+  }, [isMenuOpen]);
+
   // Animation variants
   const navItemVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -382,14 +396,14 @@ const Navbar = () => {
 
               <UserButton.MenuItems>
                 <UserButton.Action
-                  label="Wishlist"
-                  labelIcon={
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z" 
-                      stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  }
-                  onClick={() => router.push("/wishlist")}
+                label="Wishlist"
+                labelIcon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z" 
+                    stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                }
+                onClick={() => router.push("/wishlist")}
                 />
               </UserButton.MenuItems>
 
@@ -409,9 +423,9 @@ const Navbar = () => {
                 />
               </UserButton.MenuItems>
 
-              <UserButton.MenuItems>
-                <UserButton.SignOutButton onSignOut={handleLogout} />
-              </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.SignOutButton onSignOut={handleLogout} />
+            </UserButton.MenuItems>
             </UserButton>
           </motion.div>
         ) : (
@@ -454,7 +468,7 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(false)}
           >
             <motion.div 
-              className="absolute right-0 top-0 h-full w-72 bg-background p-5 overflow-y-auto z-50"
+              className="absolute right-0 top-0 h-full w-64 max-w-[80vw] bg-background p-5 overflow-y-auto z-50"
               initial={{ x: 300 }}
               animate={{ x: 0 }}
               exit={{ x: 300 }}
@@ -493,55 +507,55 @@ const Navbar = () => {
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            </svg>
                   </motion.button>
                 </form>
-              </div>
-
+        </div>
+        
               <div className="flex flex-col gap-4 pb-20">
-                <Link href="/" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
-                    <HomeIcon />
-                  </span>
+              <Link href="/" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
+                  <HomeIcon />
+                </span>
                   <span className="text-base">Home</span>
-                </Link>
-                <Link href="/all-products" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
-                    <BoxIcon />
-                  </span>
+              </Link>
+              <Link href="/all-products" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
+                  <BoxIcon />
+                </span>
                   <span className="text-base">Shop</span>
-                </Link>
-                <Link href="/wishlist" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <IconWrapper src={assets.heart_icon} alt="wishlist icon" />
+              </Link>
+              <Link href="/wishlist" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <IconWrapper src={assets.heart_icon} alt="wishlist icon" />
                   <span className="text-base">Wishlist</span> {wishlistCount > 0 && <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
-                </Link>
-                <Link href="/cart" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
-                    <CartIcon />
-                  </span>
+              </Link>
+              <Link href="/cart" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
+                  <CartIcon />
+                </span>
                   <span className="text-base">Cart</span> {cartCount > 0 && <span className="ml-2 bg-[#F8BD19] text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
-                </Link>
-                <Link href="/about" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-                  </svg>
+              </Link>
+              <Link href="/about" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                </svg>
                   <span className="text-base">About</span>
-                </Link>
-                <Link href="/contact" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                  </svg>
+              </Link>
+              <Link href="/contact" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                </svg>
                   <span className="text-base">Contact</span>
-                </Link>
-                {isSeller && (
-                  <button
-                    onClick={() => {
-                      router.push("/seller");
-                      setIsMenuOpen(false);
-                    }}
-                    className="hover:text-accent-color transition py-2 border-b border-border-color text-left flex items-center gap-2"
-                  >
-                    <IconWrapper src={assets.product_list_icon} alt="seller dashboard icon" />
+              </Link>
+              {isSeller && (
+                <button
+                  onClick={() => {
+                    router.push("/seller");
+                    setIsMenuOpen(false);
+                  }}
+                  className="hover:text-accent-color transition py-2 border-b border-border-color text-left flex items-center gap-2"
+                >
+                  <IconWrapper src={assets.product_list_icon} alt="seller dashboard icon" />
                     <span className="text-base">Merchant Portal</span>
                   </button>
                 )}
@@ -557,23 +571,23 @@ const Navbar = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     Sign In
-                  </button>
-                )}
-                {user && (
-                  <button
-                    onClick={handleMobileLogout}
-                    className="hover:text-red-600 transition py-2 border-b border-border-color text-left text-red-600 flex items-center gap-2"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                    </svg>
+                </button>
+              )}
+              {user && (
+                <button
+                  onClick={handleMobileLogout}
+                  className="hover:text-red-600 transition py-2 border-b border-border-color text-left text-red-600 flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                  </svg>
                     <span className="text-base">Logout</span>
-                  </button>
-                )}
-              </div>
+                </button>
+              )}
+            </div>
             </motion.div>
           </motion.div>
-        )}
+      )}
       </AnimatePresence>
     </motion.nav>
   );
