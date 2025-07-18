@@ -138,6 +138,12 @@ const MyOrders = () => {
     return String(address);
   };
 
+  // Format price to show only 2 decimal places
+  const formatPrice = (price) => {
+    if (!price) return '0.00';
+    return parseFloat(price).toFixed(2);
+  };
+
   // Add this function to handle updating payment status
   const updatePaymentStatus = async (orderId) => {
     try {
@@ -270,7 +276,7 @@ const MyOrders = () => {
                       <span className="font-medium text-text-secondary">Amount:</span>
                       <span className="ml-1 text-text-primary font-medium text-lg">
                         {currency.symbol}
-                      {order.amount || 0}
+                      {formatPrice(order.amount || 0)}
                       </span>
                     </div>
                     <div className="text-sm text-text-secondary flex items-center justify-end">

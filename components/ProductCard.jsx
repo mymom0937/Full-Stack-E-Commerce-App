@@ -20,7 +20,18 @@ const ProductCard = ({ product }) => {
     
     // Handle different image formats (array, single string, or undefined)
     let productImage = '/placeholder-image.png';
-    if (product.images) {
+    if (product.image) {
+        // Handle if product.image is an array
+        if (Array.isArray(product.image) && product.image.length > 0) {
+            productImage = product.image[0];
+        } 
+        // Handle if product.image is a string
+        else if (typeof product.image === 'string') {
+            productImage = product.image;
+        }
+    } 
+    // Handle if the field is called images instead of image
+    else if (product.images) {
         if (Array.isArray(product.images) && product.images.length > 0) {
             productImage = product.images[0];
         }

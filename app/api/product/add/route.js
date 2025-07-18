@@ -100,25 +100,23 @@ export async function POST(request) {
         
         // Get current database and collection info
         console.log("Current database:", mongoose.connection.db.databaseName);
-        const productCollection = mongoose.connection.db.collection('products');
-        console.log("Product collection exists:", !!productCollection);
         
-        // Directly insert using MongoDB native driver as a fallback check
-        const directInsertResult = await productCollection.insertOne(productData);
-        console.log("Direct MongoDB insert result:", directInsertResult);
+        // Use our enhanced createProduct method to ensure proper saving
+        const savedProduct = await Product.createProduct(productData);
+        console.log("Product created and verified with ID:", savedProduct._id);
         
-        if (!directInsertResult.acknowledged) {
-            throw new Error("Failed to insert product directly into MongoDB");
+        // Double verification - try to fetch the product directly from MongoDB
+        const directCheck = await mongoose.connection.db.collection('products').findOne({ _id: savedProduct._id });
+        console.log("Direct MongoDB verification result:", !!directCheck);
+
+        if (!directCheck) {
+            console.warn("Product was saved with Mongoose but could not be verified with direct MongoDB query");
         }
-        
-        // Get the inserted product to verify
-        const verifiedProduct = await productCollection.findOne({ _id: directInsertResult.insertedId });
-        console.log("Verified product exists:", !!verifiedProduct);
 
         return NextResponse.json({ 
             success: true, 
             message: "Product added successfully", 
-            newProduct: verifiedProduct 
+            newProduct: savedProduct 
         }, { status: 201 });
 
     } catch (error) {
