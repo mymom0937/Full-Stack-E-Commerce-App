@@ -14,6 +14,7 @@ const generateOrderId = () => {
 // Global variable to prevent multiple order submissions across renders
 if (typeof window !== 'undefined') {
   window.__orderBeingPlaced = window.__orderBeingPlaced || false;
+  window.__lastOrderTimestamp = window.__lastOrderTimestamp || 0;
 }
 
 const OrderSummary = () => {
@@ -35,9 +36,11 @@ const OrderSummary = () => {
   // Check global flag on component mount
   useEffect(() => {
     if (typeof window !== 'undefined' && window.__orderBeingPlaced) {
-      setIsProcessingOrder(true);
-      orderInProgress.current = true;
-      buttonClickedOnce.current = true;
+      // Reset the global flag on component mount in case it was stuck
+      window.__orderBeingPlaced = false;
+      setIsProcessingOrder(false);
+      orderInProgress.current = false;
+      buttonClickedOnce.current = false;
     }
   }, []);
 
@@ -73,11 +76,9 @@ const OrderSummary = () => {
   const handlePlaceOrder = (e) => {
     e.preventDefault(); // Prevent default form submission
     
-    // Super aggressive protection against duplicate orders
-    if (typeof window !== 'undefined' && window.__orderBeingPlaced) {
-      console.log("Order already being placed globally");
-      toast.error("An order is already being processed. Please wait.");
-      return;
+    // Reset global flag in case it was stuck
+    if (typeof window !== 'undefined') {
+      window.__orderBeingPlaced = false;
     }
     
     // Prevent rapid multiple clicks
@@ -111,51 +112,37 @@ const OrderSummary = () => {
     // Prevent the default form submission
     if (e) e.preventDefault();
     
-    // Extra aggressive global protection
+    // Check for duplicate order submission (using global timestamp)
     if (typeof window !== 'undefined') {
-      if (window.__orderBeingPlaced) {
-        console.log("Order already being placed globally");
-        toast.error("An order is already being processed");
+      const now = Date.now();
+      if (window.__lastOrderTimestamp && now - window.__lastOrderTimestamp < 10000) {
+        console.log("Preventing duplicate order - too soon after last order");
+        toast.error("An order was just placed. Please wait a moment.");
         return;
       }
-      window.__orderBeingPlaced = true;
     }
     
-    // Multi-layer protection against duplicate orders
-    if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
-      console.log("Order creation already in progress, preventing duplicate submission");
+    // Prevent if already processing
+    if (loadingCOD || loadingStripe || isProcessingOrder || buttonClickedOnce.current) {
+      console.log("Order already in progress, preventing duplicate");
       return;
     }
     
-    // Prevent rapid multiple clicks
-    const now = Date.now();
-    if (now - lastClickTime.current < 3000) {
-      console.log("Button clicked too soon after previous click");
-      return;
-    }
-    lastClickTime.current = now;
-    
-    // One-time button click protection
-    if (buttonClickedOnce.current) {
-      console.log("Button already clicked once");
-      return;
-    }
+    // Reset state
+    setLoadingCOD(true);
+    setIsProcessingOrder(true);
     buttonClickedOnce.current = true;
     
-    // Set state immediately to prevent further interactions
-    setIsProcessingOrder(true);
-    setLoadingCOD(true);
-    orderInProgress.current = true;
-    orderPlaced.current = true;
+    // Set global flag
+    if (typeof window !== 'undefined') {
+      window.__orderBeingPlaced = true;
+      window.__lastOrderTimestamp = Date.now();
+    }
     
-    // For absolute certainty, disable all inputs and controls
-    document.querySelectorAll('button, input, select').forEach(element => {
-      element.setAttribute('disabled', 'disabled');
-    });
-
     try {
       if (!selectedAddress) {
         toast.error("Please select an address");
+        resetOrderState();
         return;
       }
       
@@ -165,6 +152,7 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
+        resetOrderState();
         return;
       }
       
@@ -172,6 +160,7 @@ const OrderSummary = () => {
       const orderRequestId = orderIdRef.current;
       
       // Clear cart immediately to prevent reordering if page is refreshed
+      const cartBackup = {...cartItems};
       setCartItems({});
       
       const token = await getToken();
@@ -179,7 +168,8 @@ const OrderSummary = () => {
         {
           address: selectedAddress._id,
           items: cartItemsArray,
-          orderRequestId
+          orderRequestId,
+          clientTimestamp: Date.now()
         },
         {
           headers: {
@@ -190,16 +180,22 @@ const OrderSummary = () => {
       
       if (data.success) {
         toast.success(data.message);
+        orderPlaced.current = true;
         
         // Navigate away immediately, don't wait for any further processing
         setTimeout(() => {
           window.location.href = '/order-placed';
         }, 100);
       } else {
+        // Restore cart if order failed
+        setCartItems(cartBackup);
         toast.error(data.message || "Failed to create order");
+        resetOrderState();
       }
     } catch (error) {
+      console.error("Order creation error:", error);
       toast.error(error.response?.data?.message || error.message || "Error creating order");
+      resetOrderState();
     }
   }
 
@@ -207,51 +203,37 @@ const OrderSummary = () => {
     // Prevent the default form submission
     if (e) e.preventDefault();
     
-    // Extra aggressive global protection
+    // Check for duplicate order submission (using global timestamp)
     if (typeof window !== 'undefined') {
-      if (window.__orderBeingPlaced) {
-        console.log("Order already being placed globally");
-        toast.error("An order is already being processed");
+      const now = Date.now();
+      if (window.__lastOrderTimestamp && now - window.__lastOrderTimestamp < 10000) {
+        console.log("Preventing duplicate order - too soon after last order");
+        toast.error("An order was just placed. Please wait a moment.");
         return;
       }
-      window.__orderBeingPlaced = true;
     }
     
-    // Multi-layer protection against duplicate orders
-    if (orderInProgress.current || loadingCOD || loadingStripe || isProcessingOrder) {
-      console.log("Order creation already in progress, preventing duplicate submission");
+    // Prevent if already processing
+    if (loadingCOD || loadingStripe || isProcessingOrder || buttonClickedOnce.current) {
+      console.log("Order already in progress, preventing duplicate");
       return;
     }
     
-    // Prevent rapid multiple clicks
-    const now = Date.now();
-    if (now - lastClickTime.current < 3000) {
-      console.log("Button clicked too soon after previous click");
-      return;
-    }
-    lastClickTime.current = now;
-    
-    // One-time button click protection
-    if (buttonClickedOnce.current) {
-      console.log("Button already clicked once");
-      return;
-    }
+    // Reset state
+    setLoadingStripe(true);
+    setIsProcessingOrder(true);
     buttonClickedOnce.current = true;
     
-    // Set state immediately to prevent further interactions
-    setIsProcessingOrder(true);
-    setLoadingStripe(true);
-    orderInProgress.current = true;
-    orderPlaced.current = true;
+    // Set global flag
+    if (typeof window !== 'undefined') {
+      window.__orderBeingPlaced = true;
+      window.__lastOrderTimestamp = Date.now();
+    }
     
-    // For absolute certainty, disable all inputs and controls
-    document.querySelectorAll('button, input, select').forEach(element => {
-      element.setAttribute('disabled', 'disabled');
-    });
-
     try {
       if (!selectedAddress) {
         toast.error("Please select an address");
+        resetOrderState();
         return;
       }
       
@@ -263,6 +245,7 @@ const OrderSummary = () => {
 
       if (cartItemsArray.length === 0) {
         toast.error("Your cart is empty");
+        resetOrderState();
         return;
       }
       
@@ -270,6 +253,7 @@ const OrderSummary = () => {
       const orderRequestId = orderIdRef.current;
       
       // Clear cart immediately to prevent reordering if page is refreshed
+      const cartBackup = {...cartItems};
       setCartItems({});
       
       const token = await getToken();
@@ -278,7 +262,8 @@ const OrderSummary = () => {
         {
           address: selectedAddress._id,
           items: cartItemsArray,
-          orderRequestId
+          orderRequestId,
+          clientTimestamp: Date.now()
         },
         {
           headers: {
@@ -291,10 +276,27 @@ const OrderSummary = () => {
         // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
+        // Restore cart if order failed
+        setCartItems(cartBackup);
         toast.error(data.message || "Failed to create order");
+        resetOrderState();
       }
     } catch (error) {
+      console.error("Stripe order error:", error);
       toast.error(error.response?.data?.message || error.message || "Error creating order");
+      resetOrderState();
+    }
+  };
+
+  // Helper function to reset all order state when there's an error
+  const resetOrderState = () => {
+    setLoadingCOD(false);
+    setLoadingStripe(false);
+    setIsProcessingOrder(false);
+    buttonClickedOnce.current = false;
+    orderInProgress.current = false;
+    if (typeof window !== 'undefined') {
+      window.__orderBeingPlaced = false;
     }
   };
 

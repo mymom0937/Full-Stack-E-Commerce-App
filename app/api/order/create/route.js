@@ -9,11 +9,15 @@ import mongoose from "mongoose";
 
 // Store recent order processing to prevent duplicates
 const recentOrders = new Map();
-const DUPLICATE_ORDER_WINDOW_MS = 60000; // 60 seconds (increased from 30)
+const DUPLICATE_ORDER_WINDOW_MS = 30000; // 30 seconds
 
 // Store already processed orderRequestIds
 const processedOrderRequestIds = new Map();
 const ORDER_REQUEST_EXPIRY_MS = 3600000; // 1 hour
+
+// Track user's last order timestamp
+const userLastOrderTimestamp = new Map();
+const MIN_ORDER_INTERVAL_MS = 5000; // 5 seconds minimum between orders
 
 // A simple mutex implementation to ensure only one order is processed at a time per user
 const userOrderLocks = new Map();
@@ -24,13 +28,25 @@ const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export async function POST(request) {
   try {
     const { userId } = getAuth(request);
-    const { address, items, orderRequestId } = await request.json();
+    const { address, items, orderRequestId, clientTimestamp } = await request.json();
     
-    console.log(`Order request received for user ${userId} with requestId ${orderRequestId || 'none'}`);
+    console.log(`Order request received for user ${userId} with requestId ${orderRequestId || 'none'}, clientTimestamp: ${clientTimestamp || 'none'}`);
     
-    // Extra strong lock to prevent concurrent processing for the same user
-    if (userOrderLocks.has(userId)) {
-      console.log(`User ${userId} already has an order in progress, rejecting duplicate`);
+    // Check if user has placed an order recently
+    const lastOrderTime = userLastOrderTimestamp.get(userId);
+    const now = Date.now();
+    if (lastOrderTime && now - lastOrderTime < MIN_ORDER_INTERVAL_MS) {
+      console.log(`User ${userId} placed an order too recently (${now - lastOrderTime}ms ago)`);
+      return NextResponse.json({
+        success: false,
+        message: "You've just placed an order. Please wait a moment before placing another."
+      }, { status: 429 });
+    }
+    
+    // Check if user has a lock that's less than 10 seconds old
+    const existingLock = userOrderLocks.get(userId);
+    if (existingLock && Date.now() - existingLock < 10000) {
+      console.log(`User ${userId} has a recent order in progress, rejecting duplicate`);
       return NextResponse.json({
         success: false,
         message: "You already have an order being processed. Please wait for it to complete."
@@ -51,45 +67,28 @@ export async function POST(request) {
         }, { status: 429 });
       }
       
-      // Check if we've already processed a similar order for this orderRequestId
-      const existingOrder = await Order.findOne({ orderRequestId });
-      if (existingOrder) {
-        console.log(`Found existing order with requestId ${orderRequestId}`);
-        return NextResponse.json({
-          success: false,
-          message: "This order has already been placed. Check your orders page.",
-          orderId: existingOrder._id
-        }, { status: 409 });
+      // Check for existing order with the same orderRequestId
+      try {
+        // Connect to database with detailed logging
+        console.log("Connecting to MongoDB database...");
+        await connectDB();
+        console.log(`Connected to MongoDB database: ${mongoose.connection.db?.databaseName || 'unknown'}`);
+        
+        const existingOrder = await Order.findOne({ orderRequestId });
+        if (existingOrder) {
+          console.log(`Found existing order with requestId ${orderRequestId}`);
+          return NextResponse.json({
+            success: false,
+            message: "This order has already been placed. Check your orders page.",
+            orderId: existingOrder._id
+          }, { status: 409 });
+        }
+      } catch (dbError) {
+        console.error("Error checking for existing order:", dbError);
+        // Continue processing as this is just a precautionary check
       }
       
-      // Generate a unique identifier for this order request
-      const orderKey = `${userId}:${JSON.stringify(items)}:${address}`;
-      
-      // Check if this is a duplicate order within the time window
-      const lastOrderTime = recentOrders.get(orderKey);
-      const now = Date.now();
-      if (lastOrderTime && now - lastOrderTime < DUPLICATE_ORDER_WINDOW_MS) {
-        console.log(`Potential duplicate order detected for ${userId}, ignoring within ${DUPLICATE_ORDER_WINDOW_MS}ms window`);
-        return NextResponse.json({
-          success: false,
-          message: "Order was already submitted. Please wait a moment before trying again."
-        }, { status: 429 });
-      }
-      
-      // Mark this order as being processed
-      recentOrders.set(orderKey, now);
-      
-      // Set a timeout to remove the entry from the map after the window expires
-      setTimeout(() => {
-        recentOrders.delete(orderKey);
-      }, DUPLICATE_ORDER_WINDOW_MS);
-      
-      // Connect to database with detailed logging
-      console.log("Connecting to MongoDB database...");
-      await connectDB();
-      console.log(`Connected to MongoDB database: ${mongoose.connection.db?.databaseName || 'unknown'}`);
-      
-      if (!address || items.length === 0) {
+      if (!address || !items || items.length === 0) {
         return NextResponse.json(
           {
             success: false,
@@ -97,23 +96,6 @@ export async function POST(request) {
           },
           { status: 400 }
         );
-      }
-      
-      // Check for recent orders in the database as a second layer of protection
-      const recentDbOrders = await Order.find({
-        userId,
-        address,
-        'items.product': { $all: items.map(item => item.product) },
-        date: { $gt: now - 60000 } // Orders within the last minute
-      });
-  
-      if (recentDbOrders && recentDbOrders.length > 0) {
-        console.log(`${recentDbOrders.length} duplicate orders detected in database for user ${userId}`);
-        return NextResponse.json({
-          success: false,
-          message: "You have recently placed a similar order. Please wait before placing another.",
-          orderId: recentDbOrders[0]._id
-        }, { status: 429 });
       }
       
       // Calculate total amount
@@ -136,20 +118,16 @@ export async function POST(request) {
         address,
         items,
         amount: finalAmount,
-        date: now,
+        date: Date.now(),
         paymentType: "COD", // Default payment type for this route is COD
         isPaid: false, // Default for COD is unpaid
         status: "Order Placed",
         // Store the orderRequestId for future duplicate detection
-        orderRequestId: orderRequestId || undefined
+        orderRequestId: orderRequestId || undefined,
+        clientTimestamp: clientTimestamp || undefined
       };
   
       console.log("Order data to be saved:", JSON.stringify(orderData));
-      
-      // Add artificial delay to ensure any potential duplicate requests would have arrived
-      await wait(300);
-      
-      let orderId;
       
       // Mark this orderRequestId as processed BEFORE creating the order
       // to prevent race conditions
@@ -162,12 +140,22 @@ export async function POST(request) {
         }, ORDER_REQUEST_EXPIRY_MS);
       }
       
+      let orderId;
+      
       // Create the order directly in the database
       try {
         const order = new Order(orderData);
         const savedOrder = await order.save();
         orderId = savedOrder._id.toString();
         console.log("Order created in MongoDB:", orderId);
+        
+        // Update the user's last order timestamp
+        userLastOrderTimestamp.set(userId, Date.now());
+        
+        // Set a timeout to remove the timestamp after the window expires
+        setTimeout(() => {
+          userLastOrderTimestamp.delete(userId);
+        }, MIN_ORDER_INTERVAL_MS * 2);
       } catch (dbError) {
         console.error("Error saving order to database:", dbError);
         console.error("Error details:", dbError.message);
@@ -187,6 +175,9 @@ export async function POST(request) {
           const result = await mongoose.connection.db.collection('orders').insertOne(orderData);
           orderId = result.insertedId.toString();
           console.log("Order created directly in MongoDB:", orderId);
+          
+          // Update the user's last order timestamp
+          userLastOrderTimestamp.set(userId, Date.now());
         } catch (directError) {
           console.error("Direct MongoDB insert also failed:", directError.message);
           throw directError; // Re-throw to be caught by the outer catch
@@ -216,12 +207,16 @@ export async function POST(request) {
       }
       
       // clear user cart
-      const user = await User.findById(userId);
-      user.cartItems = {};
-      await user.save();
-      
-      // Clean up this order from the recent orders map
-      recentOrders.delete(orderKey);
+      try {
+        const user = await User.findById(userId);
+        if (user) {
+          user.cartItems = {};
+          await user.save();
+        }
+      } catch (cartError) {
+        console.error("Error clearing user cart:", cartError);
+        // Continue anyway since the order was created
+      }
       
       return NextResponse.json({
         success: true,
@@ -247,8 +242,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
-        message: error.message,
-        stack: error.stack,
+        message: "An unexpected error occurred. Please try again.",
       },
       { status: 500 }
     );

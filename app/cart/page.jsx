@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useEffect } from "react";
 import { assets } from "@/assets/assets";
 import OrderSummary from "@/components/OrderSummary";
 import Image from "next/image";
@@ -14,6 +14,14 @@ const Cart = () => {
 
   // Check if the cart is empty
   const isCartEmpty = !cartItems || Object.keys(cartItems).filter(key => cartItems[key] > 0).length === 0;
+
+  // Reset any stuck order processing flag when cart page loads
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.__orderBeingPlaced) {
+      console.log('Resetting stuck order processing flag');
+      window.__orderBeingPlaced = false;
+    }
+  }, []);
 
   return (
     <>

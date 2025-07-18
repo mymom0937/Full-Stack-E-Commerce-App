@@ -58,6 +58,12 @@ const orderSchema = new mongoose.Schema(
       type: String,
       index: true, // Index this field for faster lookups
       sparse: true // Only index documents that have this field
+    },
+    // Add clientTimestamp field to help prevent duplicate orders
+    clientTimestamp: {
+      type: Number,
+      index: true, // Index for faster lookups
+      sparse: true // Only index documents that have this field
     }
   },
   {
@@ -73,6 +79,13 @@ orderSchema.index({ orderRequestId: 1 }, {
   unique: true, 
   sparse: true,  // Only apply uniqueness to documents that have this field
   partialFilterExpression: { orderRequestId: { $exists: true } } // Only apply to docs with this field
+});
+
+// Add a compound index on userId and clientTimestamp to prevent duplicate orders
+orderSchema.index({ userId: 1, clientTimestamp: 1 }, {
+  unique: true,
+  sparse: true,
+  partialFilterExpression: { clientTimestamp: { $exists: true } }
 });
 
 // Get current database name if connected
