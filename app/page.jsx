@@ -11,8 +11,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCategories } from "@/hooks/useCategories";
 import Loading from "@/components/Loading";
-// Import React Icons
 import { FaShippingFast, FaExchangeAlt, FaMapMarkerAlt, FaShieldAlt } from "react-icons/fa";
+import PageTransition from "@/components/animations/PageTransition";
+import AnimationWrapper, { fadeIn, slideUp, slideInLeft, slideInRight } from "@/components/animations/AnimationWrapper";
 
 const BenefitCard = ({ icon: Icon, title, description }) => (
   <div className="flex flex-col items-center text-center p-6 bg-card-bg rounded-lg transition-all duration-200 hover:shadow-md">
@@ -43,18 +44,20 @@ const CategoryCard = ({ image, title, count, link }) => (
 
 // Section Title Component for consistent headings
 const SectionTitle = ({ title, highlight = null }) => (
-  <div className="flex flex-col items-center mb-10">
-    <h2 className="text-3xl font-medium text-text-primary">
-      {highlight ? (
-        <>
-          {title} <span className="text-orange-600">{highlight}</span>
-        </>
-      ) : (
-        title
-      )}
-    </h2>
-    <div className="w-28 h-0.5 bg-[#F8BD19] mt-2"></div>
-  </div>
+  <AnimationWrapper variants={slideUp}>
+    <div className="flex flex-col items-center mb-8">
+      <h2 className="text-3xl font-medium text-text-primary">
+        {highlight ? (
+          <>
+            {title} <span className="text-orange-600">{highlight}</span>
+          </>
+        ) : (
+          title
+        )}
+      </h2>
+      <div className="w-28 h-0.5 bg-[#F8BD19] mt-2"></div>
+    </div>
+  </AnimationWrapper>
 );
 
 // Featured Categories Section Component
@@ -63,7 +66,7 @@ const FeaturedCategories = () => {
   
   if (isLoading) {
     return (
-      <div className="py-16 bg-background">
+      <div className="py-10 bg-background">
         <SectionTitle title="Featured" highlight="Categories" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => (
@@ -82,17 +85,18 @@ const FeaturedCategories = () => {
   const displayCategories = categories.slice(0, 8);
   
   return (
-    <section className="px-6 md:px-16 lg:px-32 py-16 bg-background">
+    <section className="px-6 md:px-16 lg:px-32 py-10 bg-background">
       <SectionTitle title="Featured" highlight="Categories" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {displayCategories.map((category, index) => (
-          <CategoryCard
-            key={index}
-            image={category.image}
-            title={category.category}
-            count={category.count}
-            link={category.link}
-          />
+          <AnimationWrapper key={index} variants={fadeIn} delay={index * 0.1}>
+            <CategoryCard
+              image={category.image}
+              title={category.category}
+              count={category.count}
+              link={category.link}
+            />
+          </AnimationWrapper>
         ))}
       </div>
     </section>
@@ -126,45 +130,56 @@ const Home = () => {
   return (
     <>
       <Navbar/>
-      <main>
-        {/* Hero Section with Header Slider */}
-        <section className="px-6 md:px-16 lg:px-32">
-          <HeaderSlider />
-        </section>
-        
-        {/* Benefits Section */}
-        <section className="px-6 md:px-16 lg:px-32 py-16 bg-background">
-          <SectionTitle title="Why" highlight="Choose Us" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit, index) => (
-              <BenefitCard 
-                key={index}
-                icon={benefit.icon}
-                title={benefit.title}
-                description={benefit.description}
-              />
-            ))}
-          </div>
-        </section>
-        
-        {/* Featured Categories - Now using dynamic data */}
-        <FeaturedCategories />
-        
-        {/* Top Picks Section */}
-        <section className="px-6 md:px-16 lg:px-32 py-12 bg-background">
-          <HomeProducts />
-        </section>
-        
-        {/* Spotlight Section */}
-        <section className="px-6 md:px-16 lg:px-32 py-12 bg-[#111] text-white">
-          <FeaturedProduct />
-        </section>
-        
-        {/* Newsletter Section */}
-        <section className="px-6 md:px-16 lg:px-32 py-16 bg-background border-t border-border-color">
-          <NewsLetter />
-        </section>
-      </main>
+      <PageTransition>
+        <main>
+          {/* Hero Section with Header Slider */}
+          <AnimationWrapper variants={fadeIn}>
+            <section className="px-6 md:px-16 lg:px-32">
+              <HeaderSlider />
+            </section>
+          </AnimationWrapper>
+          
+          {/* Benefits Section */}
+          <section className="px-6 md:px-16 lg:px-32 py-10 bg-background">
+            <SectionTitle title="Why" highlight="Choose Us" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {benefits.map((benefit, index) => (
+                <AnimationWrapper key={index} variants={slideUp} delay={index * 0.1}>
+                  <BenefitCard 
+                    icon={benefit.icon}
+                    title={benefit.title}
+                    description={benefit.description}
+                  />
+                </AnimationWrapper>
+              ))}
+            </div>
+          </section>
+          
+          {/* Featured Categories - Now using dynamic data */}
+          <FeaturedCategories />
+          
+          {/* Top Picks Section */}
+          <AnimationWrapper variants={slideInLeft}>
+            <section className="px-6 md:px-16 lg:px-32 py-8 bg-background">
+              <HomeProducts />
+            </section>
+          </AnimationWrapper>
+          
+          {/* Spotlight Section */}
+          <AnimationWrapper variants={slideInRight}>
+            <section className="px-6 md:px-16 lg:px-32 py-12 bg-[#111] text-white">
+              <FeaturedProduct />
+            </section>
+          </AnimationWrapper>
+          
+          {/* Newsletter Section */}
+          <AnimationWrapper variants={slideUp}>
+            <section className="px-6 md:px-16 lg:px-32 py-16 bg-background border-t border-border-color">
+              <NewsLetter />
+            </section>
+          </AnimationWrapper>
+        </main>
+      </PageTransition>
       <Footer />
     </>
   );

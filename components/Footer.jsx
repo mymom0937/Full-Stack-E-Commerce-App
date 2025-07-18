@@ -26,9 +26,23 @@ const Footer = () => {
 
         {/* Bottom section with social links */}
         <div className="text-center sm:flex items-center justify-between border-t border-border-color mx-[10%] py-4">
-          <p className="text-text-secondary text-md">
-            © {new Date().getFullYear()}, EzCart. All rights reserved.
-          </p>
+          <div className="text-text-secondary flex flex-col md:flex-row md:items-center md:gap-3">
+            <p className="text-md">
+              © {new Date().getFullYear()}, EzCart. All rights reserved.
+            </p>
+            <div className="hidden md:block text-text-secondary">•</div>
+            <p className="text-sm mt-1 md:mt-0">
+              Designed & Developed by <span className="text-[#F8BD19] font-medium hover:underline">
+                <a 
+                  href="https://www.linkedin.com/in/seid-endris-dev/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Seid E.
+                </a>
+              </span>
+            </p>
+          </div>
           <ul className="flex items-center gap-3 justify-center mt-4 sm:mt-0">
             <li>
               <a

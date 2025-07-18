@@ -7,19 +7,21 @@ import { assets } from '@/assets/assets';
 const categoryImages = {
   'Headphones': assets.header_headphone_image,
   'Earphones': assets.apple_earphone_image,
-  'Smartwatch': assets.Apple_watch_ultra2,
+  'Smartwatch': assets.Apple_Watch_Ultra_2,
   'Smartphone': assets.Samsung_Galaxy_S24_Ultra,
   'Laptop': assets.macbook_image,
   'Camera': assets.cannon_camera_image,
   'Accessories': assets.Sony_WF_1000XM5,
+  'Watch': assets.Huawei_Watch_5,
   // Fallbacks for variations in naming
   'Headphone': assets.header_headphone_image,
   'Earphone': assets.apple_earphone_image,
-  'Smartwatches': assets.Apple_watch_ultra2,
+  'Smartwatches': assets.Apple_Watch_Ultra_2,
   'Smartphones': assets.Samsung_Galaxy_S24_Ultra,
   'Laptops': assets.macbook_image,
   'Cameras': assets.cannon_camera_image,
   'Accessory': assets.Sony_WF_1000XM5,
+  'Watches': assets.Huawei_Watch_5,
 };
 
 // Default fallback image
@@ -45,6 +47,9 @@ export function useCategories() {
             // Create URL-friendly link
             link: `/all-products?category=${encodeURIComponent(cat.category.toLowerCase())}`
           }));
+          
+          // Log for debugging
+          console.log('Categories with images:', categoriesWithImages);
           
           setCategories(categoriesWithImages);
         } else {

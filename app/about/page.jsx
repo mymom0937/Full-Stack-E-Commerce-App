@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { assets } from '@/assets/assets';
+import { FaDatabase, FaCloud, FaShieldAlt, FaServer, FaCogs, FaPalette } from 'react-icons/fa';
 
 export default function AboutPage() {
   return (
@@ -15,17 +16,17 @@ export default function AboutPage() {
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-text-primary">About EzCart</h1>
           <p className="max-w-3xl mx-auto text-lg text-text-secondary mb-6">
-            We're on a mission to make online shopping easier, more affordable, and more enjoyable for everyone.
+            A modern e-commerce platform designed for exceptional user experience and performance.
           </p>
           <div className="max-w-3xl mx-auto text-text-secondary">
             <p className="mb-4">
-              Born from a vision of excellence, EzCart has established itself as a premier online marketplace for high-quality electronics and tech accessories. We connect discerning customers with trusted sellers to create a seamless shopping experience from browse to delivery.
+              EzCart is a full-featured e-commerce solution built with cutting-edge technologies to deliver a seamless shopping experience. Our platform connects customers with quality products through an intuitive interface that prioritizes speed, security, and reliability.
             </p>
             <p className="mb-4">
-              Our platform offers a carefully curated selection of products, ensuring that every item meets our rigorous standards for quality, performance, and value. We believe that shopping online should be just as reliable and satisfying as shopping in person—if not more so.
+              We've engineered EzCart using the latest web development stack to ensure optimal performance and scalability. From secure user authentication to real-time order processing, every aspect of our platform is designed with both customers and merchants in mind.
             </p>
             <p>
-              With a focus on customer satisfaction, transparent business practices, and technological innovation, EzCart is redefining what consumers can expect from an e-commerce platform in today's digital marketplace.
+              Whether you're shopping for the latest tech gadgets or managing your product inventory as a seller, EzCart provides the tools and features you need for a frictionless e-commerce experience.
             </p>
           </div>
         </div>
@@ -41,6 +42,72 @@ export default function AboutPage() {
               height={450}
               priority
             />
+          </div>
+        </div>
+
+        {/* Technology Stack Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-text-primary text-center">Our Technology Stack</h2>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <div className="flex items-center mb-4">
+                <FaShieldAlt className="text-[#F8BD19] mr-3 text-2xl" />
+                <h3 className="text-xl font-semibold text-text-primary">Clerk Authentication</h3>
+              </div>
+              <p className="text-text-secondary">
+                We implement Clerk for secure, seamless user authentication, providing multi-factor authentication and social login options while maintaining the highest security standards.
+              </p>
+            </div>
+            
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <div className="flex items-center mb-4">
+                <FaDatabase className="text-[#F8BD19] mr-3 text-2xl" />
+                <h3 className="text-xl font-semibold text-text-primary">MongoDB Database</h3>
+              </div>
+              <p className="text-text-secondary">
+                Our platform is powered by MongoDB, a flexible and scalable NoSQL database that ensures fast data retrieval and robust storage for all product and user information.
+              </p>
+            </div>
+            
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <div className="flex items-center mb-4">
+                <FaCloud className="text-[#F8BD19] mr-3 text-2xl" />
+                <h3 className="text-xl font-semibold text-text-primary">Cloudinary Storage</h3>
+              </div>
+              <p className="text-text-secondary">
+                All product images are optimized and stored on Cloudinary, ensuring fast loading times and high-quality visual content across all devices and connection speeds.
+              </p>
+            </div>
+            
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <div className="flex items-center mb-4">
+                <FaCogs className="text-[#F8BD19] mr-3 text-2xl" />
+                <h3 className="text-xl font-semibold text-text-primary">Inngest Background Jobs</h3>
+              </div>
+              <p className="text-text-secondary">
+                We utilize Inngest for reliable background processing of critical operations like user management and order processing, ensuring system stability and responsiveness.
+              </p>
+            </div>
+            
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <div className="flex items-center mb-4">
+                <FaServer className="text-[#F8BD19] mr-3 text-2xl" />
+                <h3 className="text-xl font-semibold text-text-primary">Next.js Framework</h3>
+              </div>
+              <p className="text-text-secondary">
+                Built on Next.js, our application delivers lightning-fast page loads through server-side rendering and optimized client-side navigation for a smooth browsing experience.
+              </p>
+            </div>
+            
+            <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
+              <div className="flex items-center mb-4">
+                <FaPalette className="text-[#F8BD19] mr-3 text-2xl" />
+                <h3 className="text-xl font-semibold text-text-primary">TailwindCSS Styling</h3>
+              </div>
+              <p className="text-text-secondary">
+                Our modern, responsive design is implemented with TailwindCSS, providing a consistent and beautiful user interface that adapts perfectly to any screen size.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -77,7 +144,7 @@ export default function AboutPage() {
 
         {/* Why Choose Us */}
         <div className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-text-primary">Why Choose EzCart</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-text-primary text-center">Why Choose EzCart</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Reason 1 */}
             <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
@@ -86,9 +153,9 @@ export default function AboutPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-text-primary">Quality Products</h3>
+              <h3 className="text-xl font-semibold mb-2 text-text-primary">Secure Platform</h3>
               <p className="text-text-secondary">
-                We carefully vet all products and sellers to ensure you receive only the best quality items.
+                With industry-leading authentication and data protection, your personal information and transactions are always secure.
               </p>
             </div>
             
@@ -99,9 +166,9 @@ export default function AboutPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-text-primary">Competitive Pricing</h3>
+              <h3 className="text-xl font-semibold mb-2 text-text-primary">Lightning Fast</h3>
               <p className="text-text-secondary">
-                We work hard to offer the best prices and regularly run special promotions and discounts.
+                Our optimized platform ensures quick page loads, smooth navigation, and responsive design for all devices.
               </p>
             </div>
             
@@ -112,9 +179,9 @@ export default function AboutPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-text-primary">Exceptional Support</h3>
+              <h3 className="text-xl font-semibold mb-2 text-text-primary">Seamless Experience</h3>
               <p className="text-text-secondary">
-                Our customer service team is available 7 days a week to assist with any questions or concerns.
+                From browsing to checkout, we've designed every step of the shopping journey to be intuitive and hassle-free.
               </p>
             </div>
           </div>

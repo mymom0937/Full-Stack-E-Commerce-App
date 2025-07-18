@@ -8,7 +8,7 @@ import Sony_WF_1000XM5 from "./Sony WF-1000XM5.webp";
 import Apple_Watch_Ultra_2 from "./Apple_watch_ultra2.jpg";
 import Apple_iPhone_16e from "./Apple-iPhone-16e.jpg";
 import Galaxy_S25_Ultra from "./galaxy-s25-ultra.jpg";
-import Huawei_Watch_5 from "./huawei-watch-fit4-pro.webp";
+import Huawei_Watch_5 from "./Huawei Watch 5.jpg";
 import Huawei_Watch_Fit_4_Pro from "./huawei-watch-fit4-pro.webp";
 import Huawei_Watch_Fit4_Pro from "./huawei-watch-fit4-pro.webp";
 import iPad_Air from "./iPad Air.jpg";
