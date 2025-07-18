@@ -42,17 +42,17 @@ const FeaturedProduct = () => {
   }
 
   return (
-    <div className="mt-14">
+    <div className="mt-4">
       <div className="flex flex-col items-center">
-        <p className="text-3xl font-medium text-text-primary">Spotlight</p>
+        <p className="text-3xl font-medium text-white">Spotlight</p>
         <div className="w-28 h-0.5 bg-[#F8BD19] mt-2"></div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 mt-12 md:px-14 px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
         {recentProducts.map((product, index) => (
           <div 
             key={product._id} 
-            className="relative group rounded-lg overflow-hidden shadow-sm cursor-pointer h-[320px]"
+            className="relative group rounded-lg overflow-hidden shadow-lg cursor-pointer h-[320px] transition-transform duration-300 hover:-translate-y-2"
             onClick={() => handleProductClick(product._id)}
           >
             {/* Add "New" badge to the most recent product */}
@@ -74,12 +74,12 @@ const FeaturedProduct = () => {
               height={500}
               className="group-hover:brightness-75 transition duration-300 w-full h-full object-cover"
             />
-            <div className="group-hover:-translate-y-4 transition duration-300 absolute bottom-8 left-8 text-white space-y-2">
-              <p className="font-medium text-xl lg:text-2xl">{product.name}</p>
-              <p className="text-sm lg:text-base leading-5 max-w-60 line-clamp-2">
+            <div className="group-hover:-translate-y-4 transition duration-300 absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
+              <p className="font-medium text-xl text-white">{product.name}</p>
+              <p className="text-sm text-gray-300 my-2 line-clamp-2">
                 {product.description || "High-quality product with premium features."}
               </p>
-              <button className="flex items-center gap-1.5 bg-[#F8BD19] px-4 py-2 rounded">
+              <button className="flex items-center gap-1.5 bg-[#F8BD19] px-4 py-2 rounded text-black font-medium hover:bg-[#F8BD19]/90 transition">
                 View Details <Image className="h-3 w-3" src={assets.redirect_icon} alt="Redirect Icon" />
               </button>
             </div>
