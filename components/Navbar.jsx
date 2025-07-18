@@ -183,20 +183,18 @@ const Navbar = () => {
       animate="visible"
       variants={navContainerVariants}
     >
-      <motion.div variants={logoVariants}
-      className="mr-4 md:mr-6 lg:mr-8"
-      >
-        <Image
-          className="cursor-pointer w-24 sm:w-28 md:w-28 lg:w-32"
-          onClick={() => router.push("/")}
-          src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark}
-          alt="EzCart"
-          priority
-        />
+      <motion.div variants={logoVariants}>
+      <Image
+        className="cursor-pointer w-24 sm:w-28 md:w-28 lg:w-32"
+        onClick={() => router.push("/")}
+        src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark}
+        alt="EzCart"
+        priority
+      />
       </motion.div>
       
       <motion.div 
-        className="hidden lg:flex items-center gap-2 md:gap-3 lg:gap-4 xl:gap-8"
+        className="hidden lg:flex items-center gap-2 md:gap-4 lg:gap-8"
         variants={navContainerVariants}
       >
         <motion.div variants={navItemVariants}>
@@ -234,7 +232,7 @@ const Navbar = () => {
       </motion.div>
 
       <motion.div 
-        className="hidden lg:flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-5"
+        className="hidden lg:flex items-center gap-2 md:gap-3 lg:gap-5"
         variants={navContainerVariants}
       >
         <motion.div 
@@ -483,9 +481,9 @@ const Navbar = () => {
                 <div className="flex items-center gap-2">
                   {/* Theme toggle for mobile */}
                   <motion.button 
-                    onClick={toggleTheme} 
+          onClick={toggleTheme} 
                     className="p-1.5 rounded-full hover:bg-card-bg transition"
-                    aria-label="Toggle theme"
+          aria-label="Toggle theme"
                     whileHover={{ scale: 1.1, rotate: 15 }}
                     whileTap={{ scale: 0.9 }}
         >
