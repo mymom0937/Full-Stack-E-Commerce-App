@@ -4,66 +4,42 @@ import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/hooks/useProducts";
+import Loading from "./Loading";
 
 const FeaturedProduct = () => {
-  const { products } = useProducts({ refreshInterval: 5000 }); // Auto-refresh every 5 seconds
+  const { products, isLoadingProducts } = useProducts({ refreshInterval: 5000 }); // Auto-refresh every 5 seconds
   const router = useRouter();
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  
-  // List of products we want to feature
-  const featuredProductNames = [
-    "Canon EOS R5",
-    "MacBook Pro 16",
-    "Samsung Projector 4k",
-    "Sony WF-1000XM5"
-  ];
+  const [recentProducts, setRecentProducts] = useState([]);
   
   useEffect(() => {
     if (products && products.length > 0) {
-      // Find our specific products by name
-      const foundProducts = featuredProductNames
-        .map(name => {
-          // Find products that match the names we're looking for (case-insensitive contains)
-          const found = products.find(p => p && p.name && p.name.toLowerCase().includes(name.toLowerCase()));
-          return found;
-        })
-        .filter(Boolean); // Remove any undefined products
+      // Get the most recently added products
+      // Sort by createdAt timestamp (newest first)
+      const sorted = [...products].sort((a, b) => {
+        // Use createdAt if available, otherwise fallback to _id which often contains a timestamp
+        const dateA = a.createdAt ? new Date(a.createdAt) : 
+                    (a._id ? new Date(parseInt(a._id.substring(0, 8), 16) * 1000) : 0);
+        const dateB = b.createdAt ? new Date(b.createdAt) : 
+                    (b._id ? new Date(parseInt(b._id.substring(0, 8), 16) * 1000) : 0);
+        return dateB - dateA;
+      });
       
-      setFeaturedProducts(foundProducts);
+      setRecentProducts(sorted.slice(0, 4)); // Take the 4 most recent products
     } else {
-      setFeaturedProducts([]);
+      setRecentProducts([]);
     }
   }, [products]);
 
-  // If we don't have 3 products, use placeholders
-  const displayProducts = featuredProducts.length >= 3 
-    ? featuredProducts.slice(0, 4)  // Use up to 4 products
-    : [
-        {
-          _id: "placeholder1",
-          images: [assets.girl_with_headphone_image],
-          name: "Unparalleled Sound",
-          description: "Experience crystal-clear audio with premium headphones.",
-        },
-        {
-          _id: "placeholder2",
-          images: [assets.girl_with_earphone_image],
-          name: "Stay Connected",
-          description: "Compact and stylish earphones for every occasion.",
-        },
-        {
-          _id: "placeholder3",
-          images: [assets.boy_with_laptop_image],
-          name: "Power in Every Pixel",
-          description: "Shop the latest laptops for work, gaming, and more.",
-        },
-      ];
-
   const handleProductClick = (productId) => {
-    if (productId && productId !== "placeholder1" && productId !== "placeholder2" && productId !== "placeholder3") {
+    if (productId) {
       router.push(`/product/${productId}`);
     }
   };
+  
+  // If we don't have any products, don't render the section
+  if (recentProducts.length === 0) {
+    return null;
+  }
 
   return (
     <div className="mt-14">
@@ -73,14 +49,26 @@ const FeaturedProduct = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 mt-12 md:px-14 px-4">
-        {displayProducts.map((product) => (
+        {recentProducts.map((product, index) => (
           <div 
             key={product._id} 
             className="relative group rounded-lg overflow-hidden shadow-sm cursor-pointer h-[320px]"
             onClick={() => handleProductClick(product._id)}
           >
+            {/* Add "New" badge to the most recent product */}
+            {index === 0 && (
+              <div className="absolute top-3 left-3 z-10 bg-orange-600 text-white text-xs px-2 py-1 rounded-full">
+                Just Added
+              </div>
+            )}
             <Image
-              src={product.images && product.images.length > 0 ? product.images[0] : assets.upload_area}
+              src={product.images && product.images.length > 0 ? product.images[0] : (
+                product.image && Array.isArray(product.image) && product.image.length > 0 
+                  ? product.image[0] 
+                  : typeof product.image === 'string' 
+                    ? product.image 
+                    : assets.upload_area
+              )}
               alt={product.name}
               width={500}
               height={500}

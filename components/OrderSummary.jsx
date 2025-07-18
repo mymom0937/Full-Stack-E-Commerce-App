@@ -263,7 +263,7 @@ const OrderSummary = () => {
     }
     
     // Reset state
-    setLoadingStripe(true);
+      setLoadingStripe(true);
     setIsProcessingOrder(true);
     buttonClickedOnce.current = true;
     
@@ -339,7 +339,7 @@ const OrderSummary = () => {
   // Helper function to reset all order state when there's an error
   const resetOrderState = () => {
     setLoadingCOD(false);
-    setLoadingStripe(false);
+      setLoadingStripe(false);
     setIsProcessingOrder(false);
     buttonClickedOnce.current = false;
     orderInProgress.current = false;
@@ -354,7 +354,7 @@ const OrderSummary = () => {
       window.__orderCount--; // Decrement the order count if there was an error
       if (window.__orderCount < 0) window.__orderCount = 0;
     }
-  };
+  };  
 
   useEffect(() => {
     if(user){
