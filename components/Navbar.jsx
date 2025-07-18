@@ -178,22 +178,25 @@ const Navbar = () => {
 
   return (
     <motion.nav 
-      className="sticky top-0 z-50 bg-background flex items-center justify-between px-6 md:px-16 lg:px-32 py-4 border-b border-border-color text-text-primary shadow-sm transition-colors duration-200"
+      className="sticky top-0 z-50 bg-background flex items-center justify-between px-3 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-3 md:py-4 border-b border-border-color text-text-primary shadow-sm transition-colors duration-200"
       initial="hidden"
       animate="visible"
       variants={navContainerVariants}
     >
-      <motion.div variants={logoVariants}>
-      <Image
-        className="cursor-pointer w-28 md:w-32"
-        onClick={() => router.push("/")}
-        src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark}
-        alt="EzCart"
-      />
+      <motion.div variants={logoVariants}
+      className="mr-4 md:mr-6 lg:mr-8"
+      >
+        <Image
+          className="cursor-pointer w-24 sm:w-28 md:w-28 lg:w-32"
+          onClick={() => router.push("/")}
+          src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark}
+          alt="EzCart"
+          priority
+        />
       </motion.div>
       
       <motion.div 
-        className="hidden md:flex items-center gap-4 lg:gap-8"
+        className="hidden lg:flex items-center gap-2 md:gap-3 lg:gap-4 xl:gap-8"
         variants={navContainerVariants}
       >
         <motion.div variants={navItemVariants}>
@@ -231,7 +234,7 @@ const Navbar = () => {
       </motion.div>
 
       <motion.div 
-        className="hidden md:flex items-center gap-5"
+        className="hidden lg:flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-5"
         variants={navContainerVariants}
       >
         <motion.div 
@@ -242,14 +245,14 @@ const Navbar = () => {
           }}
           variants={navItemVariants}
         >
-          <form onSubmit={handleSearchSubmit} className="flex items-center">
+          <form onSubmit={handleSearchSubmit} className="flex items-center min-w-0">
             <input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={handleSearchChange}
               onFocus={() => setShowSearchResults(true)}
-              className="w-48 border border-border-color rounded-l px-3 py-1.5 text-sm bg-background text-text-primary focus:outline-none focus:ring-1 focus:ring-orange-500"
+              className="w-24 sm:w-32 md:w-40 lg:w-48 border border-border-color rounded-l px-2 md:px-3 py-1.5 text-sm bg-background text-text-primary focus:outline-none focus:ring-1 focus:ring-orange-500 min-w-0 flex-shrink"
             />
             <motion.button 
               type="submit" 
@@ -377,7 +380,7 @@ const Navbar = () => {
 
         {user ? (
           <motion.div variants={navItemVariants}>
-          <UserButton afterSignOutUrl="/">
+          <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: 'w-7 h-7 md:w-8 md:h-8' } }}>
               <UserButton.MenuItems>
                 <UserButton.Action
                   label="Home"
@@ -441,8 +444,8 @@ const Navbar = () => {
         )}
       </motion.div>
 
-      {/* Mobile menu button */}
-      <div className="md:hidden flex items-center gap-4">
+      {/* Mobile/Tablet menu button */}
+      <div className="flex lg:hidden items-center gap-4">
         <motion.button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="flex items-center justify-center"
@@ -457,11 +460,11 @@ const Navbar = () => {
         </motion.button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile/Tablet menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -485,16 +488,16 @@ const Navbar = () => {
                     aria-label="Toggle theme"
                     whileHover={{ scale: 1.1, rotate: 15 }}
                     whileTap={{ scale: 0.9 }}
-                  >
-                    {theme === 'dark' ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                      </svg>
-                    )}
+        >
+          {theme === 'dark' ? (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+          )}
                   </motion.button>
                   <motion.button 
                     onClick={() => setIsMenuOpen(false)} 
@@ -506,9 +509,9 @@ const Navbar = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </motion.button>
-                </div>
-              </div>
-
+            </div>
+        </div>
+        
               {/* Mobile search */}
               <div className="mb-6">
                 <form onSubmit={handleMobileSearchSubmit} className="flex items-center">
