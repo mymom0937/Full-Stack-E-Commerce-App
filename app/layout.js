@@ -10,6 +10,11 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'EzCart - Modern E-Commerce Store',
   description: 'Shop the latest tech gadgets, electronics, and more.',
+  icons: {
+    // icon: '/favicon.ico',
+    // icon: '/favicon2.ico',
+    icon: '/favicon3.ico',
+  },
 };
 
 export default function RootLayout({ children }) {
