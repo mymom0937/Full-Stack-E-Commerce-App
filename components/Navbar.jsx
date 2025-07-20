@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAppContext } from "@/context/AppContext";
 import { useTheme } from "@/context/ThemeContext";
 import Image from "next/image";
@@ -14,6 +15,7 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   const { openSignIn, signOut } = useClerk();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -23,6 +25,32 @@ const Navbar = () => {
   
   const cartCount = getCartCount();
   const wishlistCount = wishlist?.length || 0;
+
+  // Helper function to check if a link is active
+  const isActive = (path) => {
+    if (path === "/") {
+      return pathname === "/" || pathname === "";
+    }
+    if (path === "/all-products") {
+      return pathname === "/all-products" || pathname.startsWith("/all-products?");
+    }
+    if (path === "/wishlist") {
+      return pathname === "/wishlist";
+    }
+    if (path === "/cart") {
+      return pathname === "/cart";
+    }
+    if (path === "/about") {
+      return pathname === "/about";
+    }
+    if (path === "/contact") {
+      return pathname === "/contact";
+    }
+    if (path === "/seller") {
+      return pathname === "/seller" || pathname.startsWith("/seller/");
+    }
+    return pathname === path;
+  };
 
   // Custom logout handler that also calls our AppContext's handleLogout
   const handleLogout = () => {
@@ -90,7 +118,7 @@ const Navbar = () => {
   const handleMobileSearchSubmit = (e) => {
     e.preventDefault();
     if (mobileSearchQuery.trim()) {
-      router.push(`/all-products?search=${encodeURIComponent(mobileSearchQuery)}`);
+      window.location.href = `/all-products?search=${encodeURIComponent(mobileSearchQuery)}`;
       setMobileSearchQuery("");
       setIsMenuOpen(false);
     }
@@ -100,7 +128,7 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/all-products?search=${encodeURIComponent(searchQuery)}`);
+      window.location.href = `/all-products?search=${encodeURIComponent(searchQuery)}`;
       setSearchQuery("");
       setShowSearchResults(false);
     }
@@ -108,7 +136,7 @@ const Navbar = () => {
 
   // Handle clicking on a search result
   const handleResultClick = (productId) => {
-    router.push(`/product/${productId}`);
+    window.location.href = `/product/${productId}`;
     setSearchQuery("");
     setShowSearchResults(false);
   };
@@ -218,13 +246,14 @@ const Navbar = () => {
         variants={logoVariants}
         className={`transition-transform duration-300 ${isScrolled ? 'scale-95' : 'scale-100'}`}
       >
+      <Link href="/">
       <Image
         className="cursor-pointer w-24 sm:w-28 md:w-28 lg:w-32"
-        onClick={() => router.push("/")}
         src={isDarkMode ? assets.ezcart_logo_white : assets.ezcart_logo_dark}
         alt="EzCart"
         priority
       />
+      </Link>
       </motion.div>
       
       <motion.div 
@@ -232,36 +261,67 @@ const Navbar = () => {
         variants={navContainerVariants}
       >
         <motion.div variants={navItemVariants}>
-        <Link href="/" className="hover:text-accent-color font-medium transition">
+        <Link 
+          href="/" 
+          className={`font-medium transition px-3 py-1.5 rounded-full ${
+            isActive("/") 
+              ? "bg-[#00D4AA] text-white" 
+              : "hover:text-accent-color"
+          }`}
+        >
           Home
         </Link>
         </motion.div>
         <motion.div variants={navItemVariants}>
-        <Link href="/all-products" className="hover:text-accent-color font-medium transition">
+        <Link 
+          href="/all-products" 
+          className={`font-medium transition px-3 py-1.5 rounded-full ${
+            isActive("/all-products") 
+              ? "bg-[#00D4AA] text-white" 
+              : "hover:text-accent-color"
+          }`}
+        >
           Shop
         </Link>
         </motion.div>
         <motion.div variants={navItemVariants}>
-        <Link href="/about" className="hover:text-accent-color font-medium transition">
+        <Link 
+          href="/about" 
+          className={`font-medium transition px-3 py-1.5 rounded-full ${
+            isActive("/about") 
+              ? "bg-[#00D4AA] text-white" 
+              : "hover:text-accent-color"
+          }`}
+        >
           About
         </Link>
         </motion.div>
         <motion.div variants={navItemVariants}>
-        <Link href="/contact" className="hover:text-accent-color font-medium transition">
+        <Link 
+          href="/contact" 
+          className={`font-medium transition px-3 py-1.5 rounded-full ${
+            isActive("/contact") 
+              ? "bg-[#00D4AA] text-white" 
+              : "hover:text-accent-color"
+          }`}
+        >
           Contact
         </Link>
         </motion.div>
 
         {isSeller && (
-          <motion.button
-            variants={navItemVariants}
-            onClick={() => router.push("/seller")}
-            className="text-xs border border-border-color px-4 py-1.5 rounded-full hover:bg-card-bg transition"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.div variants={navItemVariants}>
+            <Link 
+              href="/seller" 
+              className={`text-xs border border-border-color px-4 py-1.5 rounded-full transition block ${
+                isActive("/seller") 
+                  ? "bg-[#00D4AA] text-white border-[#00D4AA]" 
+                  : "hover:bg-card-bg"
+              }`}
           >
             Merchant Portal
-          </motion.button>
+            </Link>
+          </motion.div>
         )}
       </motion.div>
 
@@ -333,7 +393,13 @@ const Navbar = () => {
                   </motion.div>
               ))}
                 <motion.div 
-                onClick={handleSearchSubmit}
+                onClick={() => {
+                  if (searchQuery.trim()) {
+                    window.location.href = `/all-products?search=${encodeURIComponent(searchQuery)}`;
+                    setSearchQuery("");
+                    setShowSearchResults(false);
+                  }
+                }}
                 className="p-2 text-center text-orange-500 hover:bg-background cursor-pointer rounded text-sm border-t border-border-color mt-1 pt-2"
                   whileHover={{ backgroundColor: "var(--background)" }}
               >
@@ -366,11 +432,11 @@ const Navbar = () => {
         
         <motion.div 
           className="relative cursor-pointer" 
-          onClick={() => router.push("/wishlist")}
           variants={navItemVariants}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
+          <Link href="/wishlist">
           <IconWrapper src={assets.heart_icon} alt="wishlist icon" />
           <AnimatePresence>
           {wishlistCount > 0 && (
@@ -385,15 +451,16 @@ const Navbar = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          </Link>
         </motion.div>
         
         <motion.div 
           className="relative cursor-pointer" 
-          onClick={() => router.push("/cart")}
           variants={navItemVariants}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
+          <Link href="/cart">
           <IconWrapper src={assets.cart_icon} alt="cart icon" />
           <AnimatePresence>
           {cartCount > 0 && (
@@ -408,6 +475,7 @@ const Navbar = () => {
               </motion.div>
           )}
           </AnimatePresence>
+          </Link>
         </motion.div>
 
         {user ? (
@@ -417,7 +485,7 @@ const Navbar = () => {
                 <UserButton.Action
                   label="Home"
                   labelIcon={<HomeIcon />}
-                  onClick={() => router.push("/")}
+                  onClick={() => window.location.href = "/"}
                 />
               </UserButton.MenuItems>
 
@@ -425,7 +493,7 @@ const Navbar = () => {
                 <UserButton.Action
                   label="Products"
                   labelIcon={<BoxIcon />}
-                  onClick={() => router.push("/all-products")}
+                  onClick={() => window.location.href = "/all-products"}
                 />
               </UserButton.MenuItems>
 
@@ -438,7 +506,7 @@ const Navbar = () => {
                     stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 }
-                onClick={() => router.push("/wishlist")}
+                onClick={() => window.location.href = "/wishlist"}
                 />
               </UserButton.MenuItems>
 
@@ -446,7 +514,7 @@ const Navbar = () => {
                 <UserButton.Action
                   label="Cart"
                   labelIcon={<CartIcon />}
-                  onClick={() => router.push("/cart")}
+                  onClick={() => window.location.href = "/cart"}
                 />
               </UserButton.MenuItems>
 
@@ -454,7 +522,7 @@ const Navbar = () => {
                 <UserButton.Action
                   label="My Orders"
                   labelIcon={<BagIcon />}
-                  onClick={() => router.push("/my-orders")}
+                  onClick={() => window.location.href = "/my-orders"}
                 />
               </UserButton.MenuItems>
 
@@ -572,52 +640,108 @@ const Navbar = () => {
                 </form>
               </div>
               
-              <div className="flex flex-col gap-2 bg-background">
-                <Link href="/" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2 bg-background px-4" onClick={() => setIsMenuOpen(false)}>
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
+              <div className="flex flex-col gap-2">
+                <Link 
+                  href="/" 
+                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                    isActive("/") 
+                      ? "bg-[#00D4AA] text-white" 
+                      : "bg-background hover:text-accent-color"
+                  }`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className={isActive("/") ? 'text-white' : (theme === 'dark' ? 'text-white' : 'text-gray-800')}>
                     <HomeIcon />
                   </span>
-                  <span className="text-base text-text-primary">Home</span>
+                  <span className={`text-base ${isActive("/") ? 'text-white' : 'text-text-primary'}`}>Home</span>
                 </Link>
-                <Link href="/all-products" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2 bg-background px-4" onClick={() => setIsMenuOpen(false)}>
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
+                <Link 
+                  href="/all-products" 
+                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                    isActive("/all-products") 
+                      ? "bg-[#00D4AA] text-white" 
+                      : "bg-background hover:text-accent-color"
+                  }`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className={isActive("/all-products") ? 'text-white' : (theme === 'dark' ? 'text-white' : 'text-gray-800')}>
                     <BoxIcon />
                   </span>
-                  <span className="text-base text-text-primary">Shop</span>
+                  <span className={`text-base ${isActive("/all-products") ? 'text-white' : 'text-text-primary'}`}>Shop</span>
                 </Link>
-                <Link href="/wishlist" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2 bg-background px-4" onClick={() => setIsMenuOpen(false)}>
+                <Link 
+                  href="/wishlist" 
+                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                    isActive("/wishlist") 
+                      ? "bg-[#00D4AA] text-white" 
+                      : "bg-background hover:text-accent-color"
+                  }`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className={isActive("/wishlist") ? 'filter brightness-0 invert' : ''}>
                   <IconWrapper src={assets.heart_icon} alt="wishlist icon" />
-                  <span className="text-base text-text-primary">Wishlist</span> {wishlistCount > 0 && <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
+                  </div>
+                  <span className={`text-base ${isActive("/wishlist") ? 'text-white' : 'text-text-primary'}`}>Wishlist</span> 
+                  {wishlistCount > 0 && <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
                 </Link>
-                <Link href="/cart" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2 bg-background px-4" onClick={() => setIsMenuOpen(false)}>
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>
+                <Link 
+                  href="/cart" 
+                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                    isActive("/cart") 
+                      ? "bg-[#00D4AA] text-white" 
+                      : "bg-background hover:text-accent-color"
+                  }`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className={isActive("/cart") ? 'text-white' : (theme === 'dark' ? 'text-white' : 'text-gray-800')}>
                     <CartIcon />
                   </span>
-                  <span className="text-base text-text-primary">Cart</span> {cartCount > 0 && <span className="ml-2 bg-[#F8BD19] text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
+                  <span className={`text-base ${isActive("/cart") ? 'text-white' : 'text-text-primary'}`}>Cart</span> 
+                  {cartCount > 0 && <span className="ml-2 bg-[#F8BD19] text-white text-xs px-1.5 py-0.5 rounded-full">{cartCount}</span>}
                 </Link>
-                <Link href="/about" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2 bg-background px-4" onClick={() => setIsMenuOpen(false)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Link 
+                  href="/about" 
+                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                    isActive("/about") 
+                      ? "bg-[#00D4AA] text-white" 
+                      : "bg-background hover:text-accent-color"
+                  }`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${isActive("/about") ? 'text-white' : (theme === 'dark' ? 'text-white' : 'text-gray-800')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
                   </svg>
-                  <span className="text-base text-text-primary">About</span>
+                  <span className={`text-base ${isActive("/about") ? 'text-white' : 'text-text-primary'}`}>About</span>
                 </Link>
-                <Link href="/contact" className="hover:text-accent-color transition py-2 border-b border-border-color flex items-center gap-2 bg-background px-4" onClick={() => setIsMenuOpen(false)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Link 
+                  href="/contact" 
+                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                    isActive("/contact") 
+                      ? "bg-[#00D4AA] text-white" 
+                      : "bg-background hover:text-accent-color"
+                  }`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${isActive("/contact") ? 'text-white' : (theme === 'dark' ? 'text-white' : 'text-gray-800')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                   </svg>
-                  <span className="text-base text-text-primary">Contact</span>
+                  <span className={`text-base ${isActive("/contact") ? 'text-white' : 'text-text-primary'}`}>Contact</span>
                 </Link>
                 {isSeller && (
-                  <button
-                    onClick={() => {
-                      router.push("/seller");
-                      setIsMenuOpen(false);
-                    }}
-                    className="hover:text-accent-color transition py-2 border-b border-border-color text-left flex items-center gap-2 bg-background px-4"
+                  <Link
+                    href="/seller"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`transition py-2 border-b border-border-color text-left flex items-center gap-2 px-4 ${
+                      isActive("/seller") 
+                        ? "bg-[#00D4AA] text-white" 
+                        : "bg-background hover:text-accent-color"
+                    }`}
                   >
+                    <div className={isActive("/seller") ? 'filter brightness-0 invert' : ''}>
                     <IconWrapper src={assets.product_list_icon} alt="seller dashboard icon" />
-                    <span className="text-base text-text-primary">Merchant Portal</span>
-                  </button>
+                    </div>
+                    <span className={`text-base ${isActive("/seller") ? 'text-white' : 'text-text-primary'}`}>Merchant Portal</span>
+                  </Link>
                 )}
                 {!user && (
                   <button
