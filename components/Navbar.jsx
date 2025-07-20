@@ -516,10 +516,6 @@ const Navbar = () => {
             >
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-bold">
-                    <span className="text-red-500">Ez</span>
-                    <span className="text-green-500">Cart</span>
-                  </h1>
                 </div>
                 <div className="flex items-center gap-2">
                   {/* Theme toggle for mobile */}
