@@ -579,7 +579,10 @@ const Navbar = () => {
               onClick={(e) => e.stopPropagation()}
               style={{
                 backgroundColor: 'var(--background)',
-                borderLeft: '1px solid var(--border-color)'
+                borderLeft: '1px solid var(--border-color)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                boxShadow: '0 0 20px rgba(0, 0, 0, 0.3)'
               }}
             >
               <div className="flex justify-between items-center mb-6">
@@ -640,10 +643,10 @@ const Navbar = () => {
                 </form>
               </div>
               
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 <Link 
                   href="/" 
-                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                  className={`transition py-3 flex items-center gap-2 px-4 border-b border-border-color ${
                     isActive("/") 
                       ? "bg-[#00D4AA] text-white" 
                       : "bg-background hover:text-accent-color"
@@ -657,7 +660,7 @@ const Navbar = () => {
                 </Link>
                 <Link 
                   href="/all-products" 
-                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                  className={`transition py-3 flex items-center gap-2 px-4 border-b border-border-color ${
                     isActive("/all-products") 
                       ? "bg-[#00D4AA] text-white" 
                       : "bg-background hover:text-accent-color"
@@ -671,7 +674,7 @@ const Navbar = () => {
                 </Link>
                 <Link 
                   href="/wishlist" 
-                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                  className={`transition py-3 flex items-center gap-2 px-4 border-b border-border-color ${
                     isActive("/wishlist") 
                       ? "bg-[#00D4AA] text-white" 
                       : "bg-background hover:text-accent-color"
@@ -686,7 +689,7 @@ const Navbar = () => {
                 </Link>
                 <Link 
                   href="/cart" 
-                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                  className={`transition py-3 flex items-center gap-2 px-4 border-b border-border-color ${
                     isActive("/cart") 
                       ? "bg-[#00D4AA] text-white" 
                       : "bg-background hover:text-accent-color"
@@ -701,7 +704,7 @@ const Navbar = () => {
                 </Link>
                 <Link 
                   href="/about" 
-                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                  className={`transition py-3 flex items-center gap-2 px-4 border-b border-border-color ${
                     isActive("/about") 
                       ? "bg-[#00D4AA] text-white" 
                       : "bg-background hover:text-accent-color"
@@ -715,7 +718,7 @@ const Navbar = () => {
                 </Link>
                 <Link 
                   href="/contact" 
-                  className={`transition py-2 border-b border-border-color flex items-center gap-2 px-4 ${
+                  className={`transition py-3 flex items-center gap-2 px-4 border-b border-border-color ${
                     isActive("/contact") 
                       ? "bg-[#00D4AA] text-white" 
                       : "bg-background hover:text-accent-color"
@@ -731,7 +734,7 @@ const Navbar = () => {
                   <Link
                     href="/seller"
                     onClick={() => setIsMenuOpen(false)}
-                    className={`transition py-2 border-b border-border-color text-left flex items-center gap-2 px-4 ${
+                    className={`transition py-3 text-left flex items-center gap-2 px-4 border-b border-border-color ${
                       isActive("/seller") 
                         ? "bg-[#00D4AA] text-white" 
                         : "bg-background hover:text-accent-color"
@@ -760,7 +763,7 @@ const Navbar = () => {
                 {user && (
                   <button
                     onClick={handleMobileLogout}
-                    className="hover:text-red-600 transition py-2 border-b border-border-color text-left text-red-600 flex items-center gap-2 bg-background px-4"
+                    className="hover:text-red-600 transition py-3 border-b border-border-color text-left text-red-600 flex items-center gap-2 bg-background px-4"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className={`w-5 h-5 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
