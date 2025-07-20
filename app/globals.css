@@ -30,6 +30,54 @@ html, body {
   overflow-x: hidden !important;
 }
 
+/* When mobile menu is open */
+body.menu-open {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+}
+
+/* Ensure sticky navbar works properly */
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+/* Prevent content from jumping when navbar becomes sticky */
+body {
+  padding-top: 0;
+}
+
+/* Ensure mobile menu is properly isolated */
+.mobile-menu-content {
+  isolation: isolate;
+  contain: layout style paint;
+}
+
+/* Mobile menu overlay styles */
+.mobile-menu-overlay {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  isolation: isolate;
+}
+
+.mobile-menu-panel {
+  background-color: var(--background) !important;
+  isolation: isolate;
+  contain: layout style paint;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+/* Ensure mobile menu has solid background */
+.mobile-menu-panel,
+.mobile-menu-panel * {
+  background-color: var(--background) !important;
+}
+
+
 @layer base {
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {

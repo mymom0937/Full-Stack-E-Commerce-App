@@ -131,7 +131,7 @@ const Home = () => {
     <>
       <Navbar/>
       <PageTransition>
-        <main>
+        <main className="pt-20">
           {/* Hero Section with Header Slider */}
           <AnimationWrapper variants={fadeIn}>
             <section className="px-6 md:px-16 lg:px-32">

@@ -152,7 +152,7 @@ const ProductsContent = () => {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-background transition-colors duration-200">
+            <div className="min-h-screen bg-background transition-colors duration-200 pt-20">
                 {/* Hero Banner */}
                 <div className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white py-16">
                     <div className="absolute inset-0 opacity-20 bg-center bg-cover" style={{ backgroundImage: 'url(/shop-banner.jpg)' }}></div>
