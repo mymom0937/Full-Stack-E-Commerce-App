@@ -38,7 +38,7 @@ const Footer = () => {
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
-                  Seid E.
+                  Seid Endris
                 </a>
               </span>
             </p>
