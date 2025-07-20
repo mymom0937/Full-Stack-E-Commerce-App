@@ -257,7 +257,7 @@ const Navbar = () => {
       </motion.div>
       
       <motion.div 
-        className="hidden lg:flex items-center gap-2 md:gap-4 lg:gap-8 ml-8 md:ml-12 lg:ml-16"
+        className="hidden lg:flex items-center gap-2 md:gap-4 lg:gap-4 xl:gap-8 ml-8 md:ml-12 lg:ml-8 xl:ml-16"
         variants={navContainerVariants}
       >
         <motion.div variants={navItemVariants}>
@@ -326,7 +326,7 @@ const Navbar = () => {
       </motion.div>
 
       <motion.div 
-        className="hidden lg:flex items-center gap-2 md:gap-3 lg:gap-5"
+        className="hidden lg:flex items-center gap-2 md:gap-3 lg:gap-3 xl:gap-5"
         variants={navContainerVariants}
       >
         <motion.div 
@@ -344,7 +344,7 @@ const Navbar = () => {
               value={searchQuery}
               onChange={handleSearchChange}
               onFocus={() => setShowSearchResults(true)}
-              className="w-24 sm:w-32 md:w-40 lg:w-48 border border-border-color rounded-l px-2 md:px-3 py-1.5 text-sm bg-background text-text-primary focus:outline-none focus:ring-1 focus:ring-orange-500 min-w-0 flex-shrink"
+              className="w-24 sm:w-32 md:w-40 lg:w-32 xl:w-48 border border-border-color rounded-l px-2 md:px-3 py-1.5 text-sm bg-background text-text-primary focus:outline-none focus:ring-1 focus:ring-orange-500 min-w-0 flex-shrink"
             />
             <motion.button 
               type="submit" 

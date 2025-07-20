@@ -200,8 +200,8 @@ const ProductList = () => {
             <h2 className="text-lg font-medium">All Products</h2>
           </div>
           
-                        {/* Mobile & Tablet Card View (visible on small and medium screens) */}
-              <div className="lg:hidden w-full">
+                        {/* Mobile, Tablet & Laptop Card View (visible on small, medium and large screens) */}
+              <div className="xl:hidden w-full">
             {sellerProducts.length === 0 ? (
               <div className="text-center p-8 bg-card-bg rounded-md border border-border-color">
                 No products found. Add your first product!
@@ -253,8 +253,8 @@ const ProductList = () => {
             )}
           </div>
           
-          {/* Desktop Table View (visible only on large screens) */}
-          <div className="hidden lg:block w-full overflow-x-auto">
+          {/* Desktop Table View (visible only on extra large screens) */}
+          <div className="hidden xl:block w-full overflow-x-auto">
             <div className="rounded-md bg-card-bg border border-border-color min-w-[700px]">
               <table className="w-full">
                 <thead className="text-text-primary text-sm text-left">
@@ -328,8 +328,8 @@ const ProductList = () => {
 
       {/* Edit Product Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className={`bg-card-bg p-6 rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto`}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 pt-16">
+          <div className={`bg-card-bg p-6 rounded-lg shadow-lg max-w-2xl w-full max-h-[calc(90vh-4rem)] overflow-y-auto`}>
             <h3 className="text-xl font-medium mb-4 text-text-primary">Edit Product</h3>
             
             <form onSubmit={handleEditSubmit}>
@@ -483,7 +483,7 @@ const ProductList = () => {
       
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && productToDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 pt-16">
           <div className={`bg-card-bg p-6 rounded-lg shadow-lg max-w-md w-full`}>
             <h3 className="text-xl font-medium mb-4 text-text-primary">Confirm Deletion</h3>
             <p className="text-text-secondary mb-6">

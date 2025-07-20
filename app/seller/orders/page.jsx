@@ -180,8 +180,8 @@ const Orders = () => {
             </div>
           ) : (
             <>
-              {/* Mobile & Tablet Card View (visible on small and medium screens) */}
-              <div className="lg:hidden w-full">
+              {/* Mobile, Tablet & Laptop Card View (visible on small, medium and large screens) */}
+              <div className="xl:hidden w-full">
                 <div className="grid grid-cols-1 gap-4">
                   {processedOrders.map((order, index) => (
                     <div 
@@ -251,8 +251,8 @@ const Orders = () => {
                 </div>
               </div>
 
-              {/* Desktop Table View (visible only on large screens) */}
-              <div className="hidden lg:block w-full overflow-x-auto">
+              {/* Desktop Table View (visible only on extra large screens) */}
+              <div className="hidden xl:block w-full overflow-x-auto">
                 <div className="rounded-md bg-card-bg border border-border-color min-w-[800px]">
                   <table className="w-full">
                     <thead className="text-text-primary text-sm text-left">

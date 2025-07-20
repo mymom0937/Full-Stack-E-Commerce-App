@@ -136,7 +136,7 @@ const Product = () => {
     if (productLoading) return (
         <>
             <Navbar />
-            <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
+            <div className="px-6 md:px-16 lg:px-32 pt-20 space-y-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                     <div className="px-5 lg:px-16 xl:px-20">
                         <ImageSkeleton className="w-full h-80 rounded-lg mb-4" />
@@ -168,7 +168,7 @@ const Product = () => {
     if (isError || !product) return (
         <>
             <Navbar />
-            <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 md:px-16 lg:px-32">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 md:px-16 lg:px-32 pt-20">
                 <h1 className="text-2xl font-medium text-text-primary mb-4">Product not found</h1>
                 <p className="text-text-secondary mb-6">We couldn't find the product you're looking for.</p>
                 <button 
@@ -207,7 +207,7 @@ const Product = () => {
             
             <Navbar />
             <PageTransition>
-            <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
+            <div className="px-6 md:px-16 lg:px-32 pt-20 space-y-10">
                 {/* Breadcrumb */}
                     <AnimationWrapper>
                 <Breadcrumb 
