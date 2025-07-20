@@ -180,8 +180,8 @@ const Orders = () => {
             </div>
           ) : (
             <>
-              {/* Mobile Card View (visible only on small screens) */}
-              <div className="md:hidden w-full">
+              {/* Mobile & Tablet Card View (visible on small and medium screens) */}
+              <div className="lg:hidden w-full">
                 <div className="grid grid-cols-1 gap-4">
                   {processedOrders.map((order, index) => (
                     <div 
@@ -251,34 +251,34 @@ const Orders = () => {
                 </div>
               </div>
 
-              {/* Desktop & Tablet Table View */}
-              <div className="hidden md:block w-full max-w-4xl overflow-x-auto">
-                <div className="rounded-md bg-card-bg border border-border-color min-w-full">
+              {/* Desktop Table View (visible only on large screens) */}
+              <div className="hidden lg:block w-full overflow-x-auto">
+                <div className="rounded-md bg-card-bg border border-border-color min-w-[800px]">
                   <table className="w-full">
                     <thead className="text-text-primary text-sm text-left">
                       <tr>
-                        <th className="w-2/5 px-4 py-3 font-medium">Order Items</th>
-                        <th className="px-4 py-3 font-medium">Customer</th>
-                        <th className="px-4 py-3 font-medium">Payment</th>
-                        <th className="px-4 py-3 font-medium">Amount</th>
-                        <th className="px-4 py-3 font-medium text-center">Action</th>
+                        <th className="w-1/3 px-3 py-3 font-medium">Order Items</th>
+                        <th className="w-1/6 px-2 py-3 font-medium">Customer</th>
+                        <th className="w-1/6 px-2 py-3 font-medium">Payment</th>
+                        <th className="w-1/6 px-2 py-3 font-medium">Amount</th>
+                        <th className="w-1/6 px-2 py-3 font-medium text-center">Action</th>
                       </tr>
                     </thead>
                     <tbody className="text-sm text-text-secondary">
                       {processedOrders.map((order, index) => (
                         <tr key={order._id || index} className="border-t border-border-color">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center space-x-3">
-                              <div className="bg-gray-500/10 rounded p-2 flex-shrink-0">
+                          <td className="px-3 py-3">
+                            <div className="flex items-center space-x-2">
+                              <div className="bg-gray-500/10 rounded p-1 flex-shrink-0">
                                 <Image
                                   src={getOrderImage(order)}
                                   alt="Order Item"
-                                  className="w-16 h-16 object-contain"
-                                  width={64}
-                                  height={64}
+                                  className="w-10 h-10 object-contain"
+                                  width={40}
+                                  height={40}
                                 />
                               </div>
-                              <div className="min-w-0 max-w-[200px]">
+                              <div className="min-w-0 max-w-[120px]">
                                 <p className="truncate text-text-primary font-medium">
                                   {formatItems(order.items)}
                                 </p>
@@ -291,13 +291,13 @@ const Orders = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 max-w-[150px]">
+                          <td className="px-2 py-3 max-w-[100px]">
                             <p className="font-medium truncate">{order.address?.fullName || 'Customer'}</p>
                             <p className="text-xs truncate">
                               {order.address?.city || ''}, {order.address?.state || ''}
                             </p>
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-2 py-3">
                             <div className="flex flex-col gap-1">
                               <span className={`font-medium ${order.isPaid ? 'text-green-500' : 'text-amber-500'}`}>
                                 {order.isPaid ? 'Paid' : 'Pending'}
@@ -307,17 +307,17 @@ const Orders = () => {
                               </span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 font-medium whitespace-nowrap">
+                          <td className="px-2 py-3 font-medium whitespace-nowrap">
                             {currency.symbol}{formatPrice(order.amount)}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-2 py-3">
                             <div className="flex justify-center">
                               <button
                                 onClick={() => router.push(`/order-details/${order._id}`)}
-                                className="p-2 bg-[#F8BD19] text-white rounded-md hover:bg-[#e5ad14] transition-colors flex items-center justify-center"
+                                className="p-1 bg-[#F8BD19] text-white rounded-md hover:bg-[#e5ad14] transition-colors flex items-center justify-center"
                                 title="View Details"
                               >
-                                <FaRegEye size={18} />
+                                <FaRegEye size={14} />
                               </button>
                             </div>
                           </td>

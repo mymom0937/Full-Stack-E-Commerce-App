@@ -163,7 +163,7 @@ const OrderDetails = ({ params }) => {
   return (
     <>
       {!isSeller && <Navbar />}
-      <div className={`flex flex-col justify-between ${isSeller ? 'px-4 md:px-10' : 'px-6 md:px-16 lg:px-32'} py-6 min-h-[calc(100vh-300px)]`}>
+      <div className={`flex flex-col justify-between ${isSeller ? 'px-4 md:px-10' : 'px-6 md:px-16 lg:px-32'} py-6 min-h-[calc(100vh-300px)] ${!isSeller ? 'pt-20' : ''}`}>
         <div className="space-y-5">
           {/* Breadcrumb */}
           {!isSeller && (

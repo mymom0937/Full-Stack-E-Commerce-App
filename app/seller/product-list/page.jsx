@@ -200,8 +200,8 @@ const ProductList = () => {
             <h2 className="text-lg font-medium">All Products</h2>
           </div>
           
-          {/* Mobile Card View (visible only on small screens) */}
-          <div className="md:hidden w-full">
+                        {/* Mobile & Tablet Card View (visible on small and medium screens) */}
+              <div className="lg:hidden w-full">
             {sellerProducts.length === 0 ? (
               <div className="text-center p-8 bg-card-bg rounded-md border border-border-color">
                 No products found. Add your first product!
@@ -253,16 +253,16 @@ const ProductList = () => {
             )}
           </div>
           
-          {/* Desktop & Tablet Table View */}
-          <div className="hidden md:block w-full max-w-4xl overflow-x-auto">
-            <div className="rounded-md bg-card-bg border border-border-color min-w-full">
+          {/* Desktop Table View (visible only on large screens) */}
+          <div className="hidden lg:block w-full overflow-x-auto">
+            <div className="rounded-md bg-card-bg border border-border-color min-w-[700px]">
               <table className="w-full">
                 <thead className="text-text-primary text-sm text-left">
                   <tr>
-                    <th className="w-2/5 px-4 py-3 font-medium">Product</th>
-                    <th className="px-4 py-3 font-medium">Category</th>
-                    <th className="px-4 py-3 font-medium">Price</th>
-                    <th className="px-4 py-3 font-medium text-center">Actions</th>
+                    <th className="w-1/3 px-3 py-3 font-medium">Product</th>
+                    <th className="w-1/6 px-2 py-3 font-medium">Category</th>
+                    <th className="w-1/6 px-2 py-3 font-medium">Price</th>
+                    <th className="w-1/6 px-2 py-3 font-medium text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm text-text-secondary">
@@ -275,44 +275,44 @@ const ProductList = () => {
                   ) : (
                     sellerProducts.map((product) => (
                       <tr key={product._id} className="border-t border-border-color">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center space-x-3">
-                            <div className="bg-gray-500/10 rounded p-2 flex-shrink-0">
+                        <td className="px-3 py-3">
+                          <div className="flex items-center space-x-2">
+                            <div className="bg-gray-500/10 rounded p-1 flex-shrink-0">
                               <Image
                                 src={product.images && product.images.length > 0 ? product.images[0] : assets.upload_area}
                                 alt="product Image"
-                                className="w-16 h-16 object-contain"
-                                width={64}
-                                height={64}
+                                className="w-10 h-10 object-contain"
+                                width={40}
+                                height={40}
                               />
                             </div>
-                            <span className="truncate">{product.name}</span>
+                            <span className="truncate max-w-[100px]">{product.name}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3">{product.category}</td>
-                        <td className="px-4 py-3">${product.offerPrice}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex justify-center gap-2">
+                        <td className="px-2 py-3">{product.category}</td>
+                        <td className="px-2 py-3">${product.offerPrice}</td>
+                        <td className="px-2 py-3">
+                          <div className="flex justify-center gap-0.5">
                             <button
                               onClick={() => handleEditClick(product)}
-                              className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
+                              className="p-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
                               title="Edit"
                             >
-                              <FiEdit size={18} />
+                              <FiEdit size={14} />
                             </button>
                             <button
                               onClick={() => handleDeleteClick(product)}
-                              className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center justify-center"
+                              className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center justify-center"
                               title="Delete"
                             >
-                              <MdDeleteOutline size={18} />
+                              <MdDeleteOutline size={14} />
                             </button>
                             <button
                               onClick={() => router.push(`/product/${product._id}`)}
-                              className="p-2 bg-[#F8BD19] text-white rounded-md hover:bg-[#e5ad14] transition-colors flex items-center justify-center"
+                              className="p-1 bg-[#F8BD19] text-white rounded-md hover:bg-[#e5ad14] transition-colors flex items-center justify-center"
                               title="View"
                             >
-                              <FaRegEye size={18} />
+                              <FaRegEye size={14} />
                             </button>
                           </div>
                         </td>

@@ -30,7 +30,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className='sticky top-0 z-50 flex items-center px-6 md:px-16 lg:px-32 py-4 justify-between border-b border-border-color bg-background text-text-primary shadow-sm transition-colors duration-200'>
+    <div className='fixed top-0 left-0 right-0 z-[100] flex items-center px-6 md:px-16 lg:px-32 py-4 justify-between border-b border-border-color bg-background/95 backdrop-blur-md text-text-primary shadow-lg transition-colors duration-200'>
       <div className="flex items-center">
         <Image 
           onClick={()=>router.push('/')} 

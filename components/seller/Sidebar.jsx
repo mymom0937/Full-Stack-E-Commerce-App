@@ -15,7 +15,7 @@ const SideBar = () => {
     ];
 
     return (
-        <div className='md:w-64 w-16 border-r min-h-screen text-base border-border-color bg-background text-text-primary py-2 flex flex-col transition-colors duration-200'>
+        <div className='md:w-64 w-16 border-r h-[calc(100vh-4rem)] text-base border-border-color bg-background text-text-primary py-2 flex flex-col transition-colors duration-200 fixed top-16 left-0'>
             {menuItems.map((item) => {
 
                 const isActive = pathname === item.path;
