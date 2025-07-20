@@ -62,10 +62,10 @@ export default function AboutPage() {
             <div className="bg-card-bg p-6 rounded-xl shadow-sm border border-border-color transition-colors duration-200">
               <div className="flex items-center mb-4">
                 <FaDatabase className="text-[#F8BD19] mr-3 text-2xl" />
-                <h3 className="text-xl font-semibold text-text-primary">MongoDB Database</h3>
+                <h3 className="text-xl font-semibold text-text-primary">MongoDB Atlas Database</h3>
               </div>
               <p className="text-text-secondary">
-                Our platform is powered by MongoDB, a flexible and scalable NoSQL database that ensures fast data retrieval and robust storage for all product and user information.
+                Our platform is powered by MongoDB Atlas, a fully-managed cloud database service that provides automatic scaling, high availability, and global distribution for optimal performance and reliability.
               </p>
             </div>
             
