@@ -257,7 +257,7 @@ const Navbar = () => {
       </motion.div>
       
       <motion.div 
-        className="hidden lg:flex items-center gap-2 md:gap-4 lg:gap-8"
+        className="hidden lg:flex items-center gap-2 md:gap-4 lg:gap-8 ml-8 md:ml-12 lg:ml-16"
         variants={navContainerVariants}
       >
         <motion.div variants={navItemVariants}>

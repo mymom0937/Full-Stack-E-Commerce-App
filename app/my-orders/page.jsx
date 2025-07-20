@@ -146,7 +146,7 @@ const MyOrders = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-[calc(100vh-300px)]">
+      <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-[calc(100vh-300px)] pt-20 md:pt-24">
         <div className="space-y-5 max-w-5xl mx-auto w-full">
           {/* Breadcrumb */}
           <Breadcrumb currentPage="My Orders" />
