@@ -1,11 +1,8 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AppContextProvider } from '@/context/AppContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Toaster } from 'react-hot-toast';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'EzCart - Modern E-Commerce Store',
@@ -20,7 +17,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <head>
+        {/* Add Google Fonts Inter classic link */}
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+      </head>
+      <body>
         <ClerkProvider>
           <ThemeProvider>
             <AppContextProvider>
