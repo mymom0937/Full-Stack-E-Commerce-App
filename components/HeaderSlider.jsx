@@ -197,7 +197,7 @@ const HeaderSlider = () => {
           exit="exit"
           className="w-full"
         >
-          <div className="flex flex-col-reverse md:flex-row items-center justify-between bg-card-bg py-8 md:px-14 px-5 mt-6 rounded-xl w-full transition-colors duration-200">
+          <div className="flex flex-col-reverse lg:flex-row items-center justify-between bg-card-bg py-8 px-5 lg:px-14 mt-6 rounded-xl w-full transition-colors duration-200">
             <motion.div 
               className="md:pl-8 mt-10 md:mt-0"
               initial="hidden"
