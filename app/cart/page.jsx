@@ -36,7 +36,7 @@ const Cart = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col lg:flex-row gap-10 px-6 lg:px-16 lg:px-32 pt-20 mb-20">
+      <div className="flex flex-col lg:flex-row gap-10 px-6 lg:px-32 pt-20 mb-20">
         <div className="flex-1">
           {/* Breadcrumb */}
           <Breadcrumb currentPage="My Cart" />
