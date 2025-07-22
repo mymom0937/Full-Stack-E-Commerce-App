@@ -7,7 +7,7 @@ import axios from 'axios'
 // Create a separate component for the parts that need searchParams
 const OrderPlacedContent = () => {
   const { router, getToken } = useAppContext()
-  const [message, setMessage] = useState("Purchase Complete")
+  const [message, setMessage] = useState("Purchase Completed Successfully.")
   const searchParams = useSearchParams()
 
   useEffect(() => {

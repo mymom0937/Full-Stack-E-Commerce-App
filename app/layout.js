@@ -5,11 +5,9 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
-  title: 'EzCart - Modern E-Commerce Store',
-  description: 'Shop the latest tech gadgets, electronics, and more.',
+  title: 'EzCart | Modern Tech Store',
+  description: 'Discover the latest gadgets and electronics.',
   icons: {
-    // icon: '/favicon.ico',
-    // icon: '/favicon2.ico',
     icon: '/favicon3.ico',
   },
 };
@@ -25,17 +23,20 @@ export default function RootLayout({ children }) {
         <ClerkProvider>
           <ThemeProvider>
             <AppContextProvider>
-              <main>
+              <main className="pt-8 md:pt-12 lg:pt-16">
                 {children}
               </main>
               <Toaster
-                position="bottom-center"
+                position="top-right"
                 toastOptions={{
                   duration: 3000,
                   style: {
                     background: 'var(--card-bg)',
                     color: 'var(--text-primary)',
                     border: '1px solid var(--border-color)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                    fontSize: '1rem',
+                    fontWeight: 500,
                   },
                   success: {
                     iconTheme: {

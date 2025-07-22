@@ -29,6 +29,17 @@ const Footer = () => {
           <p className="text-text-secondary text-md">
             © {new Date().getFullYear()}, EzCart. All rights reserved.
           </p>
+          <p className="text-sm mt-1 md:mt-0">
+            Designed & Developed by <span className="text-[#F8BD19] font-medium hover:underline">
+              <a 
+                href="https://www.linkedin.com/in/seid-endris-dev/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Seid Endris
+              </a>
+            </span>
+          </p>
           <ul className="flex items-center gap-3 justify-center mt-4 sm:mt-0">
             <li>
               <a

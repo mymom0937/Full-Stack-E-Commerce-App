@@ -38,7 +38,7 @@ export default function ContactPage() {
         message: ''
       });
       setIsSubmitting(false);
-    }, 1500);
+    }, 2500);
   };
 
   return (
