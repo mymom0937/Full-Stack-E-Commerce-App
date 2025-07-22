@@ -254,7 +254,7 @@ const HeaderSlider = () => {
               animate="visible"
             >
               <Image
-                className="md:w-72 w-48"
+                className="w-48 max-w-full"
                 src={sliderData[currentSlide].imgSrc}
                 alt={`Slide ${currentSlide + 1}`}
               />
