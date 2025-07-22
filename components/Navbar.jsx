@@ -480,55 +480,48 @@ const Navbar = () => {
 
         {user ? (
           <motion.div variants={navItemVariants}>
-          <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: 'w-7 h-7 md:w-8 md:h-8' } }}>
+            <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: 'w-7 h-7 md:w-8 md:h-8' } }}>
               <UserButton.MenuItems>
                 <UserButton.Action
                   label="Home"
                   labelIcon={<HomeIcon />}
                   onClick={() => window.location.href = "/"}
                 />
-              </UserButton.MenuItems>
-
-              <UserButton.MenuItems>
                 <UserButton.Action
                   label="Products"
                   labelIcon={<BoxIcon />}
                   onClick={() => window.location.href = "/all-products"}
                 />
-              </UserButton.MenuItems>
-
-              <UserButton.MenuItems>
                 <UserButton.Action
-                label="Wishlist"
-                labelIcon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z" 
-                    stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                }
-                onClick={() => window.location.href = "/wishlist"}
+                  label="Wishlist"
+                  labelIcon={
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z" 
+                        stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  }
+                  onClick={() => window.location.href = "/wishlist"}
                 />
-              </UserButton.MenuItems>
-
-              <UserButton.MenuItems>
                 <UserButton.Action
                   label="Cart"
                   labelIcon={<CartIcon />}
                   onClick={() => window.location.href = "/cart"}
                 />
-              </UserButton.MenuItems>
-
-              <UserButton.MenuItems>
                 <UserButton.Action
                   label="My Orders"
                   labelIcon={<BagIcon />}
                   onClick={() => window.location.href = "/my-orders"}
                 />
+                <UserButton.Action
+                  label="Sign Out"
+                  labelIcon={
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                    </svg>
+                  }
+                  onClick={handleLogout}
+                />
               </UserButton.MenuItems>
-
-            <UserButton.MenuItems>
-              <UserButton.SignOutButton onSignOut={handleLogout} />
-            </UserButton.MenuItems>
             </UserButton>
           </motion.div>
         ) : (
