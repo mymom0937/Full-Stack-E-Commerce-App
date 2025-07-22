@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         <ClerkProvider>
           <ThemeProvider>
             <AppContextProvider>
-              <main className="pt-8 md:pt-12 lg:pt-16">
+              <main className="pt-7 md:pt-11 lg:pt-14">
                 {children}
               </main>
               <Toaster
