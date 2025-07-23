@@ -82,7 +82,7 @@ const OrderSummary = () => {
     e.preventDefault(); // Prevent default form submission
     
     if (disableAllButtons) {
-      console.log("All buttons disabled, preventing action");
+      // console.log("All buttons disabled, preventing action");
       return;
     }
     
@@ -94,7 +94,7 @@ const OrderSummary = () => {
     // Prevent rapid multiple clicks
     const now = Date.now();
     if (now - lastClickTime.current < 2000) {
-      console.log("Button clicked too soon after previous click");
+      // console.log("Button clicked too soon after previous click");
       return;
     }
     lastClickTime.current = now;
@@ -129,7 +129,7 @@ const OrderSummary = () => {
     if (typeof window !== 'undefined') {
       const now = Date.now();
       if (window.__lastOrderTimestamp && now - window.__lastOrderTimestamp < 10000) {
-        console.log("Preventing duplicate order - too soon after last order");
+        // console.log("Preventing duplicate order - too soon after last order");
         toast.error("An order was just placed. Please wait a moment.");
         setTimeout(() => setDisableAllButtons(false), 5000);
         return;
@@ -137,7 +137,7 @@ const OrderSummary = () => {
       
       // Check if we've already processed an order in this session
       if (window.__orderCount > 0) {
-        console.log("Order already processed in this session");
+        // console.log("Order already processed in this session");
         toast.error("An order has already been placed. Please refresh the page to place another order.");
         return;
       }
@@ -148,7 +148,7 @@ const OrderSummary = () => {
     
     // Prevent if already processing
     if (loadingCOD || loadingStripe || isProcessingOrder || buttonClickedOnce.current) {
-      console.log("Order already in progress, preventing duplicate");
+      // console.log("Order already in progress, preventing duplicate");
       return;
     }
     
@@ -214,7 +214,7 @@ const OrderSummary = () => {
         // Navigate away immediately, don't wait for any further processing
         setTimeout(() => {
           window.location.href = '/order-placed';
-        }, 100);
+        }, 1000);
       } else {
         // Restore cart if order failed
         setCartItems(cartBackup);
@@ -222,7 +222,7 @@ const OrderSummary = () => {
         resetOrderState();
       }
     } catch (error) {
-      console.error("Order creation error:", error);
+      // console.error("Order creation error:", error);
       toast.error(error.response?.data?.message || error.message || "Error creating order");
       resetOrderState();
     }
@@ -239,7 +239,7 @@ const OrderSummary = () => {
     if (typeof window !== 'undefined') {
       const now = Date.now();
       if (window.__lastOrderTimestamp && now - window.__lastOrderTimestamp < 10000) {
-        console.log("Preventing duplicate order - too soon after last order");
+        // console.log("Preventing duplicate order - too soon after last order");
         toast.error("An order was just placed. Please wait a moment.");
         setTimeout(() => setDisableAllButtons(false), 5000);
         return;
@@ -247,7 +247,7 @@ const OrderSummary = () => {
       
       // Check if we've already processed an order in this session
       if (window.__orderCount > 0) {
-        console.log("Order already processed in this session");
+        // console.log("Order already processed in this session");
         toast.error("An order has already been placed. Please refresh the page to place another order.");
         return;
       }
@@ -258,7 +258,7 @@ const OrderSummary = () => {
     
     // Prevent if already processing
     if (loadingCOD || loadingStripe || isProcessingOrder || buttonClickedOnce.current) {
-      console.log("Order already in progress, preventing duplicate");
+      // console.log("Order already in progress, preventing duplicate");
       return;
     }
     
@@ -330,7 +330,7 @@ const OrderSummary = () => {
         resetOrderState();
       }
     } catch (error) {
-      console.error("Stripe order error:", error);
+      // console.error("Stripe order error:", error);
       toast.error(error.response?.data?.message || error.message || "Error creating order");
       resetOrderState();
     }
