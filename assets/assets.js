@@ -71,8 +71,17 @@ import product_details_page_apple_earphone_image2 from "./product_details_page_a
 import product_details_page_apple_earphone_image3 from "./product_details_page_apple_earphone_image3.png";
 import product_details_page_apple_earphone_image4 from "./product_details_page_apple_earphone_image4.png";
 import product_details_page_apple_earphone_image5 from "./product_details_page_apple_earphone_image5.png";
+import nothing_headphone from "./Nothing Headphone.jpg";
+import mackbook_pro_m144 from "./mackbook pro m14.jpg";
+import jacob_co_epicx_cr7 from "./Jacob & Co. Epic X.webp";
+
+
+
 
 export const assets = {
+  jacob_co_epicx_cr7,
+  mackbook_pro_m144,
+  nothing_headphone,
   macbook_pro_image, Apple_iPhone15_pro_max, Apple_AirPods_Pro2, Samsung_Galaxy_S24_Ultra, Sony_WF_1000XM5, Apple_Watch_Ultra_2,
   Apple_iPhone_16e, Galaxy_S25_Ultra, Huawei_Watch_5, Huawei_Watch_Fit_4_Pro, Huawei_Watch_Fit4_Pro, iPad_Air, MacBook_Air_M4, Galaxy_Z_Flip7,
   stripe_logo,

@@ -25,7 +25,7 @@ const ThemedArrow = () => {
       transition={{ 
         repeat: Infinity, 
         repeatType: "reverse", 
-        duration: 1.5,
+        duration: 2,
         ease: "easeInOut",
         repeatDelay: 1
       }}
@@ -38,16 +38,24 @@ const ThemedArrow = () => {
 
 const HeaderSlider = () => {
   const sliderData = [
+  {
+  id: 1,
+  title: "Ultimate Performance - MacBook Pro M14",
+  offer: "Exclusive Deal 20% Off",
+  buttonText1: "Shop now",
+  buttonText2: "See details",
+  imgSrc: assets.mackbook_pro_m144
+},
+ {
+  id: 2,
+  title: "Aviation Spirit - Jacob & Co. Epic X “Flight of CR7”",
+  offer: "Limited Edition 10% Off",
+  buttonText1: "Buy now",
+  buttonText2: "Discover more",
+  imgSrc: assets.jacob_co_epicx_cr7, 
+},
     {
-      id: 1,
-      title: "Premium Sound Experience - High-Quality Headphones",
-      offer: "Limited Time Offer 30% Off",
-      buttonText1: "Buy now",
-      buttonText2: "Find more",
-      imgSrc: assets.header_headphone_image,
-    },
-    {
-      id: 2,
+      id: 3,
       title: "Apple Watch Ultra 2 - Ultimate Adventure Companion",
       offer: "Designed for Explorers and Athletes",
       buttonText1: "Buy Now",
@@ -55,7 +63,7 @@ const HeaderSlider = () => {
       imgSrc: assets.Apple_Watch_Ultra_2,
     },
     {
-      id: 3,
+      id: 4,
       title: "Garmin Venu 2 - Advanced Fitness Smartwatch",
       offer: "Track your fitness journey with precision!",
       buttonText1: "Shop Now",
@@ -63,7 +71,7 @@ const HeaderSlider = () => {
       imgSrc: assets.venu_watch_image,
     },
     {
-      id: 4,
+      id: 5,
       title: "ASUS ROG Gaming Laptop - Ultimate Performance",
       offer: "Special Gaming Edition - Limited Stock",
       buttonText1: "Order Now",
@@ -71,7 +79,7 @@ const HeaderSlider = () => {
       imgSrc: assets.asus_laptop_image,
     },
     {
-      id: 5,
+      id: 6,
       title: "Sony WF-1000XM5 - Premium Wireless Earbuds",
       offer: "Industry-leading Noise Cancellation",
       buttonText1: "Shop Now",
@@ -79,7 +87,7 @@ const HeaderSlider = () => {
       imgSrc: assets.Sony_WF_1000XM5,
     },
     {
-      id: 6,
+      id: 7,
       title: "Samsung Galaxy S23 - Cutting Edge Technology",
       offer: "Experience the Next Level of Mobile Innovation",
       buttonText1: "Buy Now",
@@ -88,7 +96,7 @@ const HeaderSlider = () => {
     },
     
     {
-      id: 7,
+      id: 8,
       title: "MacBook Air M4 - Unmatched Performance",
       offer: "The World's Thinnest Laptop",
       buttonText1: "Buy Now",
@@ -96,7 +104,7 @@ const HeaderSlider = () => {
       imgSrc: assets.MacBook_Air_M4,
     },
     {
-      id: 8,
+      id: 9,
       title: "Galaxy S25 Ultra - Flagship Innovation",
       offer: "Elevate Your Mobile Experience",
       buttonText1: "Buy Now",
@@ -105,13 +113,14 @@ const HeaderSlider = () => {
     },
 
     {
-      id: 9,
+      id: 10,
       title: "Apple iPhone 16e - Revolutionary Performance",
       offer: "Next Generation Apple Intelligence",
       buttonText1: "Pre-Order",
       buttonText2: "View Specs",
       imgSrc: assets.Apple_iPhone_16e,
     },
+   
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -213,7 +222,7 @@ const HeaderSlider = () => {
             >
               <motion.p 
                 variants={textVariants}
-                className="md:text-base text-orange-600 pb-1"
+                className="md:text-base text-white bg-[#F8BD19] px-2 py-1 rounded pb-1 inline-block w-auto"
               >
                 {sliderData[currentSlide].offer}
               </motion.p>
