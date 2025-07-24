@@ -124,7 +124,7 @@ orderSchema.pre('save', function(next) {
 
 // Get current database name if connected
 const currentDb = mongoose.connection.db ? mongoose.connection.db.databaseName : null;
-console.log(`Current database when initializing Order model: ${currentDb || 'not connected yet'}`);
+// console.log(`Current database when initializing Order model: ${currentDb || 'not connected yet'}`);
 
 let Order;
 

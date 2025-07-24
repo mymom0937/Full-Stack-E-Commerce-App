@@ -49,7 +49,7 @@ export function useCategories() {
           }));
           
           // Log for debugging
-          console.log('Categories with images:', categoriesWithImages);
+          // console.log('Categories with images:', categoriesWithImages);
           
           setCategories(categoriesWithImages);
         } else {

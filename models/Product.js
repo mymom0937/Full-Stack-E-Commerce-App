@@ -51,7 +51,7 @@ const productSchema = new mongoose.Schema({
 const getProductModel = () => {
   // Get current database name
   const currentDb = mongoose.connection.db ? mongoose.connection.db.databaseName : null;
-  console.log(`Current database before Product model creation: ${currentDb || 'not connected'}`);
+  // console.log(`Current database before Product model creation: ${currentDb || 'not connected'}`);
   
   // Check if we're connected
   if (mongoose.connection.readyState === 1) {
@@ -62,34 +62,34 @@ const getProductModel = () => {
       
       // Return existing model or create new one
       if (ecommerceDb.models.products) {
-        console.log("Using existing Product model from ecommerce database");
+        // console.log("Using existing Product model from ecommerce database");
         return ecommerceDb.models.products;
       } else {
-        console.log("Creating new Product model in ecommerce database");
+        // console.log("Creating new Product model in ecommerce database");
         return ecommerceDb.model('products', productSchema);
       }
     } else {
       // We're already connected to ecommerce database
       // Return existing model or create new one
       if (mongoose.models.products) {
-        console.log("Using existing Product model from mongoose models");
+        // console.log("Using existing Product model from mongoose models");
         return mongoose.models.products;
       } else {
-        console.log("Creating new Product model in mongoose");
+        // console.log("Creating new Product model in mongoose");
         return mongoose.model('products', productSchema);
       }
     }
   } else {
     // Not connected yet, create model for when connection is established
-    console.log("Creating Product model before connection");
+    // console.log("Creating Product model before connection");
     return mongoose.models.products || mongoose.model('products', productSchema);
   }
 };
 
 // Get the model
 const Product = getProductModel();
-console.log(`Product model initialized in database: ${mongoose.connection.db ? mongoose.connection.db.databaseName : 'not connected yet'}`);
-console.log("Product model collection:", Product.collection.name);
+// console.log(`Product model initialized in database: ${mongoose.connection.db ? mongoose.connection.db.databaseName : 'not connected yet'}`);
+// console.log("Product model collection:", Product.collection.name);
 
 // Add a custom method to ensure we're saving to the right database
 Product.createProduct = async function(productData) {

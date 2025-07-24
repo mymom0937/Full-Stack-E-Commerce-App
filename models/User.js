@@ -25,7 +25,7 @@ console.log(`Current database before User model creation: ${currentDb || 'not co
 if (mongoose.connection.readyState === 1) {
   // If we're connected but not to ecommerce, switch to it
   if (currentDb && currentDb !== 'ecommerce') {
-    console.log(`Switching from ${currentDb} to ecommerce database for User model`);
+    // console.log(`Switching from ${currentDb} to ecommerce database for User model`);
     const ecommerceDb = mongoose.connection.useDb('ecommerce');
     User = ecommerceDb.models.user || ecommerceDb.model('user', userSchema);
   } else {

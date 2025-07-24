@@ -11,13 +11,13 @@ export const inngest = new Inngest({ id: "ezcart-next" });
 // Helper function to ensure we're using the ecommerce database
 async function ensureEcommerceDB() {
   await connectDB();
-  console.log(`Current database: ${mongoose.connection.db?.databaseName || 'not connected'}`);
+  // console.log(`Current database: ${mongoose.connection.db?.databaseName || 'not connected'}`);
   
   // If we're not on ecommerce database, switch to it
   if (mongoose.connection.db && mongoose.connection.db.databaseName !== 'ecommerce') {
-    console.log(`Switching from ${mongoose.connection.db.databaseName} to ecommerce database`);
+    // console.log(`Switching from ${mongoose.connection.db.databaseName} to ecommerce database`);
     mongoose.connection.useDb('ecommerce');
-    console.log(`Now using database: ${mongoose.connection.db.databaseName}`);
+    // console.log(`Now using database: ${mongoose.connection.db.databaseName}`);
   }
 }
 
@@ -29,10 +29,10 @@ export const syncUserCreation = inngest.createFunction(
   },
   async ({ event }) => {
     try {
-      console.log("Syncing user from Clerk - Event received:", event);
+      // console.log("Syncing user from Clerk - Event received:", event);
       const { id, first_name, last_name, email_addresses, image_url } =
         event.data;
-      console.log("User data extracted:", { id, first_name, last_name, email: email_addresses[0]?.email_address });
+      // console.log("User data extracted:", { id, first_name, last_name, email: email_addresses[0]?.email_address });
       
       // Save user data to the database
       const userData = {
@@ -41,15 +41,15 @@ export const syncUserCreation = inngest.createFunction(
         name: first_name + ' ' + last_name,
         imageUrl: image_url,
       }
-      console.log("User data prepared:", userData);
+      // console.log("User data prepared:", userData);
       
       // Ensure we're connected to the ecommerce database
       await ensureEcommerceDB();
-      console.log("Connected to MongoDB");
+      // console.log("Connected to MongoDB");
       
       const result = await User.create(userData);
       console.log("User created in MongoDB:", result);
-      console.log(`User created in database: ${mongoose.connection.db.databaseName}, collection: ${User.collection.name}`);
+      // console.log(`User created in database: ${mongoose.connection.db.databaseName}, collection: ${User.collection.name}`);
       
       return { success: true };
     } catch (error) {
@@ -81,7 +81,7 @@ export const syncUserUpdation = inngest.createFunction(
     await ensureEcommerceDB();
     
     await User.findByIdAndUpdate(id, userData);
-    console.log(`User updated in database: ${mongoose.connection.db.databaseName}`);
+    // console.log(`User updated in database: ${mongoose.connection.db.databaseName}`);
   }
 );
 
@@ -99,7 +99,7 @@ export const syncUserDeletion = inngest.createFunction({
     await ensureEcommerceDB();
     
     await User.findByIdAndDelete(id);
-    console.log(`User deleted from database: ${mongoose.connection.db.databaseName}`);
+    // console.log(`User deleted from database: ${mongoose.connection.db.databaseName}`);
 });
 
 //  Inngest function to create user's order in the database
@@ -108,10 +108,10 @@ export const createUserOrder = inngest.createFunction(
   { event: "order/created" },
   async ({ event, step }) => {
     try {
-      console.log("Processing order event:", event.id);
+      // console.log("Processing order event:", event.id);
       
       // Log the data to see what we're working with
-      console.log("Order data received:", JSON.stringify(event.data));
+      // console.log("Order data received:", JSON.stringify(event.data));
       
       // Explicitly check if we have amount field with correct spelling
       if ('amount' in event.data) {
@@ -143,7 +143,7 @@ export const createUserOrder = inngest.createFunction(
         isPaid: event.data.isPaid !== undefined ? event.data.isPaid : false // Include isPaid with default
       };
       
-      console.log("Order data prepared:", JSON.stringify(orderData));
+      // console.log("Order data prepared:", JSON.stringify(orderData));
       
       // Try a direct MongoDB insert to bypass Mongoose schema validation
       return await step.run("save-order-direct", async () => {
@@ -152,7 +152,7 @@ export const createUserOrder = inngest.createFunction(
           
           // Double check the orderData has the correct field name
           if ('ammount' in orderData && !('amount' in orderData)) {
-            console.log("Fixing field name from 'ammount' to 'amount' before insertion");
+            // console.log("Fixing field name from 'ammount' to 'amount' before insertion");
             orderData.amount = orderData.ammount;
             delete orderData.ammount;
           }
@@ -160,26 +160,26 @@ export const createUserOrder = inngest.createFunction(
           // Try direct insertion to bypass Mongoose validation
           const result = await mongoose.connection.db.collection('orders').insertOne(orderData);
           
-          console.log("Order created directly in MongoDB:", result.insertedId);
+          // console.log("Order created directly in MongoDB:", result.insertedId);
           return { success: true, orderId: result.insertedId.toString() };
         } catch (dbError) {
           console.error("Database error creating order:", dbError);
           
           // Fallback to Mongoose if direct insert fails
           try {
-            console.log("Trying Mongoose fallback...");
+            // console.log("Trying Mongoose fallback...");
             const order = new Order(orderData);
             const savedOrder = await order.save();
-            console.log("Order created via Mongoose:", savedOrder._id);
+            // console.log("Order created via Mongoose:", savedOrder._id);
             return { success: true, orderId: savedOrder._id };
           } catch (mongooseError) {
-            console.error("Mongoose error:", mongooseError);
+            // console.error("Mongoose error:", mongooseError);
             throw new Error(`Failed to save order: ${mongooseError.message}`);
           }
         }
       });
     } catch (error) {
-      console.error("Error in order creation function:", error);
+      // console.error("Error in order creation function:", error);
       return { success: false, error: error.message };
     }
   }
