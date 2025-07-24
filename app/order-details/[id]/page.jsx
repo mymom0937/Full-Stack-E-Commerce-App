@@ -173,15 +173,35 @@ const OrderDetails = ({ params }) => {
             box-shadow: none !important;
             background: #fff !important;
             color: #000 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
           }
           body {
             background: #fff !important;
             color: #000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
           .order-details-print-area, .order-summary, .order-items, .shipping-address, .price-details {
             margin: 0 !important;
             padding: 0.5rem !important;
           }
+          /* Hide the back button in print */
+          .back-to-orders-print-hide {
+            display: none !important;
+          }
+          /* Show a print heading instead */
+          .order-details-print-heading {
+            display: block !important;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-align: center;
+          }
+        }
+        /* Hide print heading on screen */
+        .order-details-print-heading {
+          display: none;
         }
       `}</style>
       {!isSeller && <Navbar />}
@@ -195,13 +215,15 @@ const OrderDetails = ({ params }) => {
           <div className="flex items-center justify-between">
             <button
               onClick={() => router.push(isSeller ? "/seller/orders" : "/my-orders")}
-              className="flex items-center text-sm text-[#F8BD19] hover:text-[#F8BD19]/80"
+              className="flex items-center text-sm text-[#F8BD19] hover:text-[#F8BD19]/80 back-to-orders-print-hide"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1 rotate-180">
                 <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clipRule="evenodd" />
               </svg>
               Back to Orders
             </button>
+            {/* Print Heading (only visible in print) */}
+            <span className="order-details-print-heading">Order Details</span>
             {/* Print Button */}
             <button
               onClick={() => window.print()}
