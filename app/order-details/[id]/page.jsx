@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
@@ -18,6 +18,7 @@ const OrderDetails = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [isSeller, setIsSeller] = useState(false);
   const [processedItems, setProcessedItems] = useState([]);
+  const printRef = useRef();
 
   const fetchOrderDetails = async () => {
     try {
@@ -162,9 +163,30 @@ const OrderDetails = ({ params }) => {
 
   return (
     <>
+      <style jsx global>{`
+        @media print {
+          nav, footer, .print-hidden, .print\:hidden {
+            display: none !important;
+          }
+          .order-details-print-area {
+            width: 100% !important;
+            box-shadow: none !important;
+            background: #fff !important;
+            color: #000 !important;
+          }
+          body {
+            background: #fff !important;
+            color: #000 !important;
+          }
+          .order-details-print-area, .order-summary, .order-items, .shipping-address, .price-details {
+            margin: 0 !important;
+            padding: 0.5rem !important;
+          }
+        }
+      `}</style>
       {!isSeller && <Navbar />}
       <div className={`flex flex-col justify-between ${isSeller ? 'px-4 md:px-10' : 'px-6 md:px-16 lg:px-32'} py-6 min-h-[calc(100vh-300px)] ${!isSeller ? 'pt-20' : ''}`}>
-        <div className="space-y-5">
+        <div className="space-y-5 order-details-print-area" ref={printRef}>
           {/* Breadcrumb */}
           {!isSeller && (
             <Breadcrumb currentPage="Order Details" />
@@ -179,6 +201,17 @@ const OrderDetails = ({ params }) => {
                 <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clipRule="evenodd" />
               </svg>
               Back to Orders
+            </button>
+            {/* Print Button */}
+            <button
+              onClick={() => window.print()}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2 print-hidden"
+              title="Print Order Details"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-6 0v4m0 0h4m-4 0H8" />
+              </svg>
+              Print
             </button>
           </div>
 
